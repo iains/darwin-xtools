@@ -1019,6 +1019,8 @@ char *op)
 
 	/* if this instruction requires labels mark it for later */
 	switch(insn.reloc){
+	case NO_RELOC:
+	    break;
 	case PPC_RELOC_HI16:
 	case PPC_RELOC_LO16:
 	case PPC_RELOC_HA16:
@@ -1033,6 +1035,7 @@ char *op)
 		    insn.reloc);
 	    break;
 	case PPC_RELOC_BR14:
+	case PPC_RELOC_BR14_predicted:
 	    fix_new(frag_now,
 		    thisfrag - frag_now->fr_literal,
 		    4,
@@ -1056,7 +1059,7 @@ char *op)
 		    insn.reloc);
 	    break;
 	default:
-	    as_bad("Unknown relocation type");
+	    as_bad("Unknown relocation type %d" , insn.reloc);
 	    break;
 	}
 	if(insn.jbsr_exp.X_add_symbol != NULL){
