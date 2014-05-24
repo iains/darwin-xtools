@@ -61,6 +61,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 #include "dwarf2dbg.h"
 
+#ifndef ALLOW_64BIT_LEB_ON_32B_TARGET
+#define ALLOW_64BIT_LEB_ON_32B_TARGET 0
+#endif
+
 /*
  * Parsing of input is done off of this pointer which points to the next char
  * of source file to parse.
@@ -5034,7 +5038,7 @@ uintptr_t value)
 
 /* Return the size of a LEB128 value.  */
 
-#ifndef ARCH64
+#if ! ALLOW_64BIT_LEB_ON_32B_TARGET && ! defined(ARCH64)
 static inline int
 sizeof_sleb128_32 (int32_t value)
 {
@@ -5044,20 +5048,17 @@ sizeof_sleb128_32 (int32_t value)
   do
     {
       byte = (value & 0x7f);
-      /* Sadly, we cannot rely on typical arithmetic right shift behaviour.
-	 Fortunately, we can structure things so that the extra work reduces
-	 to a noop on systems that do things "properly".  */
-      value = (value >> 7) | ~(-(offsetT)1 >> 7);
+      value >>= 7;
       size += 1;
     }
   while (!(((value == 0) && ((byte & 0x40) == 0))
-	   || ((value == -1) && ((byte & 0x40) != 0))));
+	   || ((value == -1L) && ((byte & 0x40) != 0))));
 
   return size;
 }
 #endif /* !defined(ARCH64) */
 
-#ifdef ARCH64
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
 static inline int
 sizeof_sleb128_64 (int64_t value)
 {
@@ -5067,20 +5068,18 @@ sizeof_sleb128_64 (int64_t value)
   do
     {
       byte = (value & 0x7f);
-      /* Sadly, we cannot rely on typical arithmetic right shift behaviour.
-	 Fortunately, we can structure things so that the extra work reduces
-	 to a noop on systems that do things "properly".  */
-      value = (value >> 7) | ~(-(offsetT)1 >> 7);
+
+      value >>= 7;
       size += 1;
     }
   while (!(((value == 0) && ((byte & 0x40) == 0))
-	   || ((value == -1) && ((byte & 0x40) != 0))));
+	   || ((value == -1LL) && ((byte & 0x40) != 0))));
 
   return size;
 }
 #endif /* ARCH64 */
 
-#ifndef ARCH64
+#if ! ALLOW_64BIT_LEB_ON_32B_TARGET && ! defined(ARCH64)
 static inline int
 sizeof_uleb128_32 (uint32_t value)
 {
@@ -5099,7 +5098,7 @@ sizeof_uleb128_32 (uint32_t value)
 }
 #endif /* !defined(ARCH64) */
 
-#ifdef ARCH64
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
 static inline int
 sizeof_uleb128_64 (uint64_t value)
 {
@@ -5118,7 +5117,7 @@ sizeof_uleb128_64 (uint64_t value)
 }
 #endif /* ARCH64 */
 
-#ifdef ARCH64
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
 int
 sizeof_leb128 (valueT value, int sign)
 {
@@ -5145,18 +5144,14 @@ output_sleb128 (char *p, offsetT value)
 {
   register char *orig = p;
   register int more;
-
+  int64_t sv = value;
   do
     {
-      unsigned byte = (value & 0x7f);
+      unsigned byte = (sv & 0x7f);
 
-      /* Sadly, we cannot rely on typical arithmetic right shift behaviour.
-	 Fortunately, we can structure things so that the extra work reduces
-	 to a noop on systems that do things "properly".  */
-      value = (value >> 7) | ~(-(offsetT)1 >> 7);
-
-      more = !((((value == 0) && ((byte & 0x40) == 0))
-		|| ((value == -1) && ((byte & 0x40) != 0))));
+      sv >>= 7;
+      more = !((( (sv == 0) && ((byte & 0x40) == 0))
+		|| ((sv == -1LL) && ((byte & 0x40) != 0))));
       if (more)
 	byte |= 0x80;
 
@@ -5172,17 +5167,17 @@ output_uleb128 (char *p, valueT value)
 {
   char *orig = p;
 
-  do
-    {
-      unsigned byte = (value & 0x7f);
-      value >>= 7;
-      if (value != 0)
+  unsigned_target_addr_t uval = (unsigned_target_addr_t) value;
+  do {
+      unsigned byte = (uval & 0x7f);
+      uval >>= 7;
+      if (uval != 0)
 	/* More bytes to follow.  */
 	byte |= 0x80;
 
       *p++ = byte;
     }
-  while (value != 0);
+  while (uval != 0);
 
   return p - orig;
 }
