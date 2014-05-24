@@ -30,6 +30,8 @@
 #include <unistd.h>
 #include <mach-o/loader.h>
 
+#include <mach/i386/thread_status.h>
+
 #include <vector>
 
 #include "MachOFileAbstraction.hpp"

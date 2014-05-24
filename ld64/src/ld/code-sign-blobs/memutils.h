@@ -28,6 +28,7 @@
 #ifndef _H_MEMUTILS
 #define _H_MEMUTILS
 
+#include <cstddef>
 //#include <security_utilities/utilities.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -46,7 +47,7 @@ namespace LowLevelMemoryUtilities {
 //
 static const size_t systemAlignment = 4;
 
-
+#if 0
 //
 // Get the local alignment for a type, as used by the acting compiler.
 //
@@ -56,6 +57,9 @@ unsigned long myalignof() {
 	return sizeof(s) - sizeof(T);
 }
 
+template <class T>
+inline size_t alignof() { struct { char c; T t; } s; return sizeof(s) - sizeof(T); }
+#endif
 
 //
 // Get the local offset of a field in a (struct or class) type, as layed out
