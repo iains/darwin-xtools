@@ -3199,6 +3199,9 @@ uint32_t TentativeDefinitionSection<A>::appendAtoms(class Parser<A>& parser, uin
 	uint32_t count = 0;
 	for (uint32_t i=parser.undefinedStartIndex(); i < parser.undefinedEndIndex(); ++i) {
 		const macho_nlist<P>& sym =	parser.symbolFromIndex(i);
+		// Don't count STABs.
+		if ((sym.n_type() & N_STAB) != 0)
+		  continue;
 		if ( ((sym.n_type() & N_TYPE) == N_UNDF) && (sym.n_value() != 0) ) {
 			uint64_t size = sym.n_value();
 			uint8_t alignP2 = GET_COMM_ALIGN(sym.n_desc());
