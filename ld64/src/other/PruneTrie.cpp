@@ -22,6 +22,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #include <vector>
+#include <stdio.h> // asprintf
 
 #include "MachOFileAbstraction.hpp"
 #include "MachOTrie.hpp"
