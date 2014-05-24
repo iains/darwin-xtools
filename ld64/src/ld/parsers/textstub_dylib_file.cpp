@@ -27,9 +27,11 @@
 #include <sys/mman.h>
 #include <tapi/tapi.h>
 #include <vector>
+#include <algorithm>
+#include <memory>
 
 #include "Architectures.hpp"
-#include "bitcode.hpp"
+#include "Bitcode.hpp"
 #include "MachOFileAbstraction.hpp"
 #include "MachOTrie.hpp"
 #include "generic_dylib_file.hpp"

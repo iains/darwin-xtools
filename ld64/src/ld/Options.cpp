@@ -22,7 +22,9 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-
+#include <stdint.h>
+#include <stdio.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <mach/vm_prot.h>
@@ -35,10 +37,15 @@
 #include <cxxabi.h>
 #include <Availability.h>
 #include <tapi/tapi.h>
+#include <ctype.h>
 
 #include <vector>
 #include <map>
 #include <sstream>
+#include <limits.h>
+#ifndef PATH_MAX
+#include <sys/syslimits.h>
+#endif
 
 #include "Options.h"
 #include "Architectures.hpp"
