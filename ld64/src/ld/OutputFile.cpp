@@ -480,6 +480,7 @@ uint64_t OutputFile::addressOf(const ld::Internal& state, const ld::Fixup* fixup
 		// For external relocations the classic mach-o format
 		// has addend only stored in the content.  That means
 		// that the address of the target is not used.
+		*target = NULL;
 		if ( fixup->contentAddendOnly )
 			return 0;
 	}
