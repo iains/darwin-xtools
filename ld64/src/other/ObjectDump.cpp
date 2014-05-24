@@ -31,6 +31,8 @@
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
 
+#include <algorithm>
+
 #include "MachOFileAbstraction.hpp"
 #include "parsers/macho_relocatable_file.h"
 #include "parsers/lto_file.h"

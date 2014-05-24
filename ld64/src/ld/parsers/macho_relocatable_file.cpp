@@ -43,6 +43,7 @@
 #include <map>
 #include <algorithm>
 #include <type_traits>
+#include <memory>
 
 #include "dwarf2.h"
 #include "debugline.h"

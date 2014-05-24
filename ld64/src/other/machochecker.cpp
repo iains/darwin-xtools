@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/syslimits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +33,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <utility>
 #include <vector>
 #include <set>
 #include <unordered_set>

@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <mach-o/dyld.h>
+#include <algorithm> // std::sort
 #include <vector>
 #include <map>
 #include <unordered_set>
