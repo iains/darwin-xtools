@@ -24,6 +24,7 @@
 
 
 #include <stdint.h>
+#include <stdio.h>
 #include <math.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -32,6 +33,7 @@
 
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include "ld.hpp"
 #include "compact_unwind.h"

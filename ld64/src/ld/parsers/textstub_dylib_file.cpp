@@ -27,6 +27,8 @@
 #include <sys/mman.h>
 #include <tapi/tapi.h>
 #include <vector>
+#include <algorithm>
+#include <memory>
 
 #include "Architectures.hpp"
 #include "Bitcode.hpp"
