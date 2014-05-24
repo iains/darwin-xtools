@@ -644,6 +644,7 @@ enum bool verbose)
 	    print_immediate(opcode & 0xffff, sect_offset, relocs, nrelocs,
 			    symbols, symbols64, nsymbols, sorted_symbols, 
 			    nsorted_symbols, strings, strings_size, verbose);
+	    printf("\n");
 	    break;
 	case 0xe8000000:
 	    switch(opcode & 0x3){
@@ -3131,7 +3132,7 @@ enum bool verbose)
 	pair_r_value = 0;
 
 	if(verbose == FALSE){
-	    printf("0x%x", (unsigned int)value);
+	    printf("0x%04x", (unsigned int)value);
 	    return;
 	}
 	reloc_found = 0;

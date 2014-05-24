@@ -3661,7 +3661,8 @@ uint64_t seg_addr)
 			else
 			    printf("%08x", (uint32_t)cur_addr);
 			if((qflag == FALSE ||
-			    (cputype == CPU_TYPE_POWERPC)) &&
+			    (cputype == CPU_TYPE_POWERPC ||
+			     cputype == CPU_TYPE_POWERPC64)) &&
 			    cputype != CPU_TYPE_ARM64)
 			    printf("\t");
 		    }
