@@ -644,6 +644,21 @@ void Options::setArchitecture(cpu_type_t type, cpu_subtype_t subtype, Options::P
 				fUseSimplifiedDylibReExports = true;
 			return;
 		}
+		assert(fArchitectureName != NULL);
+		if ( (fMacVersionMin == ld::macVersionUnset) && (fIOSVersionMin == ld::iOSVersionUnset) && (fOutputKind != Options::kObjectFile) ) {
+#if defined(DEFAULT_IPHONEOS_MIN_VERSION)
+			warning("-ios_version_min not specified, assuming " DEFAULT_IPHONEOS_MIN_VERSION);
+			setIOSVersionMin(DEFAULT_IPHONEOS_MIN_VERSION);
+#elif defined(DEFAULT_MACOSX_MIN_VERSION)
+			warning("-macosx_version_min not specified, assuming " DEFAULT_MACOSX_MIN_VERSION);
+			setMacOSXVersionMin(DEFAULT_MACOSX_MIN_VERSION);
+#else
+			warning("-macosx_version_min not specified, assuming 10.5");
+			fMacVersionMin = ld::mac10_5;
+#endif
+		}
+		if ( !fMakeCompressedDyldInfo && minOS(ld::mac10_6, ld::iOS_3_1) && !fMakeCompressedDyldInfoForceOff )
+			fMakeCompressedDyldInfo = true;
 	}
 	fArchitectureName = "unknown architecture";
 }
@@ -3220,6 +3235,9 @@ void Options::parse(int argc, const char* argv[])
 				fEncryptableForceOn = true;
 				cannotBeUsedWithBitcode(arg);
 			}
+			else if ( strcmp(arg, "-compact_unwind") == 0 ) {
+				fAddCompactUnwindEncoding = true;
+			}
 			else if ( strcmp(arg, "-no_compact_unwind") == 0 ) {
 				fAddCompactUnwindEncoding = false;
 				cannotBeUsedWithBitcode(arg);
@@ -3340,8 +3358,12 @@ void Options::parse(int argc, const char* argv[])
 				cannotBeUsedWithBitcode(arg);
 			}
 			else if ( strcmp(arg, "-function_starts") == 0 ) {
-				fFunctionStartsForcedOn = true;
-				fFunctionStartsForcedOff = false;
+			    if (fMacVersionMin >= ld::mac10_6) {
+				    fFunctionStartsForcedOn = true;
+				    fFunctionStartsForcedOff = false;
+				} else {
+					warning("-function_starts ignored for OS X < 10.6");
+				}
 			}
 			else if ( strcmp(arg, "-no_function_starts") == 0 ) {
 				fFunctionStartsForcedOff = true;
@@ -4445,6 +4467,11 @@ void Options::reconfigureDefaults()
 				case Options::kDynamicLibrary:
 				case Options::kDynamicBundle:
 				case Options::kDynamicExecutable:
+				    // No compact unwind for OSX 10.4/5
+				    if (fMacVersionMin < ld::mac10_6) {
+                      fAddCompactUnwindEncoding = false;
+                      fRemoveDwarfUnwindIfCompactExists = false;
+				    }
 					//if ( fAddCompactUnwindEncoding && (fVersionMin >= ld::mac10_6) )
 					//	fRemoveDwarfUnwindIfCompactExists = true;
 					break;
@@ -4678,7 +4705,7 @@ void Options::reconfigureDefaults()
 		case Options::kDyld:
 		case Options::kDynamicLibrary:
 		case Options::kDynamicBundle:
-			if ( !fVersionLoadCommandForcedOff )
+			if ( !fVersionLoadCommandForcedOff && fMacVersionMin >= ld::mac10_6)
 				fVersionLoadCommand = true;
 			break;
 	}
