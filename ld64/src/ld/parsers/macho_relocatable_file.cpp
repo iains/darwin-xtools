@@ -3315,7 +3315,7 @@ uint32_t Parser<A>::symbolIndexFromIndirectSectionAddress(pint_t addr, const mac
 			elementSize = sizeof(pint_t);
 			break;
 		default:
-			throw "section does not use inirect symbol table";
+			throw "section does not use indirect symbol table";
 	}	
 	uint32_t indexInSection = (addr - sect->addr()) / elementSize;
 	uint32_t indexIntoIndirectTable = sect->reserved1() + indexInSection;
