@@ -2692,18 +2692,19 @@ uintptr_t value)
     frchainS *frcP;
     symbolS *symbolP;
     uint64_t size;
+    expressionS exp;
+    segT st;
     int align;
 
-	if(value == S_THREAD_LOCAL_ZEROFILL){
-	    directive = "tbss";
+    if(value == S_THREAD_LOCAL_ZEROFILL){
+      directive = "tbss";
 	    frcP = section_new("__DATA", "__thread_bss", value, 0, 0);
 	    if(frcP->frch_root == NULL){
 		frcP->frch_root = xmalloc(SIZEOF_STRUCT_FRAG);
 		frcP->frch_last = frcP->frch_root;
 		memset(frcP->frch_root, '\0', SIZEOF_STRUCT_FRAG);
 	    }
-	}
-	else{
+    } else {
 	    directive = "zerofill";
 	    segname = input_line_pointer;
 	    do{
@@ -2780,12 +2781,27 @@ uintptr_t value)
 	    return;
 	}
 	input_line_pointer ++;
-	if((int)(size = get_absolute_expression()) < 0){
-	    as_bad("%s size (%lld.) <0! Ignored.", directive, size);
-	    ignore_rest_of_line();
-	    return;
+
+	st = expression(&exp);
+	if(st != SEG_ABSOLUTE) {
+	  if(st != SEG_NONE){
+	    as_bad("zerofill requires an absolute expression for the size.");
+	  }
+	  exp.X_add_number = 0;
 	}
-	align = 0;
+        size = (uint64_t)exp.X_add_number;
+#if defined (ARCH64)
+        if(size >= 0x1000000000000ULL) {
+          as_warn("%s size (%lld) exceeds physical address space of current machines.", directive, size);
+        }
+#else
+        if(size >= 0x100000000ULL) {
+          as_bad("%s size (%lld). exceeds maximum section size.", directive, size);
+          ignore_rest_of_line();
+          return;
+        }
+#endif
+ 	align = 0;
 	if(*input_line_pointer == ','){
 	    input_line_pointer++;
 	    align = get_absolute_expression();
