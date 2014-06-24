@@ -92,8 +92,10 @@ private:
 	void					fillInHelpersInInternalState();
 	void					removeCoalescedAwayAtoms();
 	void					syncAliases();
-	void					fillInEntryPoint();
-	void					linkTimeOptimize();
+    void					fillInEntryPoint();
+#ifdef LTO_SUPPORT
+ 	void					linkTimeOptimize();
+#endif
 	void					convertReferencesToIndirect(const ld::Atom& atom);
 	const ld::Atom*			entryPoint(bool searchArchives);
 	void					markLive(const ld::Atom& atom, WhyLiveBackChain* previous);
