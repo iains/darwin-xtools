@@ -22,6 +22,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
+#ifdef LTO_SUPPORT
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -1043,3 +1045,4 @@ void doPass(const Options& opts, ld::Internal& internal) {
 } // namespace bitcode_bundle
 } // namespace passes
 } // namespace ld
+#endif
