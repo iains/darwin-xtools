@@ -174,7 +174,8 @@ private:
 //
 enum MacVersionMin { macVersionUnset=0, mac10_4=0x000A0400, mac10_5=0x000A0500, 
 						mac10_6=0x000A0600, mac10_7=0x000A0700, mac10_8=0x000A0800,
-						mac10_9=0x000A0900, mac10_Future=0x10000000 };
+						mac10_9=0x000A0900, mac10_10=0x000A0A00,
+						mac10_Future=0x10000000 };
 enum IOSVersionMin { iOSVersionUnset=0, iOS_2_0=0x00020000, iOS_3_1=0x00030100, 
 						iOS_4_2=0x00040200, iOS_4_3=0x00040300, iOS_5_0=0x00050000,
 						iOS_6_0=0x00060000, iOS_7_0=0x00070000, iOS_8_0=0x00080000,
