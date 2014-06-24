@@ -22,6 +22,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
+#ifdef LTO_SUPPORT
+
 #ifndef __LTO_FILE_H__
 #define __LTO_FILE_H__
 
@@ -80,5 +82,6 @@ extern bool	optimize(   const std::vector<const ld::Atom*>&	allAtoms,
 
 
 #endif // __LTO_FILE_H__
+#endif
 
 

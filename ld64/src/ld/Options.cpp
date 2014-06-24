@@ -48,15 +48,15 @@
 #include "MachOFileAbstraction.hpp"
 #include "Snapshot.h"
 
-
 // from FunctionNameDemangle.h
 extern "C" size_t fnd_get_demangled_name(const char *mangledName, char *outputBuffer, size_t length);
 
-
+#ifdef LTO_SUPPORT
 // upward dependency on lto::version()
 namespace lto {
 	extern const char* version();
 }
+#endif
 
 // magic to place command line in crash reports
 const int crashreporterBufferSize = 2000;
@@ -3356,11 +3356,13 @@ void Options::parse(int argc, const char* argv[])
 				fDataInCodeInfoLoadCommandForcedOn  = true;
 				fDataInCodeInfoLoadCommandForcedOff = false;
 			}
+#ifdef LTO_SUPPORT
 			else if ( strcmp(arg, "-object_path_lto") == 0 ) {
 				fTempLtoObjectPath = argv[++i];
 				if ( fTempLtoObjectPath == NULL )
 					throw "missing argument to -object_path_lto";
 			}
+#endif
 			else if ( strcmp(arg, "-no_objc_category_merging") == 0 ) {
 				fObjcCategoryMerging = false;
 			}
@@ -3756,9 +3758,11 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 			 // if only -v specified, exit cleanly
 			 if ( argc == 2 ) {
+#ifdef LTO_SUPPORT
 				const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
 					fprintf(stderr, "LTO support using: %s\n", ltoVers);
+#endif
 				exit(0);
 			}
 		}

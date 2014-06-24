@@ -21,6 +21,7 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
+#ifdef LTO_SUPPORT
 
 #ifndef _BITCODE_BUNDLE_H_
 #define _BITCODE_BUNDLE_H_
@@ -41,3 +42,4 @@ extern void doPass(const Options& opts, ld::Internal& internal);
 } // namespace ld
 
 #endif /* defined(_BITCODE_BUNDLE_H_) */
+#endif
