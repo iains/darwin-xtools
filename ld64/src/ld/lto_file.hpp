@@ -35,8 +35,8 @@
 #include "Architectures.hpp"
 #include "ld.hpp"
 
+#ifdef LTO_SUPPORT
 #include "llvm-c/lto.h"
-
 
 namespace lto {
 	  
@@ -636,7 +636,7 @@ void Parser::AtomSyncer::doAtom(ld::Atom& machoAtom)
 
 
 }; // namespace lto
-
+#endif
 
 #endif
 
