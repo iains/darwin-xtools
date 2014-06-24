@@ -60,7 +60,9 @@
 #include "macho_dylib_file.h"
 #include "textstub_dylib_file.hpp"
 #include "archive_file.h"
+#ifdef LTO_SUPPORT
 #include "lto_file.h"
+#endif
 #include "opaque_section_file.h"
 #include "MachOFileAbstraction.hpp"
 #include "Snapshot.h"
@@ -193,9 +195,11 @@ const char* InputFiles::fileArch(const uint8_t* p, unsigned len)
     if ( result != NULL  )
 		return result;
 
+#ifdef LTO_SUPPORT
 	result = lto::archName(p, len);
 	if ( result != NULL  )
 		 return result;
+#endif
 	
 	if ( strncmp((const char*)p, "!<arch>\n", 8) == 0 )
 		return "archive";
@@ -328,6 +332,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 		return objResult;
 	}
 
+#ifdef LTO_SUPPORT
 	// see if it is an llvm object file
 	objResult = lto::parse(p, len, info.path, info.modTime, info.ordinal, _options.architecture(), _options.subArchitecture(), _options.logAllFiles(), _options.verboseOptimizationHints());
 	if ( objResult != NULL ) {
@@ -335,6 +340,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 		OSAtomicIncrement32(&_totalObjectLoaded);
 		return objResult;
 	}
+#endif
 
 	// see if it is a dynamic library (or text-based dynamic library)
 	ld::dylib::File* dylibResult;
@@ -386,6 +392,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 		return archiveResult;
 	}
 	
+#ifdef LTO_SUPPORT
 	// does not seem to be any valid linker input file, check LTO misconfiguration problems
 	if ( lto::archName((uint8_t*)p, len) != NULL ) {
 		if ( lto::libLTOisLoaded() ) {
@@ -413,6 +420,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 			throwf("could not process llvm bitcode object file, because %s could not be loaded", libLTO);
 		}
 	}
+#endif
 
 	if ( dylibsNotAllowed ) {
 		cpu_type_t dummy1;

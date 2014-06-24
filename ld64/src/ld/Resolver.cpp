@@ -56,12 +56,15 @@
 #include "InputFiles.h"
 #include "SymbolTable.h"
 #include "Resolver.h"
-#include "parsers/lto_file.h"
 
 #include "configure.h"
 
 #define VAL(x) #x
 #define STRINGIFY(x) VAL(x)
+
+#ifdef LTO_SUPPORT
+#include "parsers/lto_file.h"
+#endif
 
 namespace ld {
 namespace tool {
@@ -1768,6 +1771,7 @@ void Resolver::removeCoalescedAwayAtoms()
 	}
 }
 
+#ifdef LTO_SUPPORT
 void Resolver::linkTimeOptimize()
 {
 	// only do work here if some llvm obj files where loaded
@@ -1815,6 +1819,7 @@ void Resolver::linkTimeOptimize()
 	std::vector<const char*>			additionalUndefines; 
 	if ( ! lto::optimize(_atoms, _internal, optOpt, *this, newAtoms, additionalUndefines) )
 		return; // if nothing done
+
 	_ltoCodeGenFinished = true;
 	
 	// add all newly created atoms to _atoms and update symbol table
@@ -1907,7 +1912,7 @@ void Resolver::linkTimeOptimize()
 		_symbolTable.removeDeadUndefs(_atoms, mustPreserve);
 	}
 }
-
+#endif
 
 void Resolver::tweakWeakness()
 {
@@ -1969,7 +1974,9 @@ void Resolver::resolve()
 	this->syncAliases();
 	this->removeCoalescedAwayAtoms();
 	this->fillInEntryPoint();
+#ifdef LTO_SUPPORT
 	this->linkTimeOptimize();
+#endif
 	this->fillInInternalState();
 	this->tweakWeakness();
     _symbolTable.checkDuplicateSymbols();

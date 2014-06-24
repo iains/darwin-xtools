@@ -1348,8 +1348,9 @@ int main(int argc, const char* argv[])
 		ld::passes::branch_island::doPass(options, state);	// must be after stubs and order pass
 		ld::passes::dtrace::doPass(options, state);
 		ld::passes::compact_unwind::doPass(options, state);  // must be after order pass
+#ifdef LTO_SUPPORT
 		ld::passes::bitcode_bundle::doPass(options, state);  // must be after dylib
-		
+#endif
 		// sort final sections
 		state.sortSections();
 
