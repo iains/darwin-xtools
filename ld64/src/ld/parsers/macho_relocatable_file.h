@@ -47,6 +47,7 @@ struct ParserOptions {
 	Options::Platform platform;
 	uint32_t		minOSVersion;
 	ld::relocatable::File::SourceKind	srcKind;
+	ld::MacVersionMin osxMin;
 };
 
 extern ld::relocatable::File* parse(const uint8_t* fileContent, uint64_t fileLength, 

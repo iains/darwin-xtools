@@ -310,6 +310,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 		objOpts.srcKind			= ld::relocatable::File::kSourceSingle;
 	else
 		objOpts.srcKind				= ld::relocatable::File::kSourceObj;
+	objOpts.osxMin              = _options.macosxVersionMin();
 	ld::relocatable::File* objResult = mach_o::relocatable::parse(p, len, info.path, info.modTime, info.ordinal, objOpts);
 	if ( objResult != NULL ) {
 #ifdef NO_64B_ATOMIC
