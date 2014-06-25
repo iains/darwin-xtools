@@ -50,6 +50,7 @@ struct ParserOptions {
 	bool			treateBitcodeAsData;
 	bool			usingBitcode;
 	uint8_t			maxDefaultCommonAlignment;
+	ld::MacVersionMin osxMin;
 };
 
 extern ld::relocatable::File* parse(const uint8_t* fileContent, uint64_t fileLength, 
