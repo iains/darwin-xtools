@@ -52,8 +52,6 @@
 #include "ld.hpp"
 #include "macho_relocatable_file.h"
 
-
-
 extern void throwf(const char* format, ...) __attribute__ ((noreturn,format(printf, 1, 2)));
 extern void warning(const char* format, ...) __attribute__((format(printf, 1, 2)));
 
@@ -178,13 +176,14 @@ public:
 	virtual	bool					ignoreLabel(const char* label) const { return false; }
 	static const char*				makeSectionName(const macho_section<typename A::P>* s);
 
+
 protected:	
 						Section(File<A>& f, const macho_section<typename A::P>* s)
 							: ld::Section(makeSegmentName(s), makeSectionName(s), sectionType(s)),
 								_file(f), _machOSection(s), _beginAtoms(NULL), _endAtoms(NULL), _hasAliases(false) { }
 						Section(File<A>& f, const char* segName, const char* sectName, ld::Section::Type t, bool hidden=false)
 							: ld::Section(segName, sectName, t, hidden), _file(f), _machOSection(NULL), 
-								_beginAtoms(NULL), _endAtoms(NULL), _hasAliases(false) { }
+								_beginAtoms(NULL), _endAtoms(NULL), _hasAliases(false), _hasJBSR(false) { }
 
 
 	bool							addRelocFixup_powerpc(class Parser<A>& parser,const macho_relocation_info<typename A::P>* reloc);
@@ -202,6 +201,7 @@ protected:
 	class Atom<A>*					_beginAtoms;
 	class Atom<A>*					_endAtoms;
 	bool							_hasAliases;
+	bool                            _hasJBSR;
 	std::set<const class Atom<A>*>	_altEntries;
 };
 
@@ -988,7 +988,7 @@ public:
 																		ordinal, opts.warnUnwindConversionProblems,
 																		opts.keepDwarfUnwind, opts.forceDwarfConversion,
 																		opts.neverConvertDwarf, opts.verboseOptimizationHints,
-																		opts.ignoreMismatchPlatform);
+																		opts.ignoreMismatchPlatform, opts.osxMin);
 																return p.parse(opts);
 														}
 
@@ -1091,8 +1091,8 @@ public:
 	uint32_t										tentativeDefinitionCount() { return _tentativeDefinitionCount; }
 	uint32_t										absoluteSymbolCount() { return _absoluteSymbolCount; }
 	
-	bool											hasStubsSection() { return (_stubsSectionNum != 0); }
-	unsigned int									stubsSectionNum() { return _stubsSectionNum; }
+	bool											hasStubsSection() { return (_numStubsSections > 0); }
+	unsigned int									stubsSectionNum(unsigned n) { return _stubsSectionNums[n]; }
 	void											addDtraceExtraInfos(const SourceLocation& src, const char* provider);
 	const char*										scanSymbolTableForAddress(uint64_t addr);
 	bool											warnUnwindConversionProblems() { return _warnUnwindConversionProblems; }
@@ -1186,7 +1186,8 @@ private:
 															const char* path, time_t modTime, ld::File::Ordinal ordinal, 
 															bool warnUnwindConversionProblems, bool keepDwarfUnwind,
 															bool forceDwarfConversion, bool neverConvertDwarf,
-															bool verboseOptimizationHints, bool ignoreMismatchPlatform);
+															bool verboseOptimizationHints, bool ignoreMismatchPlatform,
+															bool verboseOptimizationHints, ld::MacVersionMin OSXmin);
 	ld::relocatable::File*							parse(const ParserOptions& opts);
 	static uint8_t									loadCommandSizeMask();
 	bool											parseLoadCommands(Options::Platform platform, uint32_t minOSVersion, bool simulator, bool ignoreMismatchPlatform);
@@ -1257,8 +1258,10 @@ private:
 	bool										_ignoreMismatchPlatform;
 	bool										_treateBitcodeAsData;
 	bool										_usingBitcode;
-	unsigned int								_stubsSectionNum;
-	const macho_section<P>*						_stubsMachOSection;
+	unsigned int								_numStubsSections;
+	unsigned int								_stubsSectionNums[3];
+	const macho_section<P>*						_stubsMachOSections[3];
+	ld::MacVersionMin 							_osxMin;
 	std::vector<const char*>					_dtraceProviderInfo;
 	std::vector<FixupInAtom>					_allFixups;
 };
@@ -1268,7 +1271,8 @@ private:
 template <typename A>
 Parser<A>::Parser(const uint8_t* fileContent, uint64_t fileLength, const char* path, time_t modTime, 
 					ld::File::Ordinal ordinal, bool convertDUI, bool keepDwarfUnwind, bool forceDwarfConversion, 
-					bool neverConvertDwarf, bool verboseOptimizationHints, bool ignoreMismatchPlatform)
+					bool neverConvertDwarf, bool verboseOptimizationHints, bool ignoreMismatchPlatform,
+					ld::MacVersionMin OSXmin)
 		: _fileContent(fileContent), _fileLength(fileLength), _path(path), _modTime(modTime),
 			_ordinal(ordinal), _file(NULL),
 			_symbols(NULL), _symbolCount(0), _indirectSymbolCount(0), _strings(NULL), _stringsSize(0),
@@ -1285,8 +1289,12 @@ Parser<A>::Parser(const uint8_t* fileContent, uint64_t fileLength, const char* p
 			_neverConvertDwarf(neverConvertDwarf),
 			_verboseOptimizationHints(verboseOptimizationHints),
 			_ignoreMismatchPlatform(ignoreMismatchPlatform),
-			_stubsSectionNum(0), _stubsMachOSection(NULL)
+			_stubsSectionNum(0), _osxMin(OSXmin)
 {
+  for (unsigned s=0; s<3; s++) {
+    _stubsSectionNums[s] = 0;
+    _stubsMachOSections[s] = NULL;
+  }
 }
 
 template <>
@@ -2595,12 +2603,17 @@ void Parser<A>::makeSections()
 		machOSects[count].sect = sect;
 		switch ( sect->flags() & SECTION_TYPE ) {
 			case S_SYMBOL_STUBS:
-				if ( _stubsSectionNum == 0 ) {
-					_stubsSectionNum = i+1;
-					_stubsMachOSection = sect;
+                // Cater for the wacky darwin8 crt with three versions of the symbol
+                // stub.  Probably we just dump two of them (TODO figure out how).
+				if ( _numStubsSections < 3 ) {
+					_stubsSectionNums[_numStubsSections] = i+1;
+					_stubsMachOSections[_numStubsSections] = sect;
+					_numStubsSections++;
 				}
 				else
-					assert(1 && "multiple S_SYMBOL_STUBS sections");
+					warning("%s has more than three symbol stubs sections?", _file->path()); 
+//					assert(0 && "more than three S_SYMBOL_STUBS sections");
+                break;
 			case S_LAZY_SYMBOL_POINTERS:
 				break;
 			case S_4BYTE_LITERALS:
@@ -2862,17 +2875,31 @@ Atom<A>* Parser<A>::findAtomByAddress(pint_t addr)
 template <typename A>
 Atom<A>* Parser<A>::findAtomByAddressOrNullIfStub(pint_t addr)
 {
-	if ( hasStubsSection() && (_stubsMachOSection->addr() <= addr) && (addr < (_stubsMachOSection->addr()+_stubsMachOSection->size())) ) 
+  if (hasStubsSection()) {
+    for (unsigned sts = 0; sts < 3; sts++) {
+	  if (_stubsMachOSections[sts] == NULL || stubsSectionNum(sts) == 0)
+	    break;
+	  if ( (_stubsMachOSections[sts]->addr() <= addr)
+	     && (addr < (_stubsMachOSections[sts]->addr()+_stubsMachOSections[sts]->size())))
 		return NULL;
+    }	  
+  }
+
 	return findAtomByAddress(addr);
 }
 
 template <typename A>
 Atom<A>* Parser<A>::findAtomByAddressOrLocalTargetOfStub(pint_t addr, uint32_t* offsetInAtom)
 {
-	if ( hasStubsSection() && (_stubsMachOSection->addr() <= addr) && (addr < (_stubsMachOSection->addr()+_stubsMachOSection->size())) ) {
+  if (hasStubsSection()) {
+    for (unsigned sts = 0; sts < 3; sts++) {
+	  if (_stubsMachOSections[sts] == NULL || stubsSectionNum(sts) == 0)
+	    break;
+
+	  if ((_stubsMachOSections[sts]->addr() <= addr)
+	     && (addr < (_stubsMachOSections[sts]->addr()+_stubsMachOSections[sts]->size()))) {
 		// target is a stub, remove indirection
-		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSection);
+		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSections[sts]);
 		assert(symbolIndex != INDIRECT_SYMBOL_LOCAL);
 		const macho_nlist<P>& sym = this->symbolFromIndex(symbolIndex);
 		// can't be to external weak symbol
@@ -2880,6 +2907,9 @@ Atom<A>* Parser<A>::findAtomByAddressOrLocalTargetOfStub(pint_t addr, uint32_t* 
 		*offsetInAtom = 0;
 		return this->findAtomByName(this->nameFromSymbol(sym));
 	}
+	 }
+  }
+
 	Atom<A>* target = this->findAtomByAddress(addr);
 	*offsetInAtom = addr - target->_objAddress;
 	return target;
@@ -2901,9 +2931,15 @@ Atom<A>* Parser<A>::findAtomByName(const char* name)
 template <typename A>
 void Parser<A>::findTargetFromAddress(pint_t addr, TargetDesc& target)
 {
-	if ( hasStubsSection() && (_stubsMachOSection->addr() <= addr) && (addr < (_stubsMachOSection->addr()+_stubsMachOSection->size())) ) {
+  if (hasStubsSection()) {
+    for (unsigned sts = 0; sts < 3; sts++) {
+	  if (_stubsMachOSections[sts] == NULL || stubsSectionNum(sts) == 0)
+	    break;
+
+      if ( (_stubsMachOSections[sts]->addr() <= addr)
+	     && (addr < (_stubsMachOSections[sts]->addr()+_stubsMachOSections[sts]->size())) ) {
 		// target is a stub, remove indirection
-		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSection);
+		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSections[sts]);
 		assert(symbolIndex != INDIRECT_SYMBOL_LOCAL);
 		const macho_nlist<P>& sym = this->symbolFromIndex(symbolIndex);
 		target.atom = NULL;
@@ -2912,6 +2948,9 @@ void Parser<A>::findTargetFromAddress(pint_t addr, TargetDesc& target)
 		target.addend = 0;
 		return;
 	}
+    }
+  }
+
 	Section<A>* section = this->sectionForAddress(addr);
 	target.atom = section->findAtomByAddress(addr);
 	target.addend = addr - target.atom->_objAddress;
@@ -2943,13 +2982,19 @@ void Parser<A>::findTargetFromAddressAndSectionNum(pint_t addr, unsigned int sec
 		throwf("R_ABS reloc but no absolute symbol at target address");
 	}
 
-	if ( hasStubsSection() && (stubsSectionNum() == sectNum) ) {
+  if (hasStubsSection()) {
+    for (unsigned sts = 0; sts < 3; sts++) {
+	  if (_stubsMachOSections[sts] == NULL || stubsSectionNum(sts) == 0)
+	    break;
+
+      if ( (stubsSectionNum(sts) == sectNum) ) {
 		// target is a stub, remove indirection
-		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSection);
+		uint32_t symbolIndex = this->symbolIndexFromIndirectSectionAddress(addr, _stubsMachOSections[sts]);
 		assert(symbolIndex != INDIRECT_SYMBOL_LOCAL);
 		const macho_nlist<P>& sym = this->symbolFromIndex(symbolIndex);
 		// use direct reference when stub is to a static function
-		if ( ((sym.n_type() & N_TYPE) == N_SECT) && (((sym.n_type() & N_EXT) == 0) || (this->nameFromSymbol(sym)[0] == 'L')) ) {
+		if ( ((sym.n_type() & N_TYPE) == N_SECT) 
+		      && (((sym.n_type() & N_EXT) == 0) || (this->nameFromSymbol(sym)[0] == 'L')) ) {
 			this->findTargetFromAddressAndSectionNum(sym.n_value(), sym.n_sect(), target);
 		}
 		else {
@@ -2960,6 +3005,9 @@ void Parser<A>::findTargetFromAddressAndSectionNum(pint_t addr, unsigned int sec
 		}
 		return;
 	}
+	}
+  }
+
 	Section<A>* section = this->sectionForNum(sectNum);
 	target.atom = section->findAtomByAddress(addr);
 	if ( target.atom == NULL ) {
@@ -4637,7 +4685,6 @@ void CFISection<arm64>::cfiParse(class Parser<arm64>& parser, uint8_t* buffer,
 		throwf("malformed __eh_frame section: %s", msg);
 }
 
-
 template <typename A>
 uint32_t CFISection<A>::computeAtomCount(class Parser<A>& parser, 
 											struct Parser<A>::LabelAndCFIBreakIterator& it, 
@@ -4645,7 +4692,6 @@ uint32_t CFISection<A>::computeAtomCount(class Parser<A>& parser,
 {
 	return cfis.cfiCount;
 }
-
 
 
 template <typename A>
@@ -6896,18 +6942,29 @@ bool Section<A>::addRelocFixup_powerpc(class Parser<A>& parser,
 				}
 				break;
 			case PPC_RELOC_JBSR:
-				// this is from -mlong-branch codegen.  We ignore the jump island and make reference to the real target
-				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+				// This is from -mlong-branch codegen.
+				// We ignore the jump island and make reference to the real target.
+				//
+				// FIXME: We then have, effectively, dead branch island code but it
+				// (the island code) contains relocs and probably can't be easily 
+				// proved dead?? ... this causes problems when we come to emit.
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR ) 
 					throw "PPC_RELOC_JBSR missing following pair";
-				if ( !parser._hasLongBranchStubs )
+				if ( !parser._hasLongBranchStubs && parser._osxMin >= ld::mac10_5)
 					warning("object file compiled with -mlong-branch which is no longer needed. "
 							"To remove this warning, recompile without -mlong-branch: %s", parser._path);
 				parser._hasLongBranchStubs = true;
+				this->_hasJBSR = true;
 				result = true;
 				if ( reloc->r_extern() ) {
 					throw "PPC_RELOC_JBSR should not be using an external relocation";
 				}
 				parser.findTargetFromAddressAndSectionNum(nextReloc->r_address(), reloc->r_symbolnum(), target);
+                // Check the branch and displacement.
+				assert(((instruction & 0x4C000000) == 0x48000000) && "must be a 24bit branch");
+				displacement = (instruction & 0x03FFFFFC);
+				if ( (displacement & 0x02000000) != 0 )
+					displacement |= 0xFC000000;
 				parser.addFixups(src, ld::Fixup::kindStorePPCBranch24, target);
 				break;
 			default:

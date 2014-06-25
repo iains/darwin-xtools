@@ -307,6 +307,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	objOpts.srcKind				= ld::relocatable::File::kSourceObj;
 	objOpts.treateBitcodeAsData	= _options.bitcodeKind() == Options::kBitcodeAsData;
 	objOpts.usingBitcode		= _options.bundleBitcode();
+	objOpts.osxMin              = _options.macosxVersionMin();
 
 	ld::relocatable::File* objResult = mach_o::relocatable::parse(p, len, info.path, info.modTime, info.ordinal, objOpts);
 	if ( objResult != NULL ) {
