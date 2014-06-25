@@ -1401,8 +1401,20 @@ int main(int argc, const char* argv[])
 	return 0;
 }
 
-
 #ifndef NDEBUG
+#  if defined (__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) \
+      && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ <= 1040
+
+/* Don't try a backtrace on earlier systems.  */
+
+void __assert_rtn(const char* func, const char* file, int line, const char* failedexpr)
+{
+  fprintf(stderr, "Assertion failed: (%s), function %s, file %s, line %d.\n", failedexpr, func, file, line);
+  exit (1);
+}
+#  else
+
+#include <execinfo.h>
 // implement assert() function to print out a backtrace before aborting
 void __assert_rtn(const char* func, const char* file, int line, const char* failedexpr)
 {
@@ -1434,6 +1446,7 @@ void __assert_rtn(const char* func, const char* file, int line, const char* fail
 	fprintf(stderr, "ld: Assertion failed: (%s), function %s, file %s, line %d.\n", failedexpr, func, file, line);
 	exit(1);
 }
+#  endif /* 10.4 or earlier.  */
 #endif
 
 
