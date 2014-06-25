@@ -24,6 +24,9 @@
  
 
 #include <stdlib.h>
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#undef __STDC_FORMAT_MACROS
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -4694,8 +4697,12 @@ void OutputFile::addClassicRelocs(ld::Internal& state, ld::Internal::FinalSectio
 		case ld::Fixup::kindStorePPCAbsHigh16:
 			{
 				assert(target != NULL);
-				if ( target->definition() == ld::Atom::definitionProxy )
-					throwf("half word text relocs not supported in %s", atom->name());
+				if ( target->definition() == ld::Atom::definitionProxy ) {
+fprintf(stderr, "bad reloc target: %40s source %40s (offset 0x%" PRIx64 ") final addr 0x%" PRIx64 " atom offset: 0x%x [0x%" PRIx64 "]\n",
+                 target->name(), atom->name(), atom->objectAddress(), atom->finalAddress(),
+                 fixupWithStore->offsetInAtom, (uint64_t)atom->finalAddress()+fixupWithStore->offsetInAtom );
+//					throwf("half word text relocs not supported in %s", atom->name());
+				}
 				if ( _options.outputSlidable() ) {
 					if ( inReadOnlySeg )
 						noteTextReloc(atom, target);
