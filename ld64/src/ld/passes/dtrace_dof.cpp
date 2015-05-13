@@ -50,8 +50,6 @@ public:
 											Atom(class File& f, const char* n,  const uint8_t* content, uint64_t sz);
 
 	virtual ld::File*						file() const					{ return (ld::File*)&_file; }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return _size; }
 	virtual uint64_t						objectAddress() const			{ return 0; }

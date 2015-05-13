@@ -63,15 +63,15 @@ VERSION_OLD_LINKEDIT = -mmacosx-version-min=10.4
 LD_NEW_LINKEDIT = -macosx_version_min 10.6
 
 CXX		  = $(shell xcrun -find clang++) -arch ${ARCH} ${SDKExtra}
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -stdlib=libc++ 
 
 IOS_SDK = $(shell xcodebuild -sdk iphoneos6.0.internal -version Path)
 
 ifeq ($(ARCH),armv6)
   LDFLAGS := -syslibroot $(IOS_SDK)
   override FILEARCH = arm
-  CC = $(shell xcrun -find clang) -arch ${ARCH} -ccc-install-dir ${LD_PATH} -miphoneos-version-min=5.0 -isysroot $(IOS_SDK)
-  CXX = $(shell xcrun -find clang++) -arch ${ARCH} -ccc-install-dir ${LD_PATH} -miphoneos-version-min=5.0 -isysroot $(IOS_SDK)
+  CC = $(shell xcrun -find clang) -arch ${ARCH} -ccc-install-dir ${LD_PATH} -miphoneos-version-min=5.0 -isysroot $(IOS_SDK) 
+  CXX = $(shell xcrun -find clang++) -arch ${ARCH} -ccc-install-dir ${LD_PATH} -miphoneos-version-min=5.0 -isysroot $(IOS_SDK) 
   VERSION_NEW_LINKEDIT = -miphoneos-version-min=4.0
   VERSION_OLD_LINKEDIT = -miphoneos-version-min=3.0
   LD_SYSROOT = -syslibroot $(IOS_SDK)

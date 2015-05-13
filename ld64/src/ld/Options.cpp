@@ -160,7 +160,7 @@ Options::Options(int argc, const char* argv[])
 	  fVersionLoadCommand(false), fVersionLoadCommandForcedOn(false), 
 	  fVersionLoadCommandForcedOff(false), fFunctionStartsLoadCommand(false),
 	  fFunctionStartsForcedOn(false), fFunctionStartsForcedOff(false),
-	  fDataInCodeInfoLoadCommand(false),
+	  fDataInCodeInfoLoadCommand(false), fDataInCodeInfoLoadCommandForcedOn(false), fDataInCodeInfoLoadCommandForcedOff(false),
 	  fCanReExportSymbols(false), fObjcCategoryMerging(true), fPageAlignDataAtoms(false), 
 	  fNeedsThreadLoadCommand(false), fEntryPointLoadCommand(false),
 	  fEntryPointLoadCommandForceOn(false), fEntryPointLoadCommandForceOff(false),
@@ -301,7 +301,8 @@ uint32_t Options::initialSegProtection(const char* segName) const
 uint32_t Options::maxSegProtection(const char* segName) const
 {
 	// iPhoneOS always uses same protection for max and initial
-	if ( fIOSVersionMin != ld::iOSVersionUnset ) 
+	// <rdar://problem/11663436> simulator apps need to use MacOSX max-prot
+	if ( (fIOSVersionMin != ld::iOSVersionUnset) && (fArchitecture != CPU_TYPE_I386) )
 		return initialSegProtection(segName);
 
 	for(std::vector<Options::SegmentProtect>::const_iterator it = fCustomSegmentProtections.begin(); it != fCustomSegmentProtections.end(); ++it) {
@@ -2699,10 +2700,12 @@ void Options::parse(int argc, const char* argv[])
 				fFunctionStartsForcedOn = false;
 			}
 			else if ( strcmp(arg, "-no_data_in_code_info") == 0 ) {
-				fDataInCodeInfoLoadCommand = false;
+				fDataInCodeInfoLoadCommandForcedOff = true;
+				fDataInCodeInfoLoadCommandForcedOn = false;
 			}
 			else if ( strcmp(arg, "-data_in_code_info") == 0 ) {
-				fDataInCodeInfoLoadCommand = true;
+				fDataInCodeInfoLoadCommandForcedOn  = true;
+				fDataInCodeInfoLoadCommandForcedOff = false;
 			}
 			else if ( strcmp(arg, "-object_path_lto") == 0 ) {
 				fTempLtoObjectPath = argv[++i];
@@ -3243,7 +3246,8 @@ void Options::reconfigureDefaults()
                     // iOS 5.0 and later use new MH_KEXT_BUNDLE type
                     fMakeCompressedDyldInfo = false;
                     fMakeCompressedDyldInfoForceOff = true;
-                    fAllowTextRelocs = true; 
+					// kexts are PIC in iOS 6.0 and later
+					fAllowTextRelocs = (fIOSVersionMin < ld::iOS_6_0);
 					fKextsUseStubs = !fAllowTextRelocs;
                     fUndefinedTreatment = kUndefinedDynamicLookup;
 					break;
@@ -3639,21 +3643,21 @@ void Options::reconfigureDefaults()
 	
 	// default to adding functions start for dynamic code, static code must opt-in
 	switch ( fOutputKind ) {
-		case Options::kObjectFile:
-			fFunctionStartsLoadCommand = false;
-			fDataInCodeInfoLoadCommand = false;
-			break;
 		case Options::kPreload:
 		case Options::kStaticExecutable:
 		case Options::kKextBundle:
-			fDataInCodeInfoLoadCommand = false;
+			if ( fDataInCodeInfoLoadCommandForcedOn )
+				fDataInCodeInfoLoadCommand = true;
 			if ( fFunctionStartsForcedOn )
 				fFunctionStartsLoadCommand = true;
 			break;
+		case Options::kObjectFile:
 		case Options::kDynamicExecutable:
 		case Options::kDyld:
 		case Options::kDynamicLibrary:
 		case Options::kDynamicBundle:
+			if ( !fDataInCodeInfoLoadCommandForcedOff )
+				fDataInCodeInfoLoadCommand = true;
 			if ( !fFunctionStartsForcedOff )
 				fFunctionStartsLoadCommand = true;
 			break;
@@ -3695,7 +3699,12 @@ void Options::reconfigureDefaults()
 				fNeedsThreadLoadCommand = true;
 			}
 			else {
-				if ( minOS(ld::mac10_8, ld::iOS_Future) ) {
+				if ( (fIOSVersionMin != ld::iOSVersionUnset) && (fArchitecture == CPU_TYPE_I386) ) {
+					// don't use LC_MAIN for simulator until min host OS is 10.8 for simulator
+					fNeedsThreadLoadCommand = true;
+					fEntryPointLoadCommand = false;
+				}
+				else if ( minOS(ld::mac10_8, ld::iOS_6_0) ) {
 					fEntryPointLoadCommand = true;
 					fEntryName = "_main";
 				}
@@ -3731,7 +3740,7 @@ void Options::reconfigureDefaults()
 				fSourceVersionLoadCommand = false;
 			}
 			else {
-				if ( minOS(ld::mac10_8, ld::iOS_Future) ) {
+				if ( minOS(ld::mac10_8, ld::iOS_6_0) ) {
 					fSourceVersionLoadCommand = true;
 				}
 				else
@@ -3757,7 +3766,7 @@ void Options::reconfigureDefaults()
 				fDependentDRInfo = false;
 			}
 			else {
-				if ( minOS(ld::mac10_8, ld::iOS_Future) ) 
+				if ( minOS(ld::mac10_8, ld::iOS_6_0) ) 
 					fDependentDRInfo = true;
 				else
 					fDependentDRInfo = false;

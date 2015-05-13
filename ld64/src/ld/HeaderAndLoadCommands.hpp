@@ -60,8 +60,6 @@ public:
 
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return NULL; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual const char*							name() const		{ return "mach-o header and load commands"; }
 	virtual uint64_t							size() const;
 	virtual uint64_t							objectAddress() const { return _address; }
@@ -666,6 +664,8 @@ uint32_t HeaderAndLoadCommandsAtom<A>::sectionFlags(ld::Internal::FinalSection* 
 			else if ( (strncmp(sect->sectionName(), "__objc_superrefs", 16) == 0) && (strcmp(sect->segmentName(), "__DATA") == 0) )
 				return S_REGULAR | S_ATTR_NO_DEAD_STRIP;
 			else if ( (strncmp(sect->sectionName(), "__objc_nlclslist", 16) == 0) && (strcmp(sect->segmentName(), "__DATA") == 0) )
+				return S_REGULAR | S_ATTR_NO_DEAD_STRIP;
+			else if ( (strncmp(sect->sectionName(), "__objc_nlcatlist", 16) == 0) && (strcmp(sect->segmentName(), "__DATA") == 0) )
 				return S_REGULAR | S_ATTR_NO_DEAD_STRIP;
 			else
 				return S_REGULAR;

@@ -80,7 +80,7 @@ private:
 	void					initializeState();
 	void					buildAtomList();
 	void					addInitialUndefines();
-	void					deadStripOptimize();
+	void					deadStripOptimize(bool force=false);
 	void					resolveUndefines();
 	void					checkUndefines(bool force=false);
 	void					checkDylibSymbolCollisions();
@@ -88,6 +88,7 @@ private:
 	void					fillInInternalState();
 	void					fillInHelpersInInternalState();
 	void					removeCoalescedAwayAtoms();
+  void					fillInEntryPoint();
 	void					linkTimeOptimize();
 	void					convertReferencesToIndirect(const ld::Atom& atom);
 	const ld::Atom*			entryPoint(bool searchArchives);

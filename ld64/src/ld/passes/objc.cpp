@@ -67,8 +67,6 @@ public:
 															bool compaction, bool abi2);
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "objc image info"; }
 	virtual uint64_t						size() const					{ return sizeof(objc_image_info); }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -132,8 +130,6 @@ public:
 															std::set<const ld::Atom*>& deadAtoms);
 
 	virtual const ld::File*					file() const					{ return _file; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "objc merged method list"; }
 	virtual uint64_t						size() const					{ return _methodCount*3*sizeof(pint_t) + 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -171,8 +167,6 @@ public:
 															std::set<const ld::Atom*>& deadAtoms);
 
 	virtual const ld::File*					file() const					{ return _file; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "objc merged protocol list"; }
 	virtual uint64_t						size() const					{ return (_protocolCount+1)*sizeof(pint_t); }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -210,8 +204,6 @@ public:
 															std::set<const ld::Atom*>& deadAtoms);
 
 	virtual const ld::File*					file() const					{ return _file; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "objc merged property list"; }
 	virtual uint64_t						size() const					{ return _propertyCount*2*sizeof(pint_t) + 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -252,8 +244,6 @@ public:
 
 	// overrides of ld::Atom
 	virtual const ld::File*				file() const		{ return _atom->file(); }
-	virtual bool						translationUnitSource(const char** dir, const char** nm) const
-															{ return _atom->translationUnitSource(dir, nm); }
 	virtual const char*					name() const		{ return _atom->name(); }
 	virtual uint64_t					size() const		{ return _atom->size(); }
 	virtual uint64_t					objectAddress() const { return _atom->objectAddress(); }

@@ -36,4 +36,4 @@ all:
 	nm -ap outfile | grep '.*\<SO\>.*test-cases.*/$$' | ${PASS_IFF_STDIN}
 
 clean:
-	rm outfile* 
+	rm -rf outfile* 

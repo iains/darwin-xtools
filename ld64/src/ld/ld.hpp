@@ -158,7 +158,7 @@ enum MacVersionMin { macVersionUnset=0, mac10_4=0x000A0400, mac10_5=0x000A0500,
 						mac10_Future=0x10000000 };
 enum IOSVersionMin { iOSVersionUnset=0, iOS_2_0=0x00020000, iOS_3_1=0x00030100, 
 						iOS_4_2=0x00040200, iOS_4_3=0x00040300, iOS_5_0=0x00050000,
-						iOS_Future=0x10000000};
+						iOS_6_0=0x00060000, iOS_Future=0x10000000};
  
 namespace relocatable {
 	//
@@ -659,7 +659,7 @@ public:
 	bool									finalAddressMode() const    { return (_mode == modeFinalAddress); }
 #endif
 	virtual const File*						file() const = 0;
-	virtual bool							translationUnitSource(const char** dir, const char** name) const = 0;
+	virtual const char*						translationUnitSource() const { return NULL; }
 	virtual const char*						name() const = 0;
 	virtual uint64_t						objectAddress() const = 0;
 	virtual uint64_t						size() const = 0;

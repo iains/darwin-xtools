@@ -80,8 +80,6 @@ public:
 													_name(nm) {}
 	// overrides of ld::Atom
 	virtual const ld::File*						file() const		{ return NULL; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual const char*							name() const		{ return _name; }
 	virtual uint64_t							size() const		{ return 0; }
 	virtual uint64_t							objectAddress() const { return 0; }
@@ -116,8 +114,8 @@ public:
 
 	// overrides of ld::Atom
 	virtual const ld::File*				file() const		{ return _aliasOf.file(); }
-	virtual bool						translationUnitSource(const char** dir, const char** nm) const
-															{ return _aliasOf.translationUnitSource(dir, nm); }
+	virtual const char*						translationUnitSource() const
+															{ return _aliasOf.translationUnitSource(); }
 	virtual const char*					name() const		{ return _name; }
 	virtual uint64_t					size() const		{ return 0; }
 	virtual uint64_t					objectAddress() const { return _aliasOf.objectAddress(); }
@@ -149,8 +147,6 @@ public:
 	static SectionBoundaryAtom*			makeOldSectionBoundaryAtom(const char* name, bool start);
 	
 	// overrides of ld::Atom
-	virtual bool						translationUnitSource(const char** dir, const char** nm) const
-															{ return false; }
 	virtual const ld::File*				file() const		{ return NULL; }
 	virtual const char*					name() const		{ return _name; }
 	virtual uint64_t					size() const		{ return 0; }
@@ -215,8 +211,6 @@ public:
 	static SegmentBoundaryAtom*			makeOldSegmentBoundaryAtom(const char* name, bool start); 
 	
 	// overrides of ld::Atom
-	virtual bool						translationUnitSource(const char** dir, const char** nm) const
-															{ return false; }
 	virtual const ld::File*				file() const		{ return NULL; }
 	virtual const char*					name() const		{ return _name; }
 	virtual uint64_t					size() const		{ return 0; }
@@ -794,7 +788,7 @@ public:
 	}
 };
 
-void Resolver::deadStripOptimize()
+void Resolver::deadStripOptimize(bool force)
 {
 	// only do this optimization with -dead_strip
 	if ( ! _options.deadCodeStrip() ) 
@@ -856,7 +850,7 @@ void Resolver::deadStripOptimize()
 		}
 	}
 	
-	if ( _haveLLVMObjs ) {
+	if ( _haveLLVMObjs && !force ) {
 		// <rdar://problem/9777977> don't remove combinable atoms, they may come back in lto output
 		_atoms.erase(std::remove_if(_atoms.begin(), _atoms.end(), NotLiveLTO()), _atoms.end());
 	}
@@ -1293,8 +1287,10 @@ void Resolver::fillInInternalState()
 	// <rdar://problem/7783918> make sure there is a __text section so that codesigning works
 	if ( (_options.outputKind() == Options::kDynamicLibrary) || (_options.outputKind() == Options::kDynamicBundle) )
 		_internal.getFinalSection(ld::Section("__TEXT", "__text", ld::Section::typeCode));
+}
 
-	// add entry point
+void Resolver::fillInEntryPoint()
+{
 	_internal.entryPoint = this->entryPoint(true);
 }
 
@@ -1320,7 +1316,7 @@ void Resolver::linkTimeOptimize()
 	// only do work here if some llvm obj files where loaded
 	if ( ! _haveLLVMObjs )
 		return;
-	
+
 	// run LLVM lto code-gen
 	lto::OptimizeOptions optOpt;
 	optOpt.outputFilePath				= _options.outputFilePath();
@@ -1370,7 +1366,7 @@ void Resolver::linkTimeOptimize()
 			(const_cast<ld::Atom*>(*it))->setLive((*it)->dontDeadStrip());
 		}
 		// and re-compute dead code
-		this->deadStripOptimize();
+		this->deadStripOptimize(true);
 	}
 	
 	if ( _options.outputKind() == Options::kObjectFile ) {
@@ -1431,6 +1427,7 @@ void Resolver::resolve()
 	this->checkUndefines();
 	this->checkDylibSymbolCollisions();
 	this->removeCoalescedAwayAtoms();
+	this->fillInEntryPoint();
 	this->linkTimeOptimize();
 	this->fillInInternalState();
 	this->tweakWeakness();

@@ -4,6 +4,7 @@
 
 
 extern void foo1();
+extern void foo2();
 
 
 void t1()
@@ -24,6 +25,10 @@ void t3()
 	strlen("str3");
 }
 
+// <rdar://problem/12005173> error with LTO and dead strip of non-lazy-pointer
+void* foo2p() {
+  return &foo2;
+}
 
 int main()
 {

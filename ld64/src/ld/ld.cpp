@@ -378,7 +378,7 @@ static void validateFixups(const ld::Atom& atom)
 	uint32_t curClusterOffsetInAtom = 0;
 	for (ld::Fixup::iterator fit=atom.fixupsBegin(); fit != atom.fixupsEnd(); ++fit) {
 		//fprintf(stderr, "  fixup offset=%d, cluster=%d\n", fit->offsetInAtom, fit->clusterSize);
-		assert((fit->offsetInAtom < atom.size()) || (fit->offsetInAtom == 0));
+		assert((fit->offsetInAtom <= atom.size()) || (fit->offsetInAtom == 0));
 		if ( fit->firstInCluster() ) {
 			assert(lastWasClusterEnd);
 			curClusterOffsetInAtom = fit->offsetInAtom;

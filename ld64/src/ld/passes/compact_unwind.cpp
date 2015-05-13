@@ -71,8 +71,6 @@ public:
 											~UnwindInfoAtom();
 											
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "compact unwind info"; }
 	virtual uint64_t						size() const					{ return _headerSize+_pagesSize; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -799,8 +797,6 @@ public:
 											~CompactUnwindAtom() {}
 											
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "compact unwind info"; }
 	virtual uint64_t						size() const					{ return sizeof(macho_compact_unwind_entry<P>); }
 	virtual uint64_t						objectAddress() const			{ return 0; }

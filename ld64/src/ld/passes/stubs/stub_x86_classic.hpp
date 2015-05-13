@@ -44,8 +44,6 @@ public:
 					{ pass.addAtom(*this); }
 	
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 10; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -93,8 +91,6 @@ public:
 					{ _fixup2.weakImport = weakImport; pass.addAtom(*this);  }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 4; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -130,8 +126,6 @@ public:
 				_fixup(2, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressLittleEndian32, &_lazyPointer) { pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 6; }
 	virtual uint64_t						objectAddress() const			{ return 0; }

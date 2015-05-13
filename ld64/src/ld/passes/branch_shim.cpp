@@ -59,8 +59,6 @@ public:
 				 { asprintf((char**)&_name, "%s$shim", target->name()); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 12; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -100,8 +98,6 @@ public:
 				 { asprintf((char**)&_name, "%s$shim", target->name()); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 12; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -141,8 +137,6 @@ public:
 				 { asprintf((char**)&_name, "%s$shim", target->name()); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 16; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -189,8 +183,6 @@ public:
 				 { asprintf((char**)&_name, "%s$shim", target->name()); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 16; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -229,8 +221,6 @@ public:
 				 { asprintf((char**)&_name, "%s$shim", target->name()); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char**) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 12; }
 	virtual uint64_t						objectAddress() const			{ return 0; }

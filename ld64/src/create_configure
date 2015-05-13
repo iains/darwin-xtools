@@ -16,7 +16,7 @@ fi
 
 for ANARCH in ${RC_SUPPORTED_ARCHS}
 do
-	KNOWN_ARCHS=",armv4t,armv5,armv6,armv7,i386,x86_64,"
+	KNOWN_ARCHS=",armv4t,armv5,armv6,armv7,armv7f,armv7k,armv7s,i386,x86_64,"
 	FOUND=`echo "$KNOWN_ARCHS" | grep ",$ANARCH,"`
 	if [ $FOUND ]; then
 		echo "#define SUPPORT_ARCH_$ANARCH  1" >> ${DERIVED_FILE_DIR}/configure.h

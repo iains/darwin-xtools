@@ -63,8 +63,6 @@ public:
 												InternalAtom(class File& f);
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return &_file; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual const char*							name() const		{ return "import-atom"; }
 	virtual uint64_t							size() const		{ return 0; }
 	virtual uint64_t							objectAddress() const { return 0; }
@@ -90,8 +88,8 @@ private:
 class File : public ld::relocatable::File
 {
 public:
-											File(const char* path, time_t mTime, const uint8_t* content, 
-													uint32_t contentLength, cpu_type_t arch);
+											File(const char* path, time_t mTime, ld::File::Ordinal ordinal, 
+													 const uint8_t* content, uint32_t contentLength, cpu_type_t arch);
 	virtual									~File();
 
 	// overrides of ld::File
@@ -150,8 +148,8 @@ public:
 
 	// overrides of ld::Atom
 	virtual ld::File*					file() const		{ return &_file; }
-	virtual bool						translationUnitSource(const char** dir, const char** nm) const
-															{ return (_compiledAtom ? _compiledAtom->translationUnitSource(dir, nm) : false); }
+	virtual const char*					translationUnitSource() const
+															{ return (_compiledAtom ? _compiledAtom->translationUnitSource() : NULL); }
 	virtual const char*					name() const		{ return _name; }
 	virtual uint64_t					size() const		{ return (_compiledAtom ? _compiledAtom->size() : 0); }
 	virtual uint64_t					objectAddress() const { return (_compiledAtom ? _compiledAtom->objectAddress() : 0); }
@@ -198,7 +196,7 @@ public:
 	static bool						validFile(const uint8_t* fileContent, uint64_t fileLength, cpu_type_t architecture, cpu_subtype_t subarch);
 	static const char*				fileKind(const uint8_t* fileContent, uint64_t fileLength);
 	static File*					parse(const uint8_t* fileContent, uint64_t fileLength, const char* path, 
-											time_t modTime, cpu_type_t architecture, cpu_subtype_t subarch, bool logAllFiles);
+											time_t modTime, ld::File::Ordinal ordinal, cpu_type_t architecture, cpu_subtype_t subarch, bool logAllFiles);
 	static bool						libLTOisLoaded() { return (::lto_get_version() != NULL); }
 	static bool						optimize(   const std::vector<const ld::Atom*>&	allAtoms,
 												ld::Internal&						state,
@@ -279,10 +277,10 @@ const char* Parser::fileKind(const uint8_t* p, uint64_t fileLength)
 	return NULL;
 }
 
-File* Parser::parse(const uint8_t* fileContent, uint64_t fileLength, const char* path, time_t modTime, 
+File* Parser::parse(const uint8_t* fileContent, uint64_t fileLength, const char* path, time_t modTime, ld::File::Ordinal ordinal,
 													cpu_type_t architecture, cpu_subtype_t subarch, bool logAllFiles) 
 {
-	File* f = new File(path, modTime, fileContent, fileLength, architecture);
+	File* f = new File(path, modTime, ordinal, fileContent, fileLength, architecture);
 	_s_files.push_back(f);
 	if ( logAllFiles ) 
 		printf("%s\n", path);
@@ -317,8 +315,8 @@ ld::relocatable::File* Parser::parseMachOFile(const uint8_t* p, size_t len, cons
 
 
 
-File::File(const char* pth, time_t mTime, const uint8_t* content, uint32_t contentLength, cpu_type_t arch) 
-	: ld::relocatable::File(pth,mTime,ld::File::Ordinal::LTOOrdinal()), _architecture(arch), _internalAtom(*this), 
+File::File(const char* pth, time_t mTime, ld::File::Ordinal ordinal, const uint8_t* content, uint32_t contentLength, cpu_type_t arch) 
+	: ld::relocatable::File(pth,mTime,ordinal), _architecture(arch), _internalAtom(*this), 
 	_atomArray(NULL), _atomArrayCount(0), _module(NULL), _debugInfoPath(pth), 
 	_section("__TEXT_", "__tmp_lto", ld::Section::typeTempLTO),
 	_fixupToInternal(0, ld::Fixup::k1of1, ld::Fixup::kindNone, &_internalAtom),
@@ -824,12 +822,12 @@ bool isObjectFile(const uint8_t* fileContent, uint64_t fileLength, cpu_type_t ar
 // main function used by linker to instantiate ld::Files
 //
 ld::relocatable::File* parse(const uint8_t* fileContent, uint64_t fileLength, 
-								const char* path, time_t modTime, 
+								const char* path, time_t modTime, ld::File::Ordinal ordinal,
 								cpu_type_t architecture, cpu_subtype_t subarch, bool logAllFiles)
 {
 	Mutex lock;
 	if ( Parser::validFile(fileContent, fileLength, architecture, subarch) )
-		return Parser::parse(fileContent, fileLength, path, modTime, architecture, subarch, logAllFiles);
+		return Parser::parse(fileContent, fileLength, path, modTime, ordinal, architecture, subarch, logAllFiles);
 	else
 		return NULL;
 }

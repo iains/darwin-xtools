@@ -552,6 +552,8 @@ private:
 	bool								fFunctionStartsForcedOn;
 	bool								fFunctionStartsForcedOff;
 	bool								fDataInCodeInfoLoadCommand;
+	bool								fDataInCodeInfoLoadCommandForcedOn;
+	bool								fDataInCodeInfoLoadCommandForcedOff;
 	bool								fCanReExportSymbols;
 	bool								fObjcCategoryMerging;
 	bool								fPageAlignDataAtoms;

@@ -75,7 +75,7 @@ public:
 												_sectionsArray(NULL), _atomsArray(NULL),
 												_sectionsArrayCount(0), _atomsArrayCount(0),
 												_debugInfoKind(ld::relocatable::File::kDebugInfoNone),
-												_dwarfTranslationUnitDir(NULL), _dwarfTranslationUnitFile(NULL),
+												_dwarfTranslationUnitPath(NULL), 
 												_dwarfDebugInfoSect(NULL), _dwarfDebugAbbrevSect(NULL), 
 												_dwarfDebugLineSect(NULL), _dwarfDebugStringSect(NULL), 
 												_objConstraint(ld::File::objcConstraintNone),
@@ -94,7 +94,7 @@ public:
 	virtual DebugInfoKind								debugInfo() const				{ return _debugInfoKind; }
 	virtual const std::vector<ld::relocatable::File::Stab>*	stabs() const					{ return &_stabs; }
 	virtual bool										canScatterAtoms() const			{ return _canScatterAtoms; }
-	bool												translationUnitSource(const char** dir, const char** name) const;
+	virtual const char*									translationUnitSource() const;
 	
 	const uint8_t*										fileContent()					{ return _fileContent; }
 private:
@@ -115,8 +115,7 @@ private:
 	std::vector<ld::Atom::LineInfo>			_lineInfos;
 	std::vector<ld::relocatable::File::Stab>_stabs;
 	ld::relocatable::File::DebugInfoKind	_debugInfoKind;
-	const char*								_dwarfTranslationUnitDir;
-	const char*								_dwarfTranslationUnitFile;
+	const char*								_dwarfTranslationUnitPath;
 	const macho_section<P>*					_dwarfDebugInfoSect;
 	const macho_section<P>*					_dwarfDebugAbbrevSect;
 	const macho_section<P>*					_dwarfDebugLineSect;
@@ -673,8 +672,8 @@ class Atom : public ld::Atom
 public:
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return &sect().file(); }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return sect().file().translationUnitSource(dir, nm); }
+	virtual const char*							translationUnitSource() const
+																	{ return sect().file().translationUnitSource(); }
 	virtual const char*							name() const		{ return _name; }
 	virtual uint64_t							size() const		{ return _size; }
 	virtual uint64_t							objectAddress() const { return _objAddress; }
@@ -973,6 +972,8 @@ public:
 	bool											convertUnwindInfo() { return _convertUnwindInfo; }
 	bool											hasDataInCodeLabels() { return _hasDataInCodeLabels; }
 
+	macho_data_in_code_entry<P>*					dataInCodeStart() { return _dataInCodeStart; }
+	macho_data_in_code_entry<P>*					dataInCodeEnd()   { return _dataInCodeEnd; }
 	
 	void							addFixups(const SourceLocation& src, ld::Fixup::Kind kind, const TargetDesc& target);
 	void							addFixups(const SourceLocation& src, ld::Fixup::Kind kind, const TargetDesc& target, const TargetDesc& picBase);
@@ -1090,7 +1091,9 @@ private:
 	const macho_section<P>*						_sectionsStart;
 	uint32_t									_machOSectionsCount;
 	bool										_hasUUID;
-	
+	macho_data_in_code_entry<P>*				_dataInCodeStart;
+	macho_data_in_code_entry<P>*				_dataInCodeEnd;
+		
 	// filled in by parse()
 	CFISection<A>*								_EHFrameSection;
 	CUSection<A>*								_compactUnwindSection;
@@ -1120,6 +1123,7 @@ Parser<A>::Parser(const uint8_t* fileContent, uint64_t fileLength, const char* p
 			_indirectTable(NULL), _indirectTableCount(0), 
 			_undefinedStartIndex(0), _undefinedEndIndex(0), 
 			_sectionsStart(NULL), _machOSectionsCount(0), _hasUUID(false), 
+			_dataInCodeStart(NULL), _dataInCodeEnd(NULL),
 			_EHFrameSection(NULL), _compactUnwindSection(NULL), _absoluteSection(NULL),
 			_tentativeDefinitionCount(0), _absoluteSymbolCount(0),
 			_symbolsInSections(0), _hasLongBranchStubs(false),  _AppleObjc(false),
@@ -1724,7 +1728,14 @@ bool Parser<A>::parseLoadCommands()
 		    case LC_UUID:
 				_hasUUID = true;
 				break;
-
+			case LC_DATA_IN_CODE:
+				{
+					const macho_linkedit_data_command<P>* dc = (macho_linkedit_data_command<P>*)cmd;
+					_dataInCodeStart = (macho_data_in_code_entry<P>*)(_fileContent + dc->dataoff());
+					_dataInCodeEnd = (macho_data_in_code_entry<P>*)(_fileContent + dc->dataoff() + dc->datasize());
+					if ( _dataInCodeEnd > (macho_data_in_code_entry<P>*)endOfFile )
+						throw "LC_DATA_IN_CODE table extends beyond end of file";
+				}
 			default:
 				if ( cmd->cmd() == macho_segment_command<P>::CMD ) {
 					if ( segment != NULL )
@@ -2965,13 +2976,26 @@ void Parser<A>::parseDebugInfo()
 		return;
 		
 	uint64_t stmtList;
-	if ( !read_comp_unit(&_file->_dwarfTranslationUnitFile, &_file->_dwarfTranslationUnitDir, &stmtList) ) {
+	const char* tuDir;
+	const char* tuName;
+	if ( !read_comp_unit(&tuName, &tuDir, &stmtList) ) {
 		// if can't parse dwarf, warn and give up
-		_file->_dwarfTranslationUnitFile = NULL;
-		_file->_dwarfTranslationUnitDir = NULL;
+		_file->_dwarfTranslationUnitPath = NULL;
 		warning("can't parse dwarf compilation unit info in %s", _path);
 		_file->_debugInfoKind = ld::relocatable::File::kDebugInfoNone;
 		return;
+	}
+	if ( (tuName != NULL) && (tuName[1] == '/') ) {
+		_file->_dwarfTranslationUnitPath = tuName;
+	}
+	else if ( (tuDir != NULL) && (tuName != NULL) ) {
+		asprintf((char**)&(_file->_dwarfTranslationUnitPath), "%s/%s", tuDir, tuName);
+	}
+	else if ( tuDir == NULL ) {
+		_file->_dwarfTranslationUnitPath = tuName;
+	}
+	else {
+		_file->_dwarfTranslationUnitPath = NULL;
 	}
 	
 	// add line number info to atoms from dwarf
@@ -3455,14 +3479,9 @@ File<A>::~File()
 }
 
 template <typename A>
-bool File<A>::translationUnitSource(const char** dir, const char** name) const
+const char* File<A>::translationUnitSource() const
 {
-	if ( _debugInfoKind == ld::relocatable::File::kDebugInfoDwarf ) {
-		*dir = _dwarfTranslationUnitDir;
-		*name = _dwarfTranslationUnitFile;
-		return (_dwarfTranslationUnitFile != NULL);
-	}
-	return false;
+	return _dwarfTranslationUnitPath;
 }
 
 	
@@ -6189,6 +6208,44 @@ void Section<A>::makeFixups(class Parser<A>& parser, const struct Parser<A>::CFI
 			}
 		}
 	}
+	
+	// <rdar://problem/11150575> Handle LC_DATA_IN_CODE in object files
+	if ( this->type() == ld::Section::typeCode ) {
+		const pint_t startAddr = this->_machOSection->addr();
+		const pint_t endAddr = startAddr + this->_machOSection->size();
+		for ( const macho_data_in_code_entry<P>* p = parser.dataInCodeStart(); p != parser.dataInCodeEnd(); ++p ) {
+			if ( (p->offset() >= startAddr) && (p->offset() < endAddr) ) {
+				ld::Fixup::Kind kind = ld::Fixup::kindNone;
+				switch ( p->kind() ) {
+					case DICE_KIND_DATA:
+						kind = ld::Fixup::kindDataInCodeStartData;
+						break;
+					case DICE_KIND_JUMP_TABLE8:
+						kind = ld::Fixup::kindDataInCodeStartJT8;
+						break;
+					case DICE_KIND_JUMP_TABLE16:
+						kind = ld::Fixup::kindDataInCodeStartJT16;
+						break;
+					case DICE_KIND_JUMP_TABLE32:
+						kind = ld::Fixup::kindDataInCodeStartJT32;
+						break;
+					case DICE_KIND_ABS_JUMP_TABLE32:
+						kind = ld::Fixup::kindDataInCodeStartJTA32;
+						break;
+					default:
+						kind = ld::Fixup::kindDataInCodeStartData;
+						warning("uknown LC_DATA_IN_CODE kind (%d) at offset 0x%08X", p->kind(), p->offset());
+						break;
+				}
+				Atom<A>* inAtom = parser.findAtomByAddress(p->offset());
+				typename Parser<A>::SourceLocation srcStart(inAtom, p->offset() - inAtom->objectAddress());
+				parser.addFixup(srcStart, ld::Fixup::k1of1, kind);
+				typename Parser<A>::SourceLocation srcEnd(inAtom, p->offset() + p->length() - inAtom->objectAddress());
+				parser.addFixup(srcEnd, ld::Fixup::k1of1, ld::Fixup::kindDataInCodeEnd);
+			}
+		}
+	}
+	
 	
 	// add follow-on fixups for aliases
 	if ( _hasAliases ) {

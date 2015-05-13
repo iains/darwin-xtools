@@ -68,8 +68,6 @@ public:
 													_file(f), _name(nm), _address(address) {}
 	// overrides of ld::Atom
 	virtual const ld::File*						file() const		{ return &_file; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual const char*							name() const		{ return _name; }
 	virtual uint64_t							size() const		{ return 0; }
 	virtual uint64_t							objectAddress() const { return _address; }
@@ -101,8 +99,6 @@ public:
 
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return &_file; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual const char*							name() const		{ return "import-atom"; }
 	virtual uint64_t							size() const		{ return 0; }
 	virtual uint64_t							objectAddress() const { return 0; }
@@ -389,6 +385,7 @@ File<A>::File(const uint8_t* fileContent, uint64_t fileLength, const char* pth, 
 		// pass 2 builds list of all dependent libraries
 		_dependentDylibs.reserve(dependentLibCount);
 		cmd = cmds;
+		unsigned int reExportDylibCount = 0;  
 		for (uint32_t i = 0; i < cmd_count; ++i) {
 			switch (cmd->cmd()) {
 				case LC_LOAD_DYLIB:
@@ -397,6 +394,7 @@ File<A>::File(const uint8_t* fileContent, uint64_t fileLength, const char* pth, 
 					if ( compressedLinkEdit && !linkingFlatNamespace ) 
 						break;
 				case LC_REEXPORT_DYLIB:
+					++reExportDylibCount;
 					Dependent entry;
 					entry.path = strdup(((macho_dylib_command<P>*)cmd)->name());
 					entry.dylib = NULL;
@@ -409,7 +407,7 @@ File<A>::File(const uint8_t* fileContent, uint64_t fileLength, const char* pth, 
 		}
 		// verify MH_NO_REEXPORTED_DYLIBS bit was correct
 		if ( compressedLinkEdit && !linkingFlatNamespace ) {
-			assert(_dependentDylibs.size() != 0);
+			assert(reExportDylibCount != 0);
 		}
 		// pass 3 add re-export info
 		cmd = cmds;

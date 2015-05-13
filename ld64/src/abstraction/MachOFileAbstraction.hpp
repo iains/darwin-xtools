@@ -222,6 +222,9 @@
 #ifndef CPU_SUBTYPE_ARM_V7K
   #define CPU_SUBTYPE_ARM_V7K    ((cpu_subtype_t) 12)
 #endif
+#ifndef CPU_SUBTYPE_ARM_V7S
+  #define CPU_SUBTYPE_ARM_V7S    ((cpu_subtype_t) 11)
+#endif
 
 
 #ifndef LC_SOURCE_VERSION
@@ -279,6 +282,18 @@ static const ArchInfo archInfoArray[] = {
 #endif
 #if SUPPORT_ARCH_armv7
 	{ "armv7", CPU_TYPE_ARM,     CPU_SUBTYPE_ARM_V7,     "thumbv7-", "armv7-", true,  true },
+	#define SUPPORT_ARCH_arm_any 1
+#endif
+#if SUPPORT_ARCH_armv7f
+	{ "armv7f", CPU_TYPE_ARM,    CPU_SUBTYPE_ARM_V7F,    "thumbv7f-", "", true,  true },
+	#define SUPPORT_ARCH_arm_any 1
+#endif 
+#if SUPPORT_ARCH_armv7k
+	{ "armv7k", CPU_TYPE_ARM,    CPU_SUBTYPE_ARM_V7K,    "thumbv7k-", "", true,  true },
+	#define SUPPORT_ARCH_arm_any 1
+#endif
+#if SUPPORT_ARCH_armv7s
+	{ "armv7s", CPU_TYPE_ARM,    CPU_SUBTYPE_ARM_V7S,    "thumbv7s-", "armv7s", true,  true },
 	#define SUPPORT_ARCH_arm_any 1
 #endif
 	{ NULL, 0, 0, NULL, NULL, false, false }

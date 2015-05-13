@@ -52,10 +52,6 @@ void doPass(const Options& opts, ld::Internal& state)
 {
 //	const bool log = false;
 	
-	// only optimize dylibs in final linked images
-	if ( opts.outputKind() == Options::kObjectFile )
-		return;
-
 	// clear "willRemoved" bit on all dylibs
 	for (std::vector<ld::dylib::File*>::iterator it = state.dylibs.begin(); it != state.dylibs.end(); ++it) {
 		ld::dylib::File* aDylib = *it;

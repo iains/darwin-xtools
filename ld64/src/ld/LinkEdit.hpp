@@ -113,8 +113,6 @@ public:
 
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return NULL; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual uint64_t							objectAddress() const { return 0; }
 	virtual uint64_t							size() const;
 	virtual void								copyRawContent(uint8_t buffer[]) const; 
@@ -1278,7 +1276,7 @@ template <typename A>
 void FunctionStartsAtom<A>::encode() const
 {
 	this->_encodedData.reserve(8192);
-	const uint64_t badAddress = 1;
+	const uint64_t badAddress = 0xFFFFFFFFFFFFFFFF;
 	uint64_t addr = badAddress;
 	// delta compress all function addresses
 	for (std::vector<ld::Internal::FinalSection*>::iterator it = this->_state.sections.begin(); it != this->_state.sections.end(); ++it) {
@@ -1350,19 +1348,19 @@ private:
 			entry.set_length(len);
 			switch ( kind ) {
 				case ld::Fixup::kindDataInCodeStartData:
-					entry.set_kind(1);
+					entry.set_kind(DICE_KIND_DATA);
 					break;
 				case ld::Fixup::kindDataInCodeStartJT8:
-					entry.set_kind(2);
+					entry.set_kind(DICE_KIND_JUMP_TABLE8);
 					break;
 				case ld::Fixup::kindDataInCodeStartJT16:
-					entry.set_kind(3);
+					entry.set_kind(DICE_KIND_JUMP_TABLE16);
 					break;
 				case ld::Fixup::kindDataInCodeStartJT32:
-					entry.set_kind(4);
+					entry.set_kind(DICE_KIND_JUMP_TABLE32);
 					break;
 				case ld::Fixup::kindDataInCodeStartJTA32:
-					entry.set_kind(5);
+					entry.set_kind(DICE_KIND_ABS_JUMP_TABLE32);
 					break;
 				default:
 					assert(0 && "bad L$start$ label to encode");
@@ -1500,6 +1498,8 @@ void DependentDRAtom<A>::encode() const
 	for(size_t i=0; i < topBlob->length(); ++i)
 		_encodedData.append_byte(data[i]);
 	
+	this->_encodedData.pad_to_size(sizeof(pint_t));
+
 	this->_encoded = true;
 }
 

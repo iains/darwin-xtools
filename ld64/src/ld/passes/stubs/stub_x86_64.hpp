@@ -39,8 +39,6 @@ public:
 					{ pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "fast binder pointer"; }
 	virtual uint64_t						size() const					{ return 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -66,8 +64,6 @@ public:
 							symbolTableNotIn, false, false, false, ld::Atom::Alignment(3)) { pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "image cache pointer"; }
 	virtual uint64_t						size() const					{ return 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -101,8 +97,6 @@ public:
 					{ pass.addAtom(*this); }
 
 	virtual ld::File*						file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "helper helper"; }
 	virtual uint64_t						size() const					{ return 16; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -163,8 +157,6 @@ public:
 				_fixup3(6, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressX86BranchPCRel32, helperHelper(pass)) { }
 				
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 10; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -215,8 +207,6 @@ public:
 				_fixup3(32, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressX86PCRel32, lazyPointer) { }
 				
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 36; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -298,8 +288,6 @@ public:
 					}
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -333,8 +321,6 @@ public:
 				_fixup(2, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressX86PCRel32, &_lazyPointer) { pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 6; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -375,8 +361,6 @@ public:
 				}
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 8; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -407,8 +391,6 @@ public:
 				_fixup(2, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressX86PCRel32, &_nonLazyPointer) { pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 6; }
 	virtual uint64_t						objectAddress() const			{ return 0; }

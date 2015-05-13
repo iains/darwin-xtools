@@ -1133,7 +1133,7 @@ static ld::relocatable::File* createReader(const char* path)
 		return objResult;
 
 	// see if it is an llvm object file
-	objResult = lto::parse(p, fileLen, path, stat_buf.st_mtime, sPreferredArch, sPreferredSubArch, false);
+	objResult = lto::parse(p, fileLen, path, stat_buf.st_mtime, ld::File::Ordinal::NullOrdinal(), sPreferredArch, sPreferredSubArch, false);
 	if ( objResult != NULL ) 
 		return objResult;
 

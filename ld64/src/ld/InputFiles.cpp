@@ -80,16 +80,15 @@ public:
 class DSOHandleAtom : public ld::Atom {
 public:
 									DSOHandleAtom(const char* nm, ld::Atom::Scope sc, 
-														ld::Atom::SymbolTableInclusion inc, bool preload=false)
-										: ld::Atom(preload ? _s_section_preload : _s_section, 
-													ld::Atom::definitionRegular, ld::Atom::combineNever,
+														ld::Atom::SymbolTableInclusion inc, ld::Section& sect=_s_section)
+										: ld::Atom(sect, ld::Atom::definitionRegular,
+												   (sect == _s_section_text) ? ld::Atom::combineByName : ld::Atom::combineNever, 
+												   // make "weak def" so that link succeeds even if app defines __dso_handle
 													sc, ld::Atom::typeUnclassified, inc, true, false, false, 
 													 ld::Atom::Alignment(1)), _name(nm) {}
 
 	virtual ld::File*						file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
-	virtual const char*						name() const					{ return _name; }
+  virtual const char*						name() const					{ return _name; }
 	virtual uint64_t						size() const					{ return 0; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
 	virtual void							copyRawContent(uint8_t buffer[]) const
@@ -100,6 +99,7 @@ public:
 	
 	static ld::Section						_s_section;
 	static ld::Section						_s_section_preload;
+	static ld::Section						_s_section_text;
 	static DSOHandleAtom					_s_atomAll;
 	static DSOHandleAtom					_s_atomExecutable;
 	static DSOHandleAtom					_s_atomDylib;
@@ -107,18 +107,21 @@ public:
 	static DSOHandleAtom					_s_atomDyld;
 	static DSOHandleAtom					_s_atomObjectFile;
 	static DSOHandleAtom					_s_atomPreload;
+	static DSOHandleAtom					_s_atomPreloadDSO;
 private:
 	const char*								_name;
 };
 ld::Section DSOHandleAtom::_s_section("__TEXT", "__mach_header", ld::Section::typeMachHeader, true);
 ld::Section DSOHandleAtom::_s_section_preload("__HEADER", "__mach_header", ld::Section::typeMachHeader, true);
+ld::Section DSOHandleAtom::_s_section_text("__TEXT", "__text", ld::Section::typeCode, false);
 DSOHandleAtom DSOHandleAtom::_s_atomAll("___dso_handle", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn);
 DSOHandleAtom DSOHandleAtom::_s_atomExecutable("__mh_execute_header", ld::Atom::scopeGlobal, ld::Atom::symbolTableInAndNeverStrip);
 DSOHandleAtom DSOHandleAtom::_s_atomDylib("__mh_dylib_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn);
 DSOHandleAtom DSOHandleAtom::_s_atomBundle("__mh_bundle_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn);
 DSOHandleAtom DSOHandleAtom::_s_atomDyld("__mh_dylinker_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn);
 DSOHandleAtom DSOHandleAtom::_s_atomObjectFile("__mh_object_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn);
-DSOHandleAtom DSOHandleAtom::_s_atomPreload("__mh_preload_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn, true);
+DSOHandleAtom DSOHandleAtom::_s_atomPreload("__mh_preload_header", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn, _s_section_preload);
+DSOHandleAtom DSOHandleAtom::_s_atomPreloadDSO("___dso_handle", ld::Atom::scopeLinkageUnit, ld::Atom::symbolTableNotIn, _s_section_text);
 
 
 
@@ -131,8 +134,6 @@ public:
 											_size(sz) {}
 
 	virtual ld::File*						file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "page zero"; }
 	virtual uint64_t						size() const					{ return _size; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -159,8 +160,6 @@ public:
 											_size(sz) {}
 
 	virtual ld::File*						file() const					{ return NULL; }
-	virtual bool							translationUnitSource(const char** dir, const char** ) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return "custom stack"; }
 	virtual uint64_t						size() const					{ return _size; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -286,7 +285,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	}
 
 	// see if it is an llvm object file
-	objResult = lto::parse(p, len, info.path, info.modTime, _options.architecture(), _options.subArchitecture(), _options.logAllFiles());
+	objResult = lto::parse(p, len, info.path, info.modTime, info.ordinal, _options.architecture(), _options.subArchitecture(), _options.logAllFiles());
 	if ( objResult != NULL ) {
 		OSAtomicAdd64(len, &_totalObjectSize);
 		OSAtomicIncrement32(&_totalObjectLoaded);
@@ -1053,7 +1052,9 @@ void InputFiles::forEachInitialAtom(ld::File::AtomHandler& handler)
         case Options::kPreload:
             // add implicit __mh_preload_header label
             handler.doAtom(DSOHandleAtom::_s_atomPreload);
-            handler.doAtom(DSOHandleAtom::_s_atomAll);
+            // add implicit __dso_handle label, but put it in __text section because 
+            // with -preload the mach_header is no in the address space.
+            handler.doAtom(DSOHandleAtom::_s_atomPreloadDSO);
             break;
         case Options::kObjectFile:
             handler.doAtom(DSOHandleAtom::_s_atomObjectFile);

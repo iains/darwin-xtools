@@ -856,7 +856,7 @@ void OutputFile::rangeCheckBranch32(int64_t displacement, ld::Internal& state, c
 		printSectionLayout(state);
 		
 		const ld::Atom* target;	
-		throwf("32-bit branch out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
+		throwf("32-bit branch out of range (%lld max is +/-2GB): from %s (0x%08llX) to %s (0x%08llX)",
 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
 				addressOf(state, fixup, &target));
 	}
@@ -2426,6 +2426,8 @@ bool OutputFile::setsTarget(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 		case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoad:
 		case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoadNowLEA:
+		case ld::Fixup::kindStoreTargetAddressX86PCRel32TLVLoad:
+		case ld::Fixup::kindStoreTargetAddressX86Abs32TLVLoad:
 		case ld::Fixup::kindStoreTargetAddressARMBranch24:
 		case ld::Fixup::kindStoreTargetAddressThumbBranch22:
 		case ld::Fixup::kindStoreTargetAddressARMLoad12:
@@ -3055,6 +3057,11 @@ bool OutputFile::useExternalSectionReloc(const ld::Atom* atom, const ld::Atom* t
 			}
 		}
 	}
+	
+	if ( (_options.architecture() == CPU_TYPE_I386) && (_options.outputKind() == Options::kObjectFile) ) {
+		if ( target->contentType() == ld::Atom::typeTLV ) 
+			return true;
+	}
 
 	// most architectures use external relocations only for references
 	// to a symbol in another translation unit or for references to "weak symbols" or tentative definitions
@@ -3112,7 +3119,15 @@ void OutputFile::addSectionRelocs(ld::Internal& state, ld::Internal::FinalSectio
 		// pc-rel instructions are funny. If the target is _foo+8 and _foo is 
 		// external, then the pc-rel instruction *evalutates* to the address 8.
 		if ( targetUsesExternalReloc ) {
-			if ( isPcRelStore(fixupWithStore->kind) ) {
+			// TLV support for i386 acts like RIP relative addressing
+			// The addend is the offset from the PICBase to the end of the instruction 
+			if ( (_options.architecture() == CPU_TYPE_I386) 
+				 && (_options.outputKind() == Options::kObjectFile)
+			     && (fixupWithStore->kind == ld::Fixup::kindStoreX86PCRel32TLVLoad) ) {
+				fixupWithTarget->contentAddendOnly = true;
+				fixupWithStore->contentAddendOnly = true;
+			}
+			else if ( isPcRelStore(fixupWithStore->kind) ) {
 				fixupWithTarget->contentDetlaToAddendOnly = true;
 				fixupWithStore->contentDetlaToAddendOnly = true;
 			}
@@ -3440,17 +3455,21 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 		const ld::Atom* atom = *it;
 		const ld::File* atomFile = atom->file();
 		const ld::relocatable::File* atomObjFile = dynamic_cast<const ld::relocatable::File*>(atomFile);
-		const char* newDirPath;
-		const char* newFilename;
 		//fprintf(stderr, "debug note for %s\n", atom->name());
-		// guard against dwarf info that has no directory <rdar://problem/10991352>
-		if ( atom->translationUnitSource(&newDirPath, &newFilename) && (newDirPath != NULL)) {
+    const char* newPath = atom->translationUnitSource();
+    if ( newPath != NULL ) {
+      const char* newDirPath;
+      const char* newFilename;
+      const char* lastSlash = strrchr(newPath, '/');
+      if ( lastSlash == NULL ) 
+        continue;
+      newFilename = lastSlash+1;
+      char* temp = strdup(newPath);
+      newDirPath = temp;
+      // gdb like directory SO's to end in '/', but dwarf DW_AT_comp_dir usually does not have trailing '/'
+      temp[lastSlash-newPath+1] = '\0';
 			// need SO's whenever the translation unit source file changes
-			if ( newFilename != filename ) {
-				// gdb like directory SO's to end in '/', but dwarf DW_AT_comp_dir usually does not have trailing '/'
-				size_t len = strlen(newDirPath);
-				if ( (newDirPath != NULL) && (len > 1 ) && (newDirPath[len-1] != '/') )
-					asprintf((char**)&newDirPath, "%s/", newDirPath);
+			if ( (filename == NULL) || (strcmp(newFilename,filename) != 0) ) {
 				if ( filename != NULL ) {
 					// translation unit change, emit ending SO
 					ld::relocatable::File::Stab endFileStab;

@@ -41,8 +41,6 @@ public:
 					{ _fixup2.weakImport = weakImport; pass.addAtom(*this);  }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 4; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -80,8 +78,6 @@ public:
 				{ pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 16; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
@@ -123,8 +119,6 @@ public:
 					{ pass.addAtom(*this); }
 
 	virtual const ld::File*					file() const					{ return _stubTo.file(); }
-	virtual bool							translationUnitSource(const char** dir, const char** nm) const 
-																			{ return false; }
 	virtual const char*						name() const					{ return _stubTo.name(); }
 	virtual uint64_t						size() const					{ return 12; }
 	virtual uint64_t						objectAddress() const			{ return 0; }

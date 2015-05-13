@@ -49,8 +49,6 @@ public:
 
 	// overrides of ld::Atom
 	virtual ld::File*							file() const		{ return NULL; }
-	virtual bool								translationUnitSource(const char** dir, const char** nm) const
-																	{ return false; }
 	virtual uint64_t							objectAddress() const { return 0; }
 
 	virtual void								encode() = 0;
@@ -230,7 +228,6 @@ private:
 	uint32_t						stringOffsetForStab(const ld::relocatable::File::Stab& stab, StringPoolAtom* pool);
 	uint64_t						valueForStab(const ld::relocatable::File::Stab& stab);
 	uint8_t							sectionIndexForStab(const ld::relocatable::File::Stab& stab);
-	void							addDataInCodeLabels(const ld::Atom* atom, uint32_t& symbolIndex);
 	
 
 	mutable std::vector<macho_nlist<P> >	_globals;
@@ -625,48 +622,6 @@ bool SymbolTableAtom<A>::hasStabs(uint32_t& ssos, uint32_t& ssoe, uint32_t& sos,
 
 
 template <typename A>
-void SymbolTableAtom<A>::addDataInCodeLabels(const ld::Atom* atom, uint32_t& symbolIndex)
-{
-	char label[64];
-	for (ld::Fixup::iterator fit = atom->fixupsBegin(), end=atom->fixupsEnd(); fit != end; ++fit) {
-		label[0] = '\0';
-		switch ( fit->kind ) {
-			case ld::Fixup::kindDataInCodeStartData:
-				sprintf(label, "L$start$data$%03u", symbolIndex);
-				break;
-			case ld::Fixup::kindDataInCodeStartJT8:
-				sprintf(label, "L$start$jt8$%03u", symbolIndex);
-				break;
-			case ld::Fixup::kindDataInCodeStartJT16:
-				sprintf(label, "L$start$jt16$%03u", symbolIndex);
-				break;
-			case ld::Fixup::kindDataInCodeStartJT32:
-				sprintf(label, "L$start$jt32$%03u", symbolIndex);
-				break;
-			case ld::Fixup::kindDataInCodeStartJTA32:
-				sprintf(label, "L$start$jta32$%03u", symbolIndex);
-				break;
-			case ld::Fixup::kindDataInCodeEnd:
-				sprintf(label, "L$start$code$%03u", symbolIndex);
-				break;
-			default:
-				break;
-		}
-		if ( label[0] != '\0' ) {
-			macho_nlist<P> entry;
-			entry.set_n_type(N_SECT);
-			entry.set_n_sect(atom->machoSection());
-			entry.set_n_desc(0);
-			entry.set_n_value(atom->finalAddress() + fit->offsetInAtom);
-			entry.set_n_strx(this->_writer._stringPoolAtom->add(label));
-			_locals.push_back(entry);
-			++symbolIndex;
-		}
-	}
-}
-
-
-template <typename A>
 void SymbolTableAtom<A>::encode()
 {
 	uint32_t symbolIndex = 0;
@@ -695,15 +650,6 @@ void SymbolTableAtom<A>::encode()
 		const ld::Atom* atom = *it;
 		if ( this->addLocal(atom, this->_writer._stringPoolAtom) )
 			this->_writer._atomToSymbolIndex[atom] = symbolIndex++;
-	}
-	// <rdar://problem/9218847> recreate L$start$ labels in -r mode
-	if ( (_options.outputKind() == Options::kObjectFile) && this->_writer.hasDataInCode ) {
-		for (std::vector<const ld::Atom*>::const_iterator it=globalAtoms.begin(); it != globalAtoms.end(); ++it) {
-			this->addDataInCodeLabels(*it, symbolIndex);
-		}
-		for (std::vector<const ld::Atom*>::const_iterator it=localAtoms.begin(); it != localAtoms.end(); ++it) {
-			this->addDataInCodeLabels(*it, symbolIndex);
-		}
 	}
 	this->_writer._localSymbolsCount = symbolIndex;
 	
@@ -1286,6 +1232,15 @@ void SectionRelocationsAtom<x86_64>::encodeSectionReloc(ld::Internal::FinalSecti
 				relocs.push_back(reloc1);
 			}
 			break;
+		case ld::Fixup::kindStoreTargetAddressX86PCRel32TLVLoad:
+			reloc1.set_r_address(address);
+			reloc1.set_r_symbolnum(symbolNum);
+			reloc1.set_r_pcrel(true);
+			reloc1.set_r_length(2);
+			reloc1.set_r_extern(external);
+			reloc1.set_r_type(X86_64_RELOC_TLV);
+			relocs.push_back(reloc1);
+			break;
 		default:
 			assert(0 && "need to handle -r reloc");
 		
@@ -1307,7 +1262,7 @@ uint32_t SectionRelocationsAtom<A>::sectSymNum(bool external, const ld::Atom* ta
 }
 
 template <>
-void SectionRelocationsAtom<x86>::encodeSectionReloc(ld::Internal::FinalSection* sect, 
+void SectionRelocationsAtom<x86>::encodeSectionReloc(ld::Internal::FinalSection* sect,
 													const Entry& entry, std::vector<macho_relocation_info<P> >& relocs)
 {
 	macho_relocation_info<P> reloc1;
@@ -1323,8 +1278,7 @@ void SectionRelocationsAtom<x86>::encodeSectionReloc(ld::Internal::FinalSection*
 		fromExternal = entry.fromTargetUsesExternalReloc;
 		fromSymbolNum = sectSymNum(fromExternal, entry.fromTarget);
 	}
-	
-	
+
 	switch ( entry.kind ) {
 		case ld::Fixup::kindStoreX86PCRel32:
 		case ld::Fixup::kindStoreX86BranchPCRel32:
@@ -1451,11 +1405,23 @@ void SectionRelocationsAtom<x86>::encodeSectionReloc(ld::Internal::FinalSection*
 				relocs.push_back(reloc1);
 			}
 			break;
+		case ld::Fixup::kindStoreX86PCRel32TLVLoad:
+		case ld::Fixup::kindStoreX86Abs32TLVLoad:
+		case ld::Fixup::kindStoreTargetAddressX86Abs32TLVLoad:
+			reloc1.set_r_address(address);
+			reloc1.set_r_symbolnum(symbolNum);
+			reloc1.set_r_pcrel(entry.kind == ld::Fixup::kindStoreX86PCRel32TLVLoad);
+			reloc1.set_r_length(2);
+			reloc1.set_r_extern(external);
+			reloc1.set_r_type(GENERIC_RLEOC_TLV);
+			relocs.push_back(reloc1);
+			break;
 		default:
 			assert(0 && "need to handle -r reloc");
 		
 	}
 }
+
 
 
 #if SUPPORT_ARCH_arm_any

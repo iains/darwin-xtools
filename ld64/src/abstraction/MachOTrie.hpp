@@ -373,7 +373,8 @@ inline void parseTrie(const uint8_t* start, const uint8_t* end, std::vector<Entr
 	// empty trie has no entries
 	if ( start == end )
 		return;
-	char cummulativeString[4000];
+	// worst case largest exported symbol names is length of whole trie
+	char* cummulativeString = new char[end-start]; 
 	std::vector<EntryWithOffset> entries;
 	processExportNode(start, start, end, cummulativeString, 0, entries);
 	// to preserve tie layout order, sort by node offset
@@ -382,6 +383,7 @@ inline void parseTrie(const uint8_t* start, const uint8_t* end, std::vector<Entr
 	output.reserve(entries.size());
 	for (std::vector<EntryWithOffset>::iterator it=entries.begin(); it != entries.end(); ++it)
 		output.push_back(it->entry);
+	delete cummulativeString;
 }
 
 

@@ -1,5 +1,6 @@
-/*
- * Copyright (c) 2006-2007 Apple Inc. All rights reserved.
+/* -*- mode: C++; c-basic-offset: 4; tab-width: 4 -*- 
+ *
+ * Copyright (c) 2012 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -20,42 +21,12 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#include <stdio.h>  // fprintf(), NULL
-#include <stdlib.h> // exit(), EXIT_SUCCESS
 
-#include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
+__thread int a = 0;
+__thread static int b = 0;
+extern __thread int c;
 
-#include <stdlib.h>
-#include <new>
-
-
-//
-// This test case verifies overriding operator new sets the MH_WEAK_DEFINES bit
-//
-
-#if OP_NEW
-void* operator new(size_t s) throw (std::bad_alloc)
-{
-  return malloc(s);
-}
-#endif
-
-class Foo {
-	int a;
-	int b;
-public:
-	void print(); 
-};
-
-void Foo::print() {
-	printf("%d\n", a);
-}
-
-
-int main()
-{
-	Foo* f = new Foo();
-	f->print();
-	return 0;
+int foo() {
+  return a+b+c;
 }
 
