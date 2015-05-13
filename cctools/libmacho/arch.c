@@ -61,6 +61,8 @@ static const NXArchInfo ArchInfoTable[] = {
 	 "Intel 80x86"},
     { "x86_64",    CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_ALL, NX_LittleEndian,
 	 "Intel x86-64" },
+    { "x86_64h",   CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_H,  NX_LittleEndian,
+	 "Intel x86-64h Haswell" },
     {"i860",   CPU_TYPE_I860,    CPU_SUBTYPE_I860_ALL,     NX_BigEndian,
 	 "Intel 860"},
     {"m68k",   CPU_TYPE_MC680x0, CPU_SUBTYPE_MC680x0_ALL,  NX_BigEndian,
@@ -75,6 +77,8 @@ static const NXArchInfo ArchInfoTable[] = {
 	 "SPARC"},
     {"arm",    CPU_TYPE_ARM,     CPU_SUBTYPE_ARM_ALL,	   NX_LittleEndian,
 	 "ARM"},
+    {"arm64",  CPU_TYPE_ARM64,   CPU_SUBTYPE_ARM64_ALL,	   NX_LittleEndian,
+	 "ARM64"},
     {"any",    CPU_TYPE_ANY,     CPU_SUBTYPE_MULTIPLE,     NX_UnknownByteOrder,
 	 "Architecture Independent"},
     {"veo",    CPU_TYPE_VEO,	 CPU_SUBTYPE_VEO_ALL,  	   NX_BigEndian,
@@ -148,6 +152,10 @@ static const NXArchInfo ArchInfoTable[] = {
 	 "arm v7m"},
     {"armv7em",CPU_TYPE_ARM,     CPU_SUBTYPE_ARM_V7EM,	   NX_LittleEndian,
 	 "arm v7em"},
+    {"armv8", CPU_TYPE_ARM,      CPU_SUBTYPE_ARM_V8,	   NX_LittleEndian,
+	 "arm v8"},
+    {"arm64",CPU_TYPE_ARM64,   CPU_SUBTYPE_ARM64_V8,	   NX_LittleEndian,
+	 "arm64 v8"},
     {"little", CPU_TYPE_ANY,     CPU_SUBTYPE_LITTLE_ENDIAN, NX_LittleEndian,
          "Little Endian"},
     {"big",    CPU_TYPE_ANY,     CPU_SUBTYPE_BIG_ENDIAN,   NX_BigEndian,
@@ -627,6 +635,7 @@ uint32_t nfat_archs)
 	    }
 	    break;
 	case CPU_TYPE_ARM:
+	case CPU_TYPE_ARM64:
 	    {
 		/* 
 		 * ARM is straightforward, since each architecture is backward
@@ -651,6 +660,28 @@ uint32_t nfat_archs)
 		}
 		if(fat_match_found)
 		  return fat_archs + best_fat_arch;
+		/*
+		 * For CPU_TYPE_ARM64, we will fall back to a CPU_TYPE_ARM
+		 * with the highest subtype.
+		 */
+		if(cputype == CPU_TYPE_ARM64){
+		    int fat_match_found = 0;
+		    uint32_t best_fat_arch = 0;
+		    for(i = 0; i < nfat_archs; i++){
+			if(fat_archs[i].cputype != CPU_TYPE_ARM)
+			    continue;
+			if(!fat_match_found){
+			    fat_match_found = 1;
+			    best_fat_arch = i;
+			    continue;
+			}
+			if(fat_archs[i].cpusubtype >
+			   fat_archs[best_fat_arch].cpusubtype)
+			    best_fat_arch = i;
+		    }
+		    if(fat_match_found)
+		      return fat_archs + best_fat_arch;
+		}
 	    }
 	    break;
 	default:
@@ -674,6 +705,15 @@ cpu_type_t cputype,
 cpu_subtype_t cpusubtype1,
 cpu_subtype_t cpusubtype2)
 {
+	/*
+	 * If this is an x86_64 cputype and either subtype is the
+	 * "Haswell and compatible" it does not combine with anything else.
+	 */
+	if(cputype == CPU_TYPE_X86_64 &&
+	   (cpusubtype1 == CPU_SUBTYPE_X86_64_H ||
+	    cpusubtype2 == CPU_SUBTYPE_X86_64_H))
+	    return((cpu_subtype_t)-1);
+
 	/*
 	 * We now combine any i386 or x86-64 subtype to the ALL subtype.
 	 */
@@ -837,6 +877,13 @@ cpu_subtype_t cpusubtype2)
 		default:
 		    return((cpu_subtype_t)-1);
 	    }
+
+	case CPU_TYPE_ARM64:
+	    if((cpusubtype1 & ~CPU_SUBTYPE_MASK) != CPU_SUBTYPE_ARM64_ALL)
+			return((cpu_subtype_t)-1);
+	    if((cpusubtype2 & ~CPU_SUBTYPE_MASK) != CPU_SUBTYPE_ARM64_ALL)
+			return((cpu_subtype_t)-1);
+	    break; /* logically can't get here */
 
 	default:
 	    return((cpu_subtype_t)-1);

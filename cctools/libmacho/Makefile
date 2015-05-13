@@ -10,21 +10,34 @@ KERN = -fno-builtin -finline -fno-keep-inline-functions -fsigned-bitfields \
        -I$(NEXT_ROOT)/System/Library/Frameworks/Kernel.framework/Headers \
        -DKERNEL -DKERNEL_PRIVATE -DAPPLE -DNeXT -DLIBSA_PRIVATE
 
-ifeq "cctools_ofiles_Sim" "$(RC_ProjectName)"
-  S = _sim
+ifeq "$(findstring iPhoneOS.platform, $(SDKROOT))" "iPhoneOS.platform"
+  LIBMALLOC = -lsystem_malloc
+else ifeq "$(MACOSX_DEPLOYMENT_TARGET)" "10.9"
+  LIBMALLOC = -lsystem_malloc
 endif
 
-DEPENDENT_LIBS = -nodefaultlibs -umbrella System -L/usr/lib/system \
-		 -ldyld -lsystem_malloc -lsystem_c -lsystem_kernel -lcompiler_rt
+ifeq "cctools_ofiles_Sim" "$(RC_ProjectName)"
+  S = _sim
+  DEPENDENT_LIBS = -nodefaultlibs -umbrella System -L/usr/lib/system \
+		   -ldyld$S -lsystem$S_c -lcompiler_rt$S -Wl,-upward-lSystem
+else
+  DEPENDENT_LIBS = -nodefaultlibs -umbrella System -L/usr/lib/system \
+		   -ldyld $(LIBMALLOC) -lsystem_c -lsystem_kernel \
+		   -lcompiler_rt
+endif
 
 ifneq "" "$(SDKROOT)"
   SDK = -isysroot $(SDKROOT)
   CC = $(shell xcrun -find -sdk $(SDKROOT) cc)
   STRIP = $(shell xcrun -find -sdk ${SDKROOT} strip)
   DSYMUTIL = $(shell xcrun -find -sdk ${SDKROOT} dsymutil)
+  LIBTOOL = $(shell xcrun -find -sdk $(SDKROOT) libtool)
+  RANLIB = $(shell xcrun -find -sdk $(SDKROOT) ranlib)
 else
   STRIP = strip
   DSYMUTIL = dsymutil
+  LIBTOOL = libtool
+  RANLIB = ranlib
 endif
 
 OFLAG = -Os
@@ -279,13 +292,14 @@ dynamic_ofiles: $(OBJROOT)/dynamic_obj $(OBJROOT)/dtmp_obj
 	$(CC) $(CFLAGS) $(RC_CFLAGS) $(COPTS) -c -o $(OFILE_DIR)/$*.o $<
 
 clean:
-	-rm -r -f $(OFILE_DIRS) $(OBJROOT)/static_obj
+	-rm -r -f $(OFILE_DIRS) $(OBJROOT)/static_obj \
+		  $(OBJROOT)/dynamic_profile_obj
 
 shlib_clean:
 	-rm -r -f $(OBJROOT)/ptmp_obj $(OBJROOT)/otmp_obj $(OBJROOT)/dtmp_obj
 
 libmacho.a libmacho_pg.a libmacho_static.a libmacho_kld.a: $(OBJS)
-	libtool -static -o $(SYMROOT)/$@ $(OBJS)
+	$(LIBTOOL) -static -o $(SYMROOT)/$@ $(OBJS)
 
 libmacho$S.dylib libmacho$S_profile.dylib libmacho$S_debug.dylib: $(OBJS)
 	$(CC) $(CFLAGS) $(RC_CFLAGS) -dynamiclib  \
@@ -304,15 +318,15 @@ lib_ofiles_install: all
 	then								\
 	    install -c -m 444 dtmp_obj/libmacho.a			\
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;		\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;			\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;		\
 	    (cd $(DSTROOT)$(ARCHIVEDIR) ;				\
 	    rm -f libmacho_debug.a ; ln -s libmacho.a libmacho_debug.a); \
 	    install -c -m 444 ptmp_obj/libmacho_pg.a			 \
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;	\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;		\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;	\
 	    install -c -m 444 otmp_obj/libmacho_static.a		\
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;		\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;		\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;	\
 	    install -c -m 555 dtmp_obj/libmacho$S.dylib			\
 		     $(DSTROOT)$(DYLIBDIR)/libmacho$S.dylib;		\
 	    $(STRIP) -S $(DSTROOT)$(DYLIBDIR)/libmacho$S.dylib;		\
@@ -325,15 +339,15 @@ lib_ofiles_install: all
 	else								\
 	    install -c -m 444 $(SYMROOT)/libmacho.a			\
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;		\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;			\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho.a;		\
 	    (cd $(DSTROOT)$(ARCHIVEDIR) ;				\
 	    rm -f libmacho_debug.a ; ln -s libmacho.a libmacho_debug.a); \
 	    install -c -m 444 $(SYMROOT)/libmacho_pg.a			 \
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;	\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;		\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho_profile.a;	\
 	    install -c -m 444 $(SYMROOT)/libmacho_static.a		\
 		     $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;		\
-	    ranlib $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;		\
+	    $(RANLIB) $(DSTROOT)$(ARCHIVEDIR)/libmacho_static.a;	\
 	    install -c -m 555 $(SYMROOT)/libmacho$S.dylib		\
 		     $(DSTROOT)$(DYLIBDIR)/libmacho$S.dylib;		\
 	    $(STRIP) -S $(DSTROOT)$(DYLIBDIR)/libmacho$S.dylib;		\
