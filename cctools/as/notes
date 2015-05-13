@@ -1,0 +1,131 @@
+TODO for coalesced symbols:
+- Should external relocation entries for defined coalesced symbols only be
+  created with -dynamic and not -static?
+
+TODO:
+- Add MacOS line termination \r .
+
+Known bugs:
+- The assembly line:
+	bl ""foo""
+  causes the symbol name "" to be used.
+- cmpwi seems to be the same as cmpi for PowerPC.
+- Can't optimize because of compiler bug #50416 prevents line 235 in symbols.c
+  from working (currently has #pragma CC_OPT_OFF and  #pragma CC_OPT_RESUME
+  around that routine).
+- The m88k instruction "tb0 0,r0,undef" trashes the instruction because of
+  the undefined.
+- 68k does not handle packed immediates (the tables have been changed to dis-
+  allow this) because there is no routine to convert a flonum to a 68k packed
+  form.
+- The logical operators && and || are not implemented.
+
+Bugs to be fixed:
+- The m68k "jmp @(_foo)" is not legal and needs to be flaged.
+- The PowerPC extended branch mnemonic like beqlrl need to take a CRFONLY or
+  a number shifted over by 2 (like the fcmpu instruction).
+
+Changes for the 5.25 release (the cctools-697 release):
+
+Changes for the 5.25 release (the cctools-689 release):
+- Fixed a place that needed force_cpusubtype_ALL tested in md_assemble() in
+  arm.c . Radar bug #5817558.
+- Added support for the special assembly time constant expression of the diff-
+  erence of two symbols defined in the same section then divided by exactly 2.
+  - Added the field X_sectdiff_divide_by_two to the expressionS typedef in
+    expr.h .
+  - In expr() in expr.c added code to look for an expression with a SEG_DIFFSECT
+    and a left side with an SEG_ABSOLUTE X_add_number == 2 and a O_divide right
+    side and if so set the new X_sectdiff_divide_by_two field.
+  - Added the field fx_sectdiff_divide_by_two to the struct fix.
+  - Changed cons() in read.c to save the fix for a SEG_DIFFSECT and to copy the
+    the new X_sectdiff_divide_by_two field from the expression to the new
+    fx_sectdiff_divide_by_two field in the fix.
+  - In fixup_section() in layout.c added code to test the news
+    fx_sectdiff_divide_by_two field and if so divide the value by 2.  And check
+    to see that the expression is an assembly time constant.
+
+Changes for the 5.25 release (the cctools-686 release):
+- Changed arm_relax_frag() in arm.c to take a section number for the section it
+  is operating on.  That is in turn now passed to relax_branch() in arm.c and
+  in there if the symbol that is being branched to is not for that section it
+  returns 4 for the size of the instruction.
+- In md_apply_fix() for BFD_RELOC_THUMB_PCREL_BRANCH25 the fx_r_type type is
+  set to BFD_RELOC_THUMB_PCREL_BRANCH23 so it can be output as a known
+  relocation type (ARM_THUMB_RELOC_BR22).
+
+Changes for the 5.25 release (the cctools-685 release):
+- Changed relaxed_symbol_addr() in arm.c to also add in
+  fragp->fr_symbol->sy_nlist.n_value when calculating the addr.  Without this
+  it can some times get "branch out of range" errors since it appears this
+  to have the address of the symbol from the start of the fragment.
+- Changed the check in md_assemble() in arm.c for "width suffixes are invalid
+  in ARM mode" to allow them with unified syntax.
+- Changed the arm APPLE LOCAL trap instruction opcode entry in arm.c from this:
+	CE(trap,	7ffdefe,  0, (), noargs),
+  to this:
+	TUE(trap,      7ffdefe, defe, 0, (), noargs, noargs),
+  which allows it to work with thumb mode.
+- Changed relax_section() in layout.c in two plaves #ifdef'ed ARM.  In the first
+  look it now sets frag's relax_marker field to zero.  In the "Do relax" loop
+  it flips the relax_marker field with an "^= 1".  This is to fix a problem in
+  relaxed_symbol_addr() so it knows to add the stretch amount to the addr it
+  is returning.
+- Added a second call to as_file_and_line() in frag_var() in frags.c which was
+  #ifdef ARM at the top of the file to set the fr_file and fr_line fields of
+  the current frag before creating a new frag.  This is needed because as the
+  line number of the last instruction which is the "relaxable" instruction is
+  the line number that is needed (not the first one).  So when relax_section()
+  calls arm_relax_frag() which calls md_convert_frag() it will call
+  fix_new_exp() and fix_new_internal() so a new fix may be created after all
+  code is read for the last instruction in the frag.  So md_convert_frag()
+  copies the fr_file and fr_line fields of the frag into the fx_file and fx_line
+  fields of the fix so line numbers can be reported.
+
+Changes for the 5.25 release (the cctools-684 release):
+- Changed relaxed_symbol_addr() in arm.c to not use the hack ported
+  S_GET_VALUE() as at that point the symbol does not have the value set.  The
+  code was #ifdef NOTYET to use fragp->fr_symbol->sy_frag->fr_address to get
+  the address from the symbol's frag.  The hack ported S_GET_VALUE() routine
+  was removed from symbols.[ch].
+- Changed relax_addsub() where it had a memcpy() hack in place of the
+  #ifdef NOTYET out call to bfd_get_16() to a call to a call to 
+  md_chars_to_number() to retrive the old thumb opcode into op that
+  output_relax_insn() put into the frag.
+- Added a call to as_file_and_line() in frag_var() in frags.c which was #ifdef
+  ARM to set the fr_file and fr_line fields of the frag.  This is needed because
+  when relax_section() calls arm_relax_frag() which calls md_convert_frag()
+  it will call fix_new_exp() and fix_new_internal() so a new fix will be created
+  after all code is read.  So md_convert_frag() copies the fr_file and fr_line
+  fields of the frag into the fx_file and fx_line fields of the fix so line
+  numbers can be reported.
+
+Changes for the 5.25 release (the cctools-683 release):
+- Fixed a bug in fix_new_arm() in arm.c after the call to fix_new_exp() before
+  the default: case label as missing a break; statement.
+- Fixed a bug in relax_section() in layout.c for the "Do relax" loop where
+  the call to arm_relax_frag() should have set the variable growth not
+  incremented.  The "+=" was change to just an assignment, "=".
+
+Changes for the 5.25 release (the cctools-682 release):
+- Changed relax_section() in layout.c for the "Do relax" loop and #ifdef'ed
+  ARM the rs_machine_dependent case to call arm_relax_frag().
+- Changed md_convert_frag() where it had a memcpy() hack in place of the
+  #ifdef NOTYET out call to bfd_get_16() to a call to a call to 
+  md_chars_to_number() to retrive the old thumb opcode into old_op that
+  output_relax_insn() put into the frag.
+
+Changes for the 5.25 release (the cctools-681 release):
+- Removed all __OPEN_SOURCE__ references in Makefile, notes, as.c, layout.c, 
+  messages.c, symbols.c, write_object.c, frags.h and symbols.h .
+- Fixed a bug in the table entries for the pextrq and pinsrq instructions as
+  they should have had Size64 to force the REX.W byte.
+- Fixed a bug in the table entries for the i386 SSE4.1 instruction insertps
+  where it had the second parameter as a general register not a xmm register.
+  The change was in i386-opcode.h to change Reg32 and Reg64 to RegXMM.
+  Radar bug #5650346.
+- Changed output_relax_insn() in arm.c to just used the undefined symbol instead
+  of calling make_expr_symbol() if the expression is a just an undefined symbol
+  and no subtract symbol.
+
+Changes for the 5.25 release (the cctools-680 release):
