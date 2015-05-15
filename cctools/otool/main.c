@@ -117,7 +117,7 @@ enum bool print_bind_info = FALSE;  /* print dyld bind information */
 enum bool object_processing = FALSE;
 
 static void usage(
-    void);
+    int);
 
 #ifndef LLVM_OTOOL
 
@@ -368,8 +368,12 @@ static void llvm_otool(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
-/* likewise lto_suport */
+
+/* likewise xtools_version, lto_support and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
 extern char lto_support[];
+extern char support_url[];
 
 int
 main(
@@ -397,7 +401,7 @@ char **envp)
 	errors = 0;
 
 	if(argc <= 1)
-	    usage();
+	    usage(EXIT_FAILURE);
 
 	/*
 	 * Parse the arguments.
@@ -415,25 +419,36 @@ char **envp)
 		continue;
 	    }
 	    if(strcmp(argv[i], "--version") == 0){
-		fprintf(stderr,
-#ifndef LLVM_OTOOL
-			"otool(1):"
-#else /* defined(LLVM_OTOOL) */
-			"llvm-otool(1):"
-#endif /* LLVM_OTOOL */
-			" Apple Inc. version %s\n", apple_version);
-#ifndef LLVM_OTOOL
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+#ifdef LTO_SUPPORT
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s%s\n",
+		        xtools_version, pnam, package_version,
+		        apple_version, lto_support);
+# if !defined(LLVM_OTOOL)
 		disssembler_version = llvm_disasm_version_string();
 		if(disssembler_version != NULL)
-		    fprintf(stderr, "disassmbler: %s\n", disssembler_version);
-#endif /* !defined(LLVM_OTOOL) */
+		    fprintf(stderr, "disassembler: %s\n", disssembler_version);
+# endif /* !defined(LLVM_OTOOL) */
+#else
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version,
+		        apple_version);
+#endif /* !defined(LLVM_OTOOL) && LTO_SUPPORT */
 		version = TRUE;
 		continue;
+	    }
+	    if(strcmp(argv[i], "--help") == 0){
+	        usage(0);
+		fprintf(stdout, "Please report bugs to %s\n",
+		        support_url);
+		exit(0);
 	    }
 	    if(strcmp(argv[i], "-arch") == 0){
 		if(i + 1 == argc){
 		    error("missing argument(s) to %s option", argv[i]);
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		if(strcmp("all", argv[i+1]) == 0){
 		    all_archs = TRUE;
@@ -446,7 +461,7 @@ char **envp)
 			error("unknown architecture specification flag: "
 			      "%s %s", argv[i], argv[i+1]);
 			arch_usage();
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    narch_flags++;
 		}
@@ -470,7 +485,7 @@ char **envp)
 		mcpu = argv[i] + sizeof("-mcpu=")-1;
 		if(*mcpu == '\0'){
 		    error("missing argument to -mcpu=");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		continue;
 	    }
@@ -481,7 +496,7 @@ char **envp)
 	    if(argv[i][1] == 'p'){
 		if(argc <=  i + 1){
 		    error("-p requires an argument (a text symbol name)");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		if(pflag)
 		    error("only one -p flag can be specified");
@@ -499,11 +514,11 @@ char **envp)
 		if(argc <=  i + 2){
 		    error("-s requires two arguments (a segment name and a "
 			  "section name)");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		if(sectname != NULL){
 		    error("only one -s flag can be specified");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		segname  = argv[i + 1];
 		sectname = argv[i + 2];
@@ -638,7 +653,7 @@ char **envp)
 		    break;
 		default:
 		    error("unknown char `%c' in flag %s\n", argv[i][j],argv[i]);
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 	    }
 	}
@@ -652,11 +667,11 @@ char **envp)
 	   !Hflag && !Gflag && !Sflag && !cflag && !iflag && !Dflag &&!segname){
 	    error("one of -fahlLtdoOrTMRIHCGScisP or --version must be "
 		  "specified");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	if(qflag && Qflag){
 	    error("can't specify both -q and -Q");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	/*
 	 * The default, without the -Q flag, is to use the llvm dissembler
@@ -666,7 +681,7 @@ char **envp)
 	    qflag = TRUE;
 	if(nfiles == 0 && version == FALSE){
 	    error("at least one file must be specified");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	if(segname != NULL && sectname != NULL){
 	    /* treat "-s __TEXT __text" the same as -t */
@@ -712,51 +727,52 @@ char **envp)
  */
 static
 void
-usage(
-void)
+usage(int exit_with_code)
 {
-	fprintf(stderr,
+	FILE *out = exit_with_code ? stderr : stdout;
+	fprintf(out,
 		"Usage: %s [-arch arch_type] [-fahlLDtdorSTMRIHGvVcXmqQjCP] "
 		"[-mcpu=arg] [--version] <object file> ...\n", progname);
 
-	fprintf(stderr, "\t-f print the fat headers\n");
-	fprintf(stderr, "\t-a print the archive header\n");
-	fprintf(stderr, "\t-h print the mach header\n");
-	fprintf(stderr, "\t-l print the load commands\n");
-	fprintf(stderr, "\t-L print shared libraries used\n");
-	fprintf(stderr, "\t-D print shared library id name\n");
-	fprintf(stderr, "\t-t print the text section (disassemble with -v)\n");
-	fprintf(stderr, "\t-p <routine name>  start dissassemble from routine "
+	fprintf(out, "\t-f print the fat headers\n");
+	fprintf(out, "\t-a print the archive header\n");
+	fprintf(out, "\t-h print the mach header\n");
+	fprintf(out, "\t-l print the load commands\n");
+	fprintf(out, "\t-L print shared libraries used\n");
+	fprintf(out, "\t-D print shared library id name\n");
+	fprintf(out, "\t-t print the text section (disassemble with -v)\n");
+	fprintf(out, "\t-p <routine name>  start dissassemble from routine "
 		"name\n");
-	fprintf(stderr, "\t-s <segname> <sectname> print contents of "
+	fprintf(out, "\t-s <segname> <sectname> print contents of "
 		"section\n");
-	fprintf(stderr, "\t-d print the data section\n");
-	fprintf(stderr, "\t-o print the Objective-C segment\n");
-	fprintf(stderr, "\t-r print the relocation entries\n");
-	fprintf(stderr, "\t-S print the table of contents of a library\n");
-	fprintf(stderr, "\t-T print the table of contents of a dynamic "
+	fprintf(out, "\t-d print the data section\n");
+	fprintf(out, "\t-o print the Objective-C segment\n");
+	fprintf(out, "\t-r print the relocation entries\n");
+	fprintf(out, "\t-S print the table of contents of a library\n");
+	fprintf(out, "\t-T print the table of contents of a dynamic "
 		"shared library\n");
-	fprintf(stderr, "\t-M print the module table of a dynamic shared "
+	fprintf(out, "\t-M print the module table of a dynamic shared "
 		"library\n");
-	fprintf(stderr, "\t-R print the reference table of a dynamic shared "
+	fprintf(out, "\t-R print the reference table of a dynamic shared "
 		"library\n");
-	fprintf(stderr, "\t-I print the indirect symbol table\n");
-	fprintf(stderr, "\t-H print the two-level hints table\n");
-	fprintf(stderr, "\t-G print the data in code table\n");
-	fprintf(stderr, "\t-v print verbosely (symbolically) when possible\n");
-	fprintf(stderr, "\t-V print disassembled operands symbolically\n");
-	fprintf(stderr, "\t-c print argument strings of a core file\n");
-	fprintf(stderr, "\t-X print no leading addresses or headers\n");
-	fprintf(stderr, "\t-m don't use archive(member) syntax\n");
-	fprintf(stderr, "\t-B force Thumb disassembly (ARM objects only)\n");
-	fprintf(stderr, "\t-q use llvm's disassembler (the default)\n");
-	fprintf(stderr, "\t-Q use otool(1)'s disassembler\n");
-	fprintf(stderr, "\t-mcpu=arg use `arg' as the cpu for disassembly\n");
-	fprintf(stderr, "\t-j print opcode bytes\n");
-	fprintf(stderr, "\t-P print the info plist section as strings\n");
-	fprintf(stderr, "\t-C print linker optimization hints\n");
-	fprintf(stderr, "\t--version print the version of %s\n", progname);
-	exit(EXIT_FAILURE);
+	fprintf(out, "\t-I print the indirect symbol table\n");
+	fprintf(out, "\t-H print the two-level hints table\n");
+	fprintf(out, "\t-G print the data in code table\n");
+	fprintf(out, "\t-v print verbosely (symbolically) when possible\n");
+	fprintf(out, "\t-V print disassembled operands symbolically\n");
+	fprintf(out, "\t-c print argument strings of a core file\n");
+	fprintf(out, "\t-X print no leading addresses or headers\n");
+	fprintf(out, "\t-m don't use archive(member) syntax\n");
+	fprintf(out, "\t-B force Thumb disassembly (ARM objects only)\n");
+	fprintf(out, "\t-q use llvm's disassembler (the default)\n");
+	fprintf(out, "\t-Q use otool(1)'s disassembler\n");
+	fprintf(out, "\t-mcpu=arg use `arg' as the cpu for disassembly\n");
+	fprintf(out, "\t-j print opcode bytes\n");
+	fprintf(out, "\t-P print the info plist section as strings\n");
+	fprintf(out, "\t-C print linker optimization hints\n");
+	fprintf(out, "\t--version print the version of %s\n", progname);
+	if (exit_with_code)
+	    exit(exit_with_code);
 }
 
 #ifdef LLVM_OTOOL

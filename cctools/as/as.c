@@ -83,6 +83,12 @@ static struct directory_stack *include_tail = NULL;	/* Last in chain */
 /* this is only used here, and in dwarf2dbg.c as the producer */
 char version_string[] = "GNU assembler version 1.38";
 
+/* Other version strings.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char lto_support[];
+extern char support_url[];
+
 /* this is set here, and used in dwarf2dbg.c as the apple_flags */
 char *apple_flags = NULL;
 
@@ -169,6 +175,46 @@ char **envp)
 	    if(*arg != '-')
 		continue;
 
+	    if((strcmp(arg, "--target-help") == 0) ||
+	       (strcmp(arg, "--help") == 0))
+	    {
+		fprintf(stdout, "TODO: print options. (see man as)\n");
+#ifdef XTOOLS_BUGURL
+		fprintf(stdout, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+#endif
+		exit(0);
+	    }
+
+	    if(strcmp(arg, "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+#if defined(PPC)
+#  if defined(ARCH64)
+#    define WHICH_ARCH "ppc64"
+#  else
+#    define WHICH_ARCH "ppc"
+#  endif
+#elif defined(I386)
+#  if defined(ARCH64)
+#    define WHICH_ARCH "x86_64"
+#  else
+#    define WHICH_ARCH "x86"
+#  endif
+#elif defined(ARM)
+#    define WHICH_ARCH "arm"
+#else
+#    define WHICH_ARCH "unknown"
+#endif
+		/* Implement a gnu-style --version to be friendly to GCC.
+		   Do not say "GNU" in this output to avoid being mistaken
+		   for BINUTILS as. */
+		fprintf(stdout, "xtools-%s %s for %s %s\nBased on Apple Inc. %s"
+                                " from GAS version 1.38\n",
+		        xtools_version, pnam, WHICH_ARCH, package_version,
+		        apple_version);
+		exit(0);
+	    }
 	    if(strcmp(arg, "--gstabs") == 0){
 		/* generate stabs for debugging assembly code */
 		flagseen[(int)'g'] = TRUE;
@@ -251,7 +297,10 @@ char **envp)
 		    break;
 
 		case 'v':
-		    fprintf(stderr, APPLE_INC_VERSION " %s, ", apple_version);
+		     /* Here we say "GNU assembler 1.38" for backwards compat.
+		        with behaviour based on this response in existing
+		        config tests.  */
+		    fprintf(stderr, APPLE_INC_VERSION "%s, ", apple_version);
 		    fprintf(stderr, "%s\n", version_string);
 		    if(*arg && strcmp(arg,"ersion"))
 			as_fatal("Unknown -v option ignored");
