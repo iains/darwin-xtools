@@ -169,6 +169,31 @@ char **envp)
 	    if(*arg != '-')
 		continue;
 
+	    if(strcmp(arg, "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+#if defined(PPC)
+#  if defined(ARCH64)
+#    define WHICH_ARCH "ppc64"
+#  else
+#    define WHICH_ARCH "ppc"
+#  endif
+#elif defined(I386)
+#  if defined(ARCH64)
+#    define WHICH_ARCH "x86_64"
+#  else
+#    define WHICH_ARCH "x86"
+#  endif
+#elif defined(ARM)
+#    define WHICH_ARCH "arm"
+#else
+#    define WHICH_ARCH "unknown"
+#endif
+		fprintf(stderr, "xtools %s for %s - based on Apple Inc. %s from %s\n",
+		        pnam, WHICH_ARCH, apple_version, version_string);
+		exit(0);
+	    }
 	    if(strcmp(arg, "--gstabs") == 0){
 		/* generate stabs for debugging assembly code */
 		flagseen[(int)'g'] = TRUE;
