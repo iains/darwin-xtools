@@ -27,6 +27,7 @@ int argc,
 char **argv,
 char **envp)
 {
+    const char *SUB = "./";
     const char *LIB = "../libexec/as/";
     const char *LOCALLIB = "../local/libexec/as/";
     const char *AS = "/as";
@@ -360,7 +361,7 @@ char **envp)
 	/*
 	 * If this assembler exist try to run it else print an error message.
 	 */
-	as = makestr(prefix, LIB, arch_name, AS, NULL);
+	as = makestr(prefix, SUB, arch_name, AS, NULL);
 	new_argv = allocate((argc + 1) * sizeof(char *));
 	new_argv[0] = as;
 	j = 1;
@@ -383,6 +384,15 @@ char **envp)
 		exit(1);
 	}
 	as_local = makestr(prefix, LOCALLIB, arch_name, AS, NULL);
+	new_argv[0] = as_local;
+	if(access(as_local, F_OK) == 0){
+	    argv[0] = as_local;
+	    if(execute(new_argv, verbose))
+		exit(0);
+	    else
+		exit(1);
+	}
+	as_local = makestr(prefix, LIB, arch_name, AS, NULL);
 	new_argv[0] = as_local;
 	if(access(as_local, F_OK) == 0){
 	    argv[0] = as_local;
