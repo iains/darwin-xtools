@@ -131,6 +131,7 @@ struct cmd_flags {
     uint32_t index;	/*  the index to start searching at */
     enum bool A;	/* pathname or library name of an object on each line */
     enum bool P;	/* portable output format */
+    enum bool W;	/* Warnings. */
     char *format;	/* the -t format */
 #ifdef LTO_SUPPORT
     enum bool L;	/* print the symbols from (__LLVM,__bundle) section */
@@ -282,6 +283,7 @@ char **envp)
 	cmd_flags.bincl_name = NULL;
 	cmd_flags.A = FALSE;
 	cmd_flags.P = FALSE;
+	cmd_flags.W = FALSE;
 	cmd_flags.format = "%llx";
 
         files = allocate(sizeof(char *) * argc);
@@ -421,6 +423,9 @@ char **envp)
 			case 'v':
 			    cmd_flags.v = TRUE;
 			    break;
+			case 'W':
+			    cmd_flags.W = TRUE;
+			    break;
 			case 'A':
 			    cmd_flags.A = TRUE;
 			    break;
@@ -481,7 +486,7 @@ void
 usage(
 void)
 {
-	fprintf(stderr, "Usage: %s [-agnopruUmxjlfAP"
+	fprintf(stderr, "Usage: %s [-agnopruUmxjlfAPW"
 #ifdef LTO_SUPPORT
 		"L"
 #endif /* LTO_SUPPORT */
@@ -719,7 +724,9 @@ void *cookie)
 			       ofile, arch_name, cmd_flags);
 	    else
 #endif /* LTO_SUPPORT */
-		warning("no name list");
+	    if (cmd_flags->W)
+	      /* Don't print this all the time, mostly it's noise.  */
+	      warning("no name list");
 	    return;
 	}
 #ifdef LTO_SUPPORT
