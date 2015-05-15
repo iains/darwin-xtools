@@ -21,7 +21,12 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define AS_H_
 
 extern char *apple_flags;
-#define APPLE_INC_VERSION "Apple Inc version"
+#ifdef APPLE
+#define APPLE_INC_VERSION "Apple Inc version "
+#else
+#define APPLE_INC_VERSION "xtools based on Apple Inc. "
+#endif
+
 /* apple_version is in apple_version.c which is created by the Makefile */
 extern char apple_version[];
 /* the GNU version is set in as.c */
