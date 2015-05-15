@@ -92,6 +92,10 @@ static void badoptions __P((char *));
 static void usage __P((void));
 char *progname;
 
+/* apple_version is in cctools_version.c which is in libstuff and created by
+   the build process. */
+extern char apple_version[];
+
 /*
  * main --
  *	main basically uses getopt to parse options and calls the appropriate
@@ -112,8 +116,14 @@ main(argc, argv)
 	progname = argv[0];
 	run_ranlib = 1;
 
-	if (argc < 3)
+	if (argc < 3) {
+	   if(strcmp(argv[1], "--version") == 0){
+		/* Implement a gnu-style --version to be friendly to GCC.  */
+		fprintf(stderr, "xtools ar - based on Apple Inc. %s\n", apple_version);
+		exit(0);
+	    } else
 		usage();
+	}
 
 	/*
 	 * Historic versions didn't require a '-' in front of the options.
