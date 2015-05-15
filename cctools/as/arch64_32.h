@@ -16,6 +16,7 @@ typedef struct nlist_64 nlist_t;
 #define swap_nlist_t swap_nlist_64
 
 typedef int64_t signed_target_addr_t;
+typedef uint64_t unsigned_target_addr_t;
 #define TA_DFMT "%llu"
 
 #else		/* 32-bit architecutres */
@@ -32,6 +33,7 @@ typedef struct nlist nlist_t;
 #define swap_nlist_t swap_nlist
 
 typedef int32_t signed_target_addr_t;
+typedef uint32_t unsigned_target_addr_t;
 #define TA_DFMT "%u"
 
 #endif 
