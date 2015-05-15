@@ -377,6 +377,13 @@ char **envp)
 
 	for(a = 1; a < argc; a++){
 	    if(argv[a][0] == '-'){
+		if(strcmp(argv[a], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    char *pnam = strrchr(progname, '/');
+		    pnam = (pnam)?pnam+1:progname;
+		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		    exit(0);
+		}
 		if(strcmp(argv[a], "-relayout") == 0){
 		    if(operation_specified == TRUE){
 			error("more than one operation specified");

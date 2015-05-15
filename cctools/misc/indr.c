@@ -226,6 +226,13 @@ char *envp[])
 	 */
 	no_flags_left = FALSE;
 	for(i = 1; i < argc ; i++){
+	    if(strcmp(argv[i], "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		exit(0);
+	    }
 	    if(argv[i][0] != '-' || no_flags_left){
 		if(list_filename == NULL && list_filenames == NULL)
 		    list_filename = argv[i];

@@ -74,6 +74,13 @@ char **envp)
 	archs = NULL;
 	narchs = 0;
 	if(argc < 3){
+	   if(strcmp(argv[1], "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		exit(0);
+	    }
 	    usage();
 	    return(EXIT_FAILURE);
 	}
