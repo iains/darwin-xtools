@@ -127,6 +127,7 @@ struct cmd_flags {
     uint32_t index;	/*  the index to start searching at */
     enum bool A;	/* pathname or library name of an object on each line */
     enum bool P;	/* portable output format */
+    enum bool w;	/* Warnings. */
     char *format;	/* the -t format */
 };
 /* These need to be static because of the qsort compare function */
@@ -269,6 +270,7 @@ char **envp)
 	cmd_flags.bincl_name = NULL;
 	cmd_flags.A = FALSE;
 	cmd_flags.P = FALSE;
+	cmd_flags.w = FALSE;
 	cmd_flags.format = "%llx";
 
         files = allocate(sizeof(char *) * argc);
@@ -414,6 +416,9 @@ char **envp)
 			    break;
 			case 'v':
 			    cmd_flags.v = TRUE;
+			    break;
+			case 'w':
+			    cmd_flags.w = TRUE;
 			    break;
 			case 'A':
 			    cmd_flags.A = TRUE;
@@ -564,7 +569,9 @@ void *cookie)
 	    lc = (struct load_command *)((char *)lc + lc->cmdsize);
 	}
 	if(st == NULL || st->nsyms == 0){
-	    warning("no name list");
+	    if (cmd_flags->w)
+	      /* Don't print this all the time, mostly it's noise.  */
+	      warning("no name list");
 	    return;
 	}
 	if(process_flags.nsects > 0){
