@@ -344,6 +344,7 @@ static uint32_t trnc(
 /* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
 
+#define RSZ (sizeof("ranlib")-1)
 int
 main(
 int argc,
@@ -351,7 +352,7 @@ char **argv,
 char **envp)
 {
     char *p, *endp, *filelist, *dirname, *addr;
-    int fd, i;
+    int fd, i, len, sz;
     struct stat stat_buf;
     uint32_t j, nfiles, maxfiles;
     uint32_t temp;
@@ -389,8 +390,12 @@ char **envp)
 	    p++;
 	else
 	    p = argv[0];
-	if(strncmp(p, "ranlib", sizeof("ranlib") - 1) == 0)
-	    cmd_flags.ranlib = TRUE;
+
+	len = strlen(p);
+	/* If the name by which this was invoked ends in 'ranlib' then we are in
+	   ranlib mode.  */
+	if(len >= RSZ && strncmp(p+len-RSZ, "ranlib", RSZ) == 0)
+            cmd_flags.ranlib = TRUE;
 
 	/* The default is to used long names */
 	cmd_flags.use_long_names = TRUE;
