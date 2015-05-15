@@ -668,6 +668,11 @@ cleanup_libs()
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * main() see top of file for program's description and options.
  */
@@ -678,7 +683,7 @@ char *argv[],
 char *envp[])
 {
     int i;
-    char *input_file, *output_file, *objcunique;
+    char *input_file, *output_file, *objcunique, *pnam;
     struct arch *archs;
     uint32_t narchs;
     struct stat stat_buf;
@@ -700,9 +705,24 @@ char *envp[])
 	write_to_stdout = FALSE;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 
 	for(i = 1; i < argc; i++){
 	    if(argv[i][0] == '-'){
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s [-c|-p|-d] [-i] [-z] [-u] [-r rootdir] "
+				    "[-e executable_path] [-seg_addr_table table_file_name] "
+				    "[-seg_addr_table_filename pathname] [-seg1addr address]"
+				    "[-o output_file] [-s] input_file\n", pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
 		if(strcmp(argv[i], "-o") == 0){
 		    if(write_to_stdout)
 			fatal("-o cannot be used with the -s option");
