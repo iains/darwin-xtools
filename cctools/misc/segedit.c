@@ -139,6 +139,10 @@ static int cmp_qsort(
 static void usage(
     void);
 
+/* apple_version is created by the libstuff/Makefile */
+extern char apple_version[];
+char *version = apple_version;
+
 int
 main(
 int argc,
@@ -154,6 +158,13 @@ char *envp[])
 
 	for (i = 1; i < argc; i++) {
 	    if(argv[i][0] == '-'){
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    char *pnam = strrchr(progname, '/');
+		    pnam = (pnam)?pnam+1:progname;
+		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		    exit(0);
+		}
 		switch(argv[i][1]){
 		case 'e':
 		    if(i + 4 > argc){
