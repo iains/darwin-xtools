@@ -395,6 +395,11 @@ char **envp)
         memset(cmd_flags.filelist, '\0', sizeof(char *) * maxfiles);
 	for(i = 1; i < argc; i++){
 	    if(argv[i][0] == '-'){
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", p, apple_version);
+		    exit(0);
+		}
 		if(argv[i][1] == '\0'){
 		    for(i += 1 ; i < argc; i++)
 			cmd_flags.files[cmd_flags.nfiles++] = argv[i];

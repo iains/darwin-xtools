@@ -116,6 +116,13 @@ char *envp[])
 	host_byte_sex = get_host_byte_sex();
 
 	if(argc != 3){
+	   if(strcmp(argv[1], "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		exit(0);
+	    }
 	    fprintf(stderr, "Usage: %s old_dylib new_dylib\n", progname);
 	    exit(EXIT_FAILURE);
 	}
