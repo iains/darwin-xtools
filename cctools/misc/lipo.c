@@ -231,8 +231,13 @@ static struct thin_file *new_blank_dylib(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
+
+/* likewise xtools_version and support_url.  */
 /* likewise lto_suport */
+extern char xtools_version[];
+extern char package_version[];
 extern char lto_support[];
+extern char support_url[];
 
 int
 main(
@@ -251,14 +256,34 @@ char *envp[])
     enum bool found;
     struct arch_flag blank_arch;
     uint64_t nbytes_to_write, nbytes_written;
+    char *pnam;
 
 	input = NULL;
 	/*
 	 * Process the command line arguments.
 	 */
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	for(a = 1; a < argc; a++){
 	    if(argv[a][0] == '-'){
+		if(strcmp(argv[a], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+			xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[a], "--help") == 0){
+		    fprintf(stdout,
+			"Usage: %s [input_file] ... [-arch <arch_type> input_file] ... "
+			"[-info] [-detailed_info] [-output output_file] [-create] "
+			"[-arch_blank <arch_type>] [-thin <arch_type>] "
+			"[-remove <arch_type>] ... [-extract <arch_type>] ... "
+			"[-extract_family <arch_type>] ... "
+			"[-verify_arch <arch_type> ...] "
+			"[-replace <arch_type> <file_name>] ...\n", pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
 		p = &(argv[a][1]);
 		switch(*p){
 		case 'a':

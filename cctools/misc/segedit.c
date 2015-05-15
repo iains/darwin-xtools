@@ -139,6 +139,15 @@ static int cmp_qsort(
 static void usage(
     void);
 
+/* apple_version is created by the libstuff/Makefile */
+extern char apple_version[];
+char *version = apple_version;
+
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 int
 main(
 int argc,
@@ -148,12 +157,28 @@ char *envp[])
     int i;
     struct extract *ep;
     struct replace *rp;
+    char *pnam;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	host_byte_sex = get_host_byte_sex();
 
 	for (i = 1; i < argc; i++) {
 	    if(argv[i][0] == '-'){
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s <input file> [-extract <segname> <sectname> "
+				    "<filename>] ...\n\t[[-replace <segname> <sectname> "
+				    "<filename>] ... -output <filename>]\n",
+				    pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
 		switch(argv[i][1]){
 		case 'e':
 		    if(i + 4 > argc){

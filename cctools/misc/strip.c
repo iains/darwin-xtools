@@ -365,6 +365,10 @@ static int cmp_bsearch_global_64(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
 
 int
 main(
@@ -378,8 +382,11 @@ char *envp[])
     uint32_t narch_flags;
     enum bool all_archs;
     struct symbol_list *sp;
+    char *pnam;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 
 	arch_flags = NULL;
 	narch_flags = 0;
@@ -389,6 +396,24 @@ char *envp[])
 	args_left = 1;
 	for (i = 1; i < argc; i++){
 	    if(argv[i][0] == '-'){
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+#ifndef NMEDIT
+		    fprintf(stdout, "Usage: %s [-AnuSXx] [-] [-d filename] [-s filename] "
+				"[-R filename] [-o output] file [...] \n",
+				pnam);
+#else
+		    fprintf(stdout, "Usage: %s -s filename [-R filename] [-p] [-A] [-] "
+				"[-o output] file [...] \n",
+				pnam);
+#endif /* NMEDIT */
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
 		if(argv[i][1] == '\0'){
 		    args_left = 0;
 		    break;

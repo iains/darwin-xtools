@@ -174,6 +174,11 @@ static void add_list(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The indr(l) program takes the following options:
  *
@@ -197,7 +202,7 @@ char *envp[])
     int i;
     uint32_t j;
     enum bool no_flags_left;
-    char *list_filename, *output_file, *input_file;
+    char *list_filename, *output_file, *input_file, *pnam;
     struct arch_flag *arch_flags;
     uint32_t narch_flags;
     enum bool all_archs;
@@ -207,7 +212,8 @@ char *envp[])
     struct stat stat_buf;
 
 	progname = argv[0];
-
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	arch_flags = NULL;
 	narch_flags = 0;
 	all_archs = FALSE;
@@ -226,6 +232,21 @@ char *envp[])
 	 */
 	no_flags_left = FALSE;
 	for(i = 1; i < argc ; i++){
+	    if(strcmp(argv[i], "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		exit(0);
+	    } else if(strcmp(argv[i], "--help") == 0){
+		fprintf(stdout, "Usage: %s [-n] [[-arch arch_flag] ...] "
+				"<symbol list file> <input file> <output file>\n",
+				pnam);
+		fprintf(stdout, "Usage: %s [-n] [[-arch_indr arch_flag "
+				"<symbol list file>] ...] <input file> <output file>\n",
+				pnam);
+		fprintf(stdout, "Please report bugs to %s\n", support_url);
+		exit(0);
+	    }
 	    if(argv[i][0] != '-' || no_flags_left){
 		if(list_filename == NULL && list_filenames == NULL)
 		    list_filename = argv[i];

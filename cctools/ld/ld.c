@@ -471,6 +471,11 @@ static enum bool check_max_init_prot(vm_prot_t maxprot, vm_prot_t initprot);
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * main() parses the command line arguments and drives the link-edit process.
  */
@@ -507,7 +512,7 @@ char *envp[])
     enum bool vflag;
     enum bool prebinding_via_LD_PREBIND;
     enum bool hash_instrument_specified;
-    char *ld_library_path;
+    char *ld_library_path, *pnam;
 
 #ifdef __MWERKS__
     char **dummy;
@@ -521,6 +526,8 @@ char *envp[])
 	hash_instrument_specified = FALSE;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 #ifndef BINARY_COMPARE
 	host_pagesize = 0x2000;
 #else
@@ -562,6 +569,16 @@ char *envp[])
 		continue;
 	    }
 	    else{
+		if(strcmp(argv[i], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s [options] file [...]\n", pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
 	        if (ld_print_options == TRUE)
 		  print("[Logging ld options]\t%s\n", argv[i]);
 
