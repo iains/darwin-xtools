@@ -48,17 +48,17 @@ __private_extern__ char **ld_library_paths;
 __private_extern__ unsigned long nld_library_paths;
 
 /* the standard directories to search for -lx filenames */
-__private_extern__ char *standard_dirs[];
+extern __private_extern__ char *standard_dirs[];
 
 /*
  * The user specified directories to search for "-framework Foo" names, and the
  * number of them.  These are specified with -F options.
  */
-__private_extern__ char **framework_dirs;
+extern __private_extern__ char **framework_dirs;
 __private_extern__ unsigned long nframework_dirs;
 
 /* the standard framework directories to search for "-framework Foo" names */
-__private_extern__ char *standard_framework_dirs[];
+extern __private_extern__ char *standard_framework_dirs[];
 
 /* the pointer to the head of the base object file's segments */
 __private_extern__ struct merged_segment *base_obj_segments;
