@@ -4568,8 +4568,8 @@ mark_globals_live(void)
 		    if(only_referenced_dynamically == TRUE)
 			continue;
 		}
-#ifdef DEBUG
 mark_it_live:
+#ifdef DEBUG
 		if(((debug & (1 << 25)) || (debug & (1 << 26)))){
 		    print("** In mark_globals_live() ");
 		    if(merged_symbol->nlist.n_desc & N_NO_DEAD_STRIP)
