@@ -286,6 +286,13 @@ char **envp)
 	align_specified = FALSE;
 
 	for(i = 1; i < argc; i++){
+	    if(strcmp(argv[i], "--version") == 0){
+		/* Implement a gnu-style --version.  */
+		char *pnam = strrchr(progname, '/');
+		pnam = (pnam)?pnam+1:progname;
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		exit(0);
+	    }
 	    if(strcmp(argv[i], "-subsystem") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -subsystem option");
