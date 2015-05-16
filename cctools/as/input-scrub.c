@@ -467,7 +467,7 @@ char *no_path_name)
       return (NULL);
     }
 found:
-  return (whole_file_name);
+  return (strndup(whole_file_name, MAXPATHLEN+1));
 }
 
 void
