@@ -1,0 +1,4 @@
+
+const char
+  apple_version[] __attribute__ ((__used__)) =
+  "cctools-@CCTOOLS_VERSION_NUM@";
