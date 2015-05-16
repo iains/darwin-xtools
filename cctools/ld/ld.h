@@ -82,7 +82,7 @@ enum weak_reference_mismatches_handling {
     WEAK_REFS_MISMATCH_NON_WEAK
 };
 
-__private_extern__ struct macosx_deployment_target macosx_deployment_target;
+extern __private_extern__ struct macosx_deployment_target macosx_deployment_target;
 
 /* name of this program as executed (argv[0]) */
 __private_extern__ char *progname;
@@ -107,8 +107,8 @@ __private_extern__ enum bool multi_module_dylib;
  * cputype and cpusubtype.  specific_arch_flag is true if an -arch flag is
  * specified and the flag for a specific implementation of an architecture.
  */
-__private_extern__ struct arch_flag arch_flag;
-__private_extern__ enum bool specific_arch_flag;
+extern __private_extern__ struct arch_flag arch_flag;
+extern __private_extern__ enum bool specific_arch_flag;
 
 /*
  * The -force_cpusubtype_ALL flag.
