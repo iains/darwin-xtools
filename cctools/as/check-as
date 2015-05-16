@@ -1,0 +1,16 @@
+#! /bin/bash
+#
+# usage check-as
+# $1 = generator
+# $2 = arch
+# $3 = assembler driver to test.
+# return success/fail of the final comparison on objects.
+
+#set -x
+$1 > check-$2.s
+$3 -arch $2 -W -force_cpusubtype_ALL -o check-$2.o check-$2.s
+otool -arch $2 -Q -X -tV check-$2.o >  check-$2-1.s
+$3 -arch $2 -W -force_cpusubtype_ALL -o check-$2-1.o check-$2-1.s
+otool -arch $2 -Q -X -tV check-$2-1.o >  check-$2-2.s
+diff -W200 -y --suppress-common-lines check-$2-1.s check-$2-2.s >errors-$2-diff.txt
+exec cmp check-$2.o check-$2-1.o
