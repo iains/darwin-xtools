@@ -368,6 +368,8 @@ static void llvm_otool(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
+/* likewise lto_suport */
+extern char lto_support[];
 
 int
 main(
