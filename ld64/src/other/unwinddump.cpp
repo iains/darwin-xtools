@@ -1163,6 +1163,18 @@ int main(int argc, const char* argv[])
 		for(int i=1; i < argc; ++i) {
 			const char* arg = argv[i];
 			if ( arg[0] == '-' ) {
+				if(strcmp(arg, "--version") == 0){
+					/* Implement a gnu-style --version.  */
+					fprintf(stdout, "xtools-%s unwinddump %s\nBased on Apple Inc. ld64-%s\n",
+				XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+					exit(0);
+				} else if(strcmp(arg, "--help") == 0){
+					fprintf(stdout, "unwinddump: [-arch] [no_symbols] file\n");
+#ifdef XTOOLS_BUGURL
+					fprintf(stdout, "Please report bugs to %s\n", XTOOLS_BUGURL);
+#endif
+					exit(0);
+				}
 				if ( strcmp(arg, "-arch") == 0 ) {
 					const char* arch = argv[++i];
 					if ( strcmp(arch, "i386") == 0 )
