@@ -3774,13 +3774,14 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 		}
 		else if ( strcmp(argv[i], "-Z") == 0 )
 			addStandardLibraryDirectories = false;
-		else if ( strcmp(argv[i], "-v") == 0 ) {
+		else if ( strcmp(argv[i], "-v") == 0 ||
+				  strcmp(argv[i], "--version") == 0 ) {
 			fVerbose = true;
 			extern const char ldVersionString[];
 			fprintf(stderr, "%s", ldVersionString);
 			fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 			 // if only -v specified, exit cleanly
-			 if ( argc == 2 ) {
+			 if ( argc == 2  || strcmp(argv[i], "--version") == 0 ) {
 #ifdef LTO_SUPPORT
 				const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
