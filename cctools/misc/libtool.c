@@ -263,9 +263,11 @@ static void create_dynamic_shared_library_cleanup(
 static void make_table_of_contents(
     struct arch *arch,
     char *output);
+#ifdef LTO_SUPPORT
 static void save_lto_member_toc_info(
     struct member *member,
     void *mod);
+#endif
 static int toc_name_qsort(
     const struct toc *toc1,
     const struct toc *toc2);
@@ -336,6 +338,8 @@ static uint32_t trnc(
 
 /* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
+/* likewise lto_suport */
+extern char lto_support[];
 
 #define RSZ (sizeof("ranlib")-1)
 int
@@ -402,7 +406,8 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", p, apple_version);
+		    fprintf(stderr, "xtools %s - based on Apple Inc. %s%s\n",
+		            p, apple_version, lto_support);
 		    exit(0);
 		}
 		if(argv[i][1] == '\0'){
@@ -1374,7 +1379,9 @@ void)
 				/* No fat members in a fat file */
 				if(ofiles[i].mh != NULL ||
 				   ofiles[i].mh64 != NULL ||
+#ifdef LTO_SUPPORT
 				   ofiles[i].lto != NULL ||
+#endif
 				   cmd_flags.ranlib == TRUE)
 				    add_member(ofiles + i);
 				else{
@@ -1446,7 +1453,9 @@ void)
 			    do{
 				if(ofiles[i].mh != NULL ||
 				   ofiles[i].mh64 != NULL ||
+#ifdef LTO_SUPPORT
 				   ofiles[i].lto != NULL ||
+#endif
 				   cmd_flags.ranlib == TRUE){
 				    add_member(ofiles + i);
 				}
@@ -3839,6 +3848,7 @@ char *output)
 	       (int)sizeof(arch->toc_ar_hdr.ar_fmag));
 }
 
+#ifdef LTO_SUPPORT
 /*
  * save_lto_member_toc_info() saves away the table of contents info for a
  * member that has lto_content.  This allows the lto module to be disposed of
@@ -3871,6 +3881,7 @@ void *mod)
 	    }
 	}
 }
+#endif
 
 /*
  * Function for qsort() for comparing toc structures by name.
