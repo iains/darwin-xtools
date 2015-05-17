@@ -123,6 +123,8 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_priv.h)
                 COPYONLY)
 endif()
 
+include_directories("${CMAKE_SOURCE_DIR}/macho-target-includes")
+
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)
