@@ -328,6 +328,8 @@ static uint32_t trnc(
 
 /* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
+/* likewise lto_suport */
+extern char lto_support[];
 
 #define RSZ (sizeof("ranlib")-1)
 int
@@ -394,7 +396,8 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", p, apple_version);
+		    fprintf(stderr, "xtools %s - based on Apple Inc. %s%s\n",
+		            p, apple_version, lto_support);
 		    exit(0);
 		}
 		if(argv[i][1] == '\0'){
