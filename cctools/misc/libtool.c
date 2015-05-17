@@ -349,6 +349,8 @@ static uint32_t trnc(
 
 /* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
+/* likewise lto_suport */
+extern char lto_support[];
 
 #define RSZ (sizeof("ranlib")-1)
 int
@@ -1470,7 +1472,9 @@ void)
 			    do{
 				if(ofiles[i].mh != NULL ||
 				   ofiles[i].mh64 != NULL ||
+#ifdef LTO_SUPPORT
 				   ofiles[i].lto != NULL ||
+#endif
 				   cmd_flags.ranlib == TRUE){
 				    add_member(ofiles + i);
 				}
