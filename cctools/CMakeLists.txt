@@ -3,7 +3,7 @@ set(CCTOOLS_VERSION_NUM 862)
 
 # We need this on in the libraries as well as the apps.
 if(XTOOLS_LTO_SUPPORT)
-  add_definitions(-DLTO_SUPORT)
+  add_definitions(-DLTO_SUPPORT)
   set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
 endif()
 

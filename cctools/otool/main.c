@@ -350,6 +350,8 @@ static void print_argstrings(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
+/* likewise lto_suport */
+extern char lto_support[];
 
 int
 main(
@@ -386,7 +388,8 @@ char **envp)
 		/* Implement a gnu-style --version.  */
 		char *pnam = strrchr(progname, '/');
 		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s%s\n",
+		        pnam, apple_version, lto_support);
 		disssembler_version = llvm_disasm_version_string();
 		if(disssembler_version != NULL)
 		    fprintf(stderr, "disassembler: %s\n", disssembler_version);
