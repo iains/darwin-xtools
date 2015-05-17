@@ -53,7 +53,7 @@ enum {
 };
 
 
-struct unw_context_t { uint64_t data[128]; };
+struct unw_context_t { uint64_t data[144]; };
 typedef struct unw_context_t     unw_context_t;
 
 struct unw_cursor_t { uint64_t data[140]; };
