@@ -2375,7 +2375,7 @@ static void dump(const char* path)
 
 static void usage()
 {
-	fprintf(stderr, "Usage: dyldinfo [-arch <arch>] <options> <mach-o file>\n"
+	fprintf(stdout, "Usage: dyldinfo [-arch <arch>] <options> <mach-o file>\n"
 			"\t-dylibs           print dependent dylibs\n"
 			"\t-dr               print dependent dylibs and show any recorded DR info\n"
 			"\t-rebase           print addresses dyld will adjust if file not loaded at preferred address\n"
@@ -2403,6 +2403,18 @@ int main(int argc, const char* argv[])
 		for(int i=1; i < argc; ++i) {
 			const char* arg = argv[i];
 			if ( arg[0] == '-' ) {
+				if(strcmp(arg, "--version") == 0){
+					/* Implement a gnu-style --version.  */
+					fprintf(stdout, "xtools-%s dyldinfo %s\nBased on Apple Inc. ld64-%s\n",
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+					exit(0);
+				} else if(strcmp(arg, "--help") == 0){
+					usage();
+#ifdef XTOOLS_BUGURL
+					fprintf(stdout, "Please report bugs to %s\n", XTOOLS_BUGURL);
+#endif
+					exit(0);
+				}
 				if ( strcmp(arg, "-arch") == 0 ) {
 					const char* arch = ++i<argc? argv[i]: "";
 					if ( strcmp(arch, "ppc64") == 0 )

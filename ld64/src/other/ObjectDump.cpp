@@ -1288,7 +1288,7 @@ static
 void
 usage()
 {
-	fprintf(stderr, "ObjectDump options:\n"
+	fprintf(stdout, "ObjectDump options:\n"
 			"\t-no_content\tdon't dump contents\n"
 			"\t-no_section\tdon't dump section name\n"
 			"\t-no_defintion\tdon't dump definition kind\n"
@@ -1312,6 +1312,18 @@ int main(int argc, const char* argv[])
 		for(int i=1; i < argc; ++i) {
 			const char* arg = argv[i];
 			if ( arg[0] == '-' ) {
+				if(strcmp(argv[i], "--version") == 0){
+					/* Implement a gnu-style --version.  */
+					fprintf(stdout, "xtools-%s ObjectDump %s\nBased on Apple Inc. ld64-%s\n",
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+					exit(0);
+				} else if(strcmp(argv[i], "--help") == 0){
+					usage();
+#ifdef XTOOLS_BUGURL
+					fprintf(stdout, "Please report bugs to %s\n", XTOOLS_BUGURL);
+#endif
+					exit(0);
+				}
 				if ( strcmp(arg, "-no_content") == 0 ) {
 					sDumpContent = false;
 				}
