@@ -2,3 +2,7 @@
 const char
   apple_version[] __attribute__ ((__used__)) =
   "cctools-@CCTOOLS_VERSION_NUM@";
+
+const char
+  lto_support[] __attribute__ ((__used__)) =
+  " @LTO_SUPPORT_INFO@";

@@ -1,4 +1,10 @@
 
+# We need this on in the libraries as well as the apps.
+if(XTOOLS_LTO_SUPPORT)
+  add_definitions(-DLTO_SUPORT)
+  set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
+endif()
+
 set(CCTOOLS_VERSION_NUM 855)
 
 option(CCTOOLS_EFITOOLS  "Build efitools as part of cctools" OFF)
