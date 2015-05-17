@@ -29,11 +29,10 @@
  * @OSF_COPYRIGHT@
  */
 
-#ifndef	_MACH_PPC_THREAD_STATUS_H_
-#define _MACH_PPC_THREAD_STATUS_H_
+#ifndef	_MACH_FOR_TGT_PPC_THREAD_STATUS_H_
+#define _MACH_FOR_TGT_PPC_THREAD_STATUS_H_
 
-#include <mach/ppc/_structs.h>
-#include <mach/message.h>
+#include <mach-for-target/ppc/_structs.h>
 
 /*
  * ppc_thread_state is the structure that is exported to user threads for 
@@ -69,12 +68,10 @@
          (x == THREAD_STATE_NONE))
 */
 
-typedef _STRUCT_PPC_THREAD_STATE	ppc_thread_state_t;
-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-typedef _STRUCT_PPC_THREAD_STATE64	ppc_thread_state64_t;
-#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
-typedef _STRUCT_PPC_FLOAT_STATE		ppc_float_state_t;
-typedef _STRUCT_PPC_VECTOR_STATE	ppc_vector_state_t;
+typedef _STRUCT_PPC_TGT_THREAD_STATE	ppc_tgt_thread_state_t;
+typedef _STRUCT_PPC_TGT_THREAD_STATE64	ppc_tgt_thread_state64_t;
+typedef _STRUCT_PPC_TGT_FLOAT_STATE	ppc_tgt_float_state_t;
+typedef _STRUCT_PPC_TGT_VECTOR_STATE	ppc_tgt_vector_state_t;
 
 /*
  * saved state structure
@@ -83,17 +80,7 @@ typedef _STRUCT_PPC_VECTOR_STATE	ppc_vector_state_t;
  *
  */
 
-#ifdef	MACH__POSIX_C_SOURCE_PRIVATE
-
-#include <ppc/savearea.h>
-
-typedef struct savearea				ppc_saved_state_t;
-
-#else	/* MACH__POSIX_C_SOURCE_PRIVATE */
-
-typedef struct ppc_thread_state			ppc_saved_state_t;
-
-#endif	/* MACH__POSIX_C_SOURCE_PRIVATE */
+typedef struct ppc_tgt_thread_state	ppc_tgt_saved_state_t;
 
 /*
  * ppc_exception_state
@@ -112,45 +99,34 @@ typedef struct ppc_thread_state			ppc_saved_state_t;
 /* Still available on 64-bit processors, but may fall short */
 /* of covering the full potential state (hi half available). */
 
-typedef _STRUCT_PPC_EXCEPTION_STATE	ppc_exception_state_t;
-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-typedef _STRUCT_PPC_EXCEPTION_STATE64	ppc_exception_state64_t;
-#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+typedef _STRUCT_PPC_TGT_EXCEPTION_STATE		ppc_tgt_exception_state_t;
+typedef _STRUCT_PPC_TGT_EXCEPTION_STATE64	ppc_tgt_exception_state64_t;
 
 /*
  * Save State Flags
  */
 
-#define PPC_THREAD_STATE_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_thread_state_t) / sizeof(int)))
+#define PPC_TGT_THREAD_STATE_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_thread_state_t) / sizeof(int)))
 
-#define PPC_THREAD_STATE64_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_thread_state64_t) / sizeof(int)))
+#define PPC_TGT_THREAD_STATE64_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_thread_state64_t) / sizeof(int)))
 
-#define PPC_EXCEPTION_STATE_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_exception_state_t) / sizeof(int)))
+#define PPC_TGT_EXCEPTION_STATE_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_exception_state_t) / sizeof(int)))
 
-#define PPC_EXCEPTION_STATE64_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_exception_state64_t) / sizeof(int)))
+#define PPC_TGT_EXCEPTION_STATE64_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_exception_state64_t) / sizeof(int)))
 
-#define PPC_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_float_state_t) / sizeof(int)))
+#define PPC_TGT_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_float_state_t) / sizeof(int)))
 
-#define PPC_VECTOR_STATE_COUNT ((mach_msg_type_number_t) \
-   (sizeof(ppc_vector_state_t) / sizeof(int)))
-
-/*
- * Machine-independent way for servers and Mach's exception mechanism to
- * choose the most efficient state flavor for exception RPC's:
- */
-/*
-#define MACHINE_THREAD_STATE		PPC_THREAD_STATE
-#define MACHINE_THREAD_STATE_COUNT	PPC_THREAD_STATE_COUNT
-*/
+#define PPC_TGT_VECTOR_STATE_COUNT ((mach_msg_type_number_t) \
+   (sizeof(ppc_tgt_vector_state_t) / sizeof(int)))
 
 /*
  * Largest state on this machine:
  */
 #define THREAD_MACHINE_STATE_MAX	THREAD_STATE_MAX
 
-#endif /* _MACH_PPC_THREAD_STATUS_H_ */
+#endif /* _MACH_FOR_TGT_PPC_THREAD_STATUS_H_ */

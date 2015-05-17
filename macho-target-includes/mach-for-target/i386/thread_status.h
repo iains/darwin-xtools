@@ -64,13 +64,12 @@
  *	state as applied to I386 processors.
  */
 
-#ifndef	_MACH_I386_THREAD_STATUS_H_
-#define _MACH_I386_THREAD_STATUS_H_
+#ifndef	_MACH_FOR_TGT_I386_THREAD_STATUS_H_
+#define _MACH_FOR_TGT_I386_THREAD_STATUS_H_
 
-#include <mach/i386/_structs.h>
-#include <mach/message.h>
-#include <mach/i386/fp_reg.h>
-#include <mach/i386/thread_state.h>
+#include <mach-for-target/i386/_structs.h>
+#include <mach-for-target/i386/fp_reg.h>
+#include <mach-for-target/i386/thread_state.h>
 #include <i386/eflags.h>
 
 /*
@@ -144,11 +143,11 @@
 	  (x == x86_AVX_STATE64)	|| \
 	  (x == THREAD_STATE_NONE))
 
-struct x86_state_hdr {
+struct x86_tgt_state_hdr {
 	int	flavor;
 	int	count;
 };
-typedef struct x86_state_hdr x86_state_hdr_t;
+typedef struct x86_tgt_state_hdr x86_tgt_state_hdr_t;
 
 /*
  * Default segment register values.
@@ -162,122 +161,122 @@ typedef struct x86_state_hdr x86_state_hdr_t;
 /*
  * to be deprecated in the future
  */
-typedef _STRUCT_X86_THREAD_STATE32 i386_thread_state_t;
-#define i386_THREAD_STATE_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (i386_thread_state_t) / sizeof (int) ))
+typedef _STRUCT_X86_TGT_THREAD_STATE32 i386_tgt_thread_state_t;
+#define i386_TGT_THREAD_STATE_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (i386_tgt_thread_state_t) / sizeof (int) ))
 
-typedef _STRUCT_X86_THREAD_STATE32 x86_thread_state32_t;
-#define x86_THREAD_STATE32_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (x86_thread_state32_t) / sizeof (int) ))
-
-/*
- * to be deprecated in the future
- */
-typedef _STRUCT_X86_FLOAT_STATE32 i386_float_state_t;
-#define i386_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
-		(sizeof(i386_float_state_t)/sizeof(unsigned int)))
-
-typedef _STRUCT_X86_FLOAT_STATE32 x86_float_state32_t;
-#define x86_FLOAT_STATE32_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_float_state32_t)/sizeof(unsigned int)))
-
-typedef _STRUCT_X86_AVX_STATE32 x86_avx_state32_t;
-#define x86_AVX_STATE32_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_avx_state32_t)/sizeof(unsigned int)))
+typedef _STRUCT_X86_TGT_THREAD_STATE32 x86_tgt_thread_state32_t;
+#define x86_TGT_THREAD_STATE32_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (x86_tgt_thread_state32_t) / sizeof (int) ))
 
 /*
  * to be deprecated in the future
  */
-typedef _STRUCT_X86_EXCEPTION_STATE32 i386_exception_state_t;
-#define i386_EXCEPTION_STATE_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (i386_exception_state_t) / sizeof (int) ))
+typedef _STRUCT_X86_TGT_FLOAT_STATE32 i386_tgt_float_state_t;
+#define i386_TGT_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
+		(sizeof(i386_tgt_float_state_t)/sizeof(unsigned int)))
 
-typedef _STRUCT_X86_EXCEPTION_STATE32 x86_exception_state32_t;
-#define x86_EXCEPTION_STATE32_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (x86_exception_state32_t) / sizeof (int) ))
+typedef _STRUCT_X86_TGT_FLOAT_STATE32 x86_tgt_float_state32_t;
+#define x86_TGT_FLOAT_STATE32_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_float_state32_t)/sizeof(unsigned int)))
 
-#define I386_EXCEPTION_STATE_COUNT i386_EXCEPTION_STATE_COUNT
+typedef _STRUCT_X86_TGT_AVX_STATE32 x86_tgt_avx_state32_t;
+#define x86_TGT_AVX_STATE32_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_avx_state32_t)/sizeof(unsigned int)))
 
-typedef _STRUCT_X86_DEBUG_STATE32 x86_debug_state32_t;
-#define x86_DEBUG_STATE32_COUNT       ((mach_msg_type_number_t) \
-	( sizeof (x86_debug_state32_t) / sizeof (int) ))
+/*
+ * to be deprecated in the future
+ */
+typedef _STRUCT_X86_TGT_EXCEPTION_STATE32 i386_tgt_exception_state_t;
+#define i386_TGT_EXCEPTION_STATE_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (i386_tgt_exception_state_t) / sizeof (int) ))
 
-#define X86_DEBUG_STATE32_COUNT x86_DEBUG_STATE32_COUNT
+typedef _STRUCT_X86_TGT_EXCEPTION_STATE32 x86_tgt_exception_state32_t;
+#define x86_TGT_EXCEPTION_STATE32_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (x86_tgt_exception_state32_t) / sizeof (int) ))
 
-typedef _STRUCT_X86_THREAD_STATE64 x86_thread_state64_t;
-#define x86_THREAD_STATE64_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (x86_thread_state64_t) / sizeof (int) ))
+#define I386_EXCEPTION_STATE_COUNT i386_TGT_EXCEPTION_STATE_COUNT
 
-typedef _STRUCT_X86_FLOAT_STATE64 x86_float_state64_t;
-#define x86_FLOAT_STATE64_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_float_state64_t)/sizeof(unsigned int)))
+typedef _STRUCT_X86_TGT_DEBUG_STATE32 x86_tgt_debug_state32_t;
+#define x86_TGT_DEBUG_STATE32_COUNT       ((mach_msg_type_number_t) \
+	( sizeof (x86_tgt_debug_state32_t) / sizeof (int) ))
 
-typedef _STRUCT_X86_AVX_STATE64 x86_avx_state64_t;
-#define x86_AVX_STATE64_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_avx_state64_t)/sizeof(unsigned int)))
+#define X86_TGT_DEBUG_STATE32_COUNT x86_TGT_DEBUG_STATE32_COUNT
 
-typedef _STRUCT_X86_EXCEPTION_STATE64 x86_exception_state64_t;
-#define x86_EXCEPTION_STATE64_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (x86_exception_state64_t) / sizeof (int) ))
+typedef _STRUCT_X86_TGT_THREAD_STATE64 x86_tgt_thread_state64_t;
+#define x86_TGT_THREAD_STATE64_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (x86_tgt_thread_state64_t) / sizeof (int) ))
 
-#define X86_EXCEPTION_STATE64_COUNT x86_EXCEPTION_STATE64_COUNT
+typedef _STRUCT_X86_TGT_FLOAT_STATE64 x86_tgt_float_state64_t;
+#define x86_TGT_FLOAT_STATE64_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_float_state64_t)/sizeof(unsigned int)))
 
-typedef _STRUCT_X86_DEBUG_STATE64 x86_debug_state64_t;
-#define x86_DEBUG_STATE64_COUNT	((mach_msg_type_number_t) \
-    ( sizeof (x86_debug_state64_t) / sizeof (int) ))
+typedef _STRUCT_X86_TGT_AVX_STATE64 x86_tgt_avx_state64_t;
+#define x86_TGT_AVX_STATE64_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_avx_state64_t)/sizeof(unsigned int)))
 
-#define X86_DEBUG_STATE64_COUNT x86_DEBUG_STATE64_COUNT
+typedef _STRUCT_X86_TGT_EXCEPTION_STATE64 x86_tgt_exception_state64_t;
+#define x86_TGT_EXCEPTION_STATE64_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (x86_tgt_exception_state64_t) / sizeof (int) ))
+
+#define X86_TGT_EXCEPTION_STATE64_COUNT x86_TGT_EXCEPTION_STATE64_COUNT
+
+typedef _STRUCT_X86_TGT_DEBUG_STATE64 x86_tgt_debug_state64_t;
+#define x86_TGT_DEBUG_STATE64_COUNT	((mach_msg_type_number_t) \
+    ( sizeof (x86_tgt_debug_state64_t) / sizeof (int) ))
+
+#define X86_TGT_DEBUG_STATE64_COUNT x86_TGT_DEBUG_STATE64_COUNT
 
 /*
  * Combined thread, float and exception states
  */
-struct x86_thread_state {
-	x86_state_hdr_t			tsh;
+struct x86_tgt_thread_state {
+	x86_tgt_state_hdr_t			tsh;
 	union {
-	    x86_thread_state32_t	ts32;
-	    x86_thread_state64_t	ts64;
+	    x86_tgt_thread_state32_t	ts32;
+	    x86_tgt_thread_state64_t	ts64;
 	} uts;
 };
 
-struct x86_float_state {
-	x86_state_hdr_t			fsh;
+struct x86_tgt_float_state {
+	x86_tgt_state_hdr_t			fsh;
 	union {
-		x86_float_state32_t	fs32;
-		x86_float_state64_t	fs64;
+		x86_tgt_float_state32_t	fs32;
+		x86_tgt_float_state64_t	fs64;
 	} ufs;
 };
 
-struct x86_exception_state {
-	x86_state_hdr_t			esh;
+struct x86_tgt_exception_state {
+	x86_tgt_state_hdr_t			esh;
 	union {
-		x86_exception_state32_t	es32;
-		x86_exception_state64_t	es64;
+		x86_tgt_exception_state32_t	es32;
+		x86_tgt_exception_state64_t	es64;
 	} ues;
 };
 
-struct x86_debug_state {
-	x86_state_hdr_t			dsh;
+struct x86_tgt_debug_state {
+	x86_tgt_state_hdr_t			dsh;
 	union {
-		x86_debug_state32_t	ds32;
-		x86_debug_state64_t	ds64;
+		x86_tgt_debug_state32_t	ds32;
+		x86_tgt_debug_state64_t	ds64;
 	} uds;
 };
 
-typedef struct x86_thread_state x86_thread_state_t;
-#define x86_THREAD_STATE_COUNT	((mach_msg_type_number_t) \
-		( sizeof (x86_thread_state_t) / sizeof (int) ))
+typedef struct x86_tgt_thread_state x86_tgt_thread_state_t;
+#define x86_TGT_THREAD_STATE_COUNT	((mach_msg_type_number_t) \
+		( sizeof (x86_tgt_thread_state_t) / sizeof (int) ))
 
-typedef struct x86_float_state x86_float_state_t;
-#define x86_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_float_state_t)/sizeof(unsigned int)))
+typedef struct x86_tgt_float_state x86_tgt_float_state_t;
+#define x86_TGT_FLOAT_STATE_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_float_state_t)/sizeof(unsigned int)))
 
-typedef struct x86_exception_state x86_exception_state_t;
-#define x86_EXCEPTION_STATE_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_exception_state_t)/sizeof(unsigned int)))
+typedef struct x86_tgt_exception_state x86_tgt_exception_state_t;
+#define x86_TGT_EXCEPTION_STATE_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_exception_state_t)/sizeof(unsigned int)))
 
-typedef struct x86_debug_state x86_debug_state_t;
-#define x86_DEBUG_STATE_COUNT ((mach_msg_type_number_t) \
-		(sizeof(x86_debug_state_t)/sizeof(unsigned int)))
+typedef struct x86_tgt_debug_state x86_tgt_debug_state_t;
+#define x86_TGT_DEBUG_STATE_COUNT ((mach_msg_type_number_t) \
+		(sizeof(x86_tgt_debug_state_t)/sizeof(unsigned int)))
 
 /*
  * Machine-independent way for servers and Mach's exception mechanism to
@@ -287,4 +286,4 @@ typedef struct x86_debug_state x86_debug_state_t;
 #define MACHINE_THREAD_STATE_COUNT	x86_THREAD_STATE_COUNT
 
 
-#endif	/* _MACH_I386_THREAD_STATUS_H_ */
+#endif	/* _MACH_FOR_TGT_I386_THREAD_STATUS_H_ */

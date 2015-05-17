@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2000-2006 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000-2007 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
- * 
+ *
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
  * Version 2.0 (the 'License'). You may not use this file except in
@@ -11,10 +11,10 @@
  * unlawful or unlicensed copies of an Apple operating system, or to
  * circumvent, violate, or enable the circumvention or violation of, any
  * terms of an Apple operating system software license agreement.
- * 
+ *
  * Please obtain a copy of the License at
  * http://www.opensource.apple.com/apsl/ and read it before using this file.
- * 
+ *
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -22,21 +22,17 @@
  * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
  * Please see the License for the specific language governing rights and
  * limitations under the License.
- * 
+ *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
-/*
- * @OSF_COPYRIGHT@
- */
 
-#ifndef _MACH_I386_THREAD_STATE_H_
-#define _MACH_I386_THREAD_STATE_H_
+#ifndef _MACH_FOR_TGT_MACHINE_THREAD_STATUS_H_
+#define _MACH_FOR_TGT_MACHINE_THREAD_STATUS_H_
 
-/* Size of maximum exported thread state in words */
-#define I386_THREAD_STATE_MAX	(224)    /* Size of biggest state possible */
+typedef uint32_t mach_msg_type_number_t;
 
-#if defined (__i386__) || defined(__x86_64__)
-#define THREAD_STATE_MAX	I386_THREAD_STATE_MAX
-#endif
+#include "mach-for-target/ppc/thread_status.h"
+#include "mach-for-target/i386/thread_status.h"
+#include "mach-for-target/arm/thread_status.h"
 
-#endif	/* _MACH_I386_THREAD_STATE_H_ */
+#endif /* _MACH_FOR_TGT_MACHINE_THREAD_STATUS_H_ */

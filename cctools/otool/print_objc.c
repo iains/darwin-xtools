@@ -31,7 +31,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "mach-o/loader.h"
-#include "objc/objc-runtime.h"
+//#include "objc/objc-runtime.h"
 #include "stuff/allocate.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
@@ -74,6 +74,46 @@ struct objc_class_t {
     uint32_t cache; 	  /* struct objc_cache * (32-bit pointer) */
     uint32_t protocols;   /* struct objc_protocol_list * (32-bit pointer) */
 };
+
+/* From runtime.h. */
+#define CLS_GETINFO(cls,infomask)        ((cls)->info & (infomask))
+#define CLS_SETINFO(cls,infomask)        ((cls)->info |= (infomask))
+// class is not a metaclass
+#define CLS_CLASS               0x1
+// class is a metaclass
+#define CLS_META                0x2
+// class's +initialize method has completed
+#define CLS_INITIALIZED         0x4
+// class is posing
+#define CLS_POSING              0x8
+// unused
+#define CLS_MAPPED              0x10
+// class and subclasses need cache flush during image loading
+#define CLS_FLUSH_CACHE         0x20
+// method cache should grow when full
+#define CLS_GROW_CACHE          0x40
+// unused
+#define CLS_NEED_BIND           0x80
+// methodLists is array of method lists
+#define CLS_METHOD_ARRAY        0x100
+// the JavaBridge constructs classes with these markers
+#define CLS_JAVA_HYBRID         0x200
+#define CLS_JAVA_CLASS          0x400
+// thread-safe +initialize
+#define CLS_INITIALIZING        0x800
+// bundle unloading
+#define CLS_FROM_BUNDLE         0x1000
+// C++ ivar support
+#define CLS_HAS_CXX_STRUCTORS   0x2000
+// Lazy method list arrays
+#define CLS_NO_METHOD_ARRAY     0x4000
+// +load implementation
+#define CLS_HAS_LOAD_METHOD     0x8000
+// objc_allocateClassPair API
+#define CLS_CONSTRUCTING        0x10000
+// class compiled with bigger class structure
+#define CLS_EXT                 0x20000
+/* end from runtime.h */
 
 struct objc_category_t {
     uint32_t category_name;	/* char * (32-bit pointer) */
