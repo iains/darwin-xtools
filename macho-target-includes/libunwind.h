@@ -35,7 +35,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <mach/mach_types.h>
 #include <Availability.h>
 
 /* error codes */
