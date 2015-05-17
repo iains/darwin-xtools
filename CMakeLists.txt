@@ -58,7 +58,26 @@ else()
   message(STATUS "*Top Level* native build")
 endif()
 
-option(XTOOLS_LTO_SUPPORT "Support LTO in cctools and ld64." OFF)
+set(LTO_PATH /compilers/clang-legacy-trunk-s1g)
+if(EXISTS ${LTO_PATH}/include/llvm-c/lto.h AND
+   EXISTS ${LTO_PATH}/lib/libLTO.dylib)
+  configure_file(
+                ${LTO_PATH}/include/llvm-c/lto.h
+                ${CMAKE_BINARY_DIR}/lto-include/llvm-c/lto.h
+                COPYONLY)
+  configure_file(
+                ${LTO_PATH}/lib/libLTO.dylib
+                ${CMAKE_BINARY_DIR}/lib/libLTO.dylib
+                COPYONLY)
+  include_directories("${CMAKE_BINARY_DIR}/lto-include")
+  link_directories("${CMAKE_BINARY_DIR}/lib")
+  option(XTOOLS_LTO_SUPPORT "Support LTO in cctools and ld64." ON)
+  message(STATUS "*Top Level* WITH LTO")
+else()
+  option(XTOOLS_LTO_SUPPORT "Support LTO in cctools and ld64." OFF)
+  message(STATUS "*Top Level* NO LTO")
+endif()
+
 set(XTOOLS_HOST_IS_64B YES)
 
 SET(CMAKE_C_FLAGS_MINSIZEREL   "-Os")
