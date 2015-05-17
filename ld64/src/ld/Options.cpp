@@ -2437,13 +2437,6 @@ void Options::parse(int argc, const char* argv[])
 					++i;
 				// previously handled by buildSearchPaths()
 			}
-			// The one gnu style option we have to keep compatibility
-			// with gcc. Might as well have the single hyphen one as well.
-			else if ( (strcmp(arg, "--help") == 0)
-					  || (strcmp(arg, "-help") == 0)) {
-				fprintf (stdout, "ld64: For information on command line options please use 'man ld'.\n");
-				exit (0);
-			}
 			else if ( strcmp(arg, "-arch") == 0 ) {
 				parseArch(argv[++i]);
 			}
@@ -4010,6 +4003,8 @@ void Options::parse(int argc, const char* argv[])
 void Options::buildSearchPaths(int argc, const char* argv[])
 {
 	bool addStandardLibraryDirectories = true;
+	bool exitAfterOptionsParsing = false;
+	bool shouldPrintHelp = false;
 	std::vector<const char*> libraryPaths;
 	std::vector<const char*> frameworkPaths;
 	libraryPaths.reserve(10);
@@ -4046,23 +4041,36 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 		}
 		else if ( strcmp(argv[i], "-Z") == 0 )
 			addStandardLibraryDirectories = false;
-		else if ( strcmp(argv[i], "-v") == 0 ) {
+		else if ( strcmp(argv[i], "-v") == 0 ||
+				  strcmp(argv[i], "--version") == 0 ) {
+			bool isVersion = strcmp(argv[i], "--version") == 0;
+			/* GNU-style --version is supposed to output on stdout, -v uses
+			   stderr.  */
+			FILE *out = isVersion ? stdout : stderr;
 			fVerbose = true;
 			extern const char ldVersionString[];
-			fprintf(stderr, "%s", ldVersionString);
-			fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
-			 // if only -v specified, exit cleanly
-			 if ( argc == 2 ) {
+			fprintf(out, "%s", ldVersionString);
+			fprintf(out, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 #ifdef LTO_SUPPORT
 				const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
 					fprintf(stderr, "LTO support using: %s (static support for %d, runtime is %d)\n",
 							ltoVers, lto::static_api_version(), lto::runtime_api_version());
 #endif
-				fprintf(stderr, "TAPI support using: %s\n", tapi::Version::getFullVersionAsString().c_str());
-				exit(0);
+			 fprintf(out, "TAPI support using: %s\n",
+			         tapi::Version::getFullVersionAsString().c_str());
+			 // if only -v specified or --version, exit cleanly
+			 if ( argc == 2  || isVersion ) {
+				exitAfterOptionsParsing = true;
 			}
 		}
+        // --help and --target-help for GCC compatibility.
+		else if (strcmp(argv[i], "--help") == 0 ||
+				 strcmp(argv[i], "-help") == 0 ||
+		         strcmp(argv[i], "--target-help") == 0 ) {
+		    shouldPrintHelp = true;
+			exitAfterOptionsParsing = true;
+        }
 		else if ( strcmp(argv[i], "-syslibroot") == 0 ) {
 			const char* path = argv[++i];
 			if ( path == NULL )
@@ -4091,6 +4099,25 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			fBundleBitcode = true;
 		}
 	}
+    if (exitAfterOptionsParsing){
+        if (shouldPrintHelp) {
+            if (! fVerbose) { // We didn't print the version info yet.
+			    extern const char ldVersionString[];
+			    fprintf(stdout, "%s", ldVersionString);
+			    fprintf(stdout, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
+#ifdef LTO_SUPPORT
+                const char* ltoVers = lto::version();
+				if ( ltoVers != NULL )
+					fprintf(stdout, "LTO support using: %s\n", ltoVers);
+#endif
+            }
+            fprintf(stdout, "TODO: implement options summary (look at man ld).\n");
+#ifdef XTOOLS_BUGURL
+            fprintf(stdout, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+#endif
+        }
+        exit (0);
+    }
 	int standardLibraryPathsStartIndex = libraryPaths.size();
 	int standardFrameworkPathsStartIndex = frameworkPaths.size();
 	if ( addStandardLibraryDirectories ) {

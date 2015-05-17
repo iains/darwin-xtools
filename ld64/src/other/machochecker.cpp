@@ -1722,6 +1722,18 @@ int main(int argc, const char* argv[])
 	for(int i=1; i < argc; ++i) {
 		const char* arg = argv[i];
 		if ( arg[0] == '-' ) {
+			if(strcmp(argv[i], "--version") == 0){
+					/* Implement a gnu-style --version.  */
+				fprintf(stdout, "xtools-%s machocheck %s\nBased on Apple Inc. ld64-%s\n",
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+					exit(0);
+			} else if(strcmp(argv[i], "--help") == 0){
+				fprintf(stdout, "machocheck [-progress] file\n");
+#ifdef XTOOLS_BUGURL
+				fprintf(stdout, "Please report bugs to %s\n", XTOOLS_BUGURL);
+#endif
+				exit(0);
+			}
 			if ( strcmp(arg, "-progress") == 0 ) {
 				progress = true;
 			}
