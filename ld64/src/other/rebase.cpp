@@ -990,7 +990,7 @@ static uint64_t startAddress(cpu_type_t arch, std::vector<fileInfo>& files, uint
 
 static void usage()
 {
-	fprintf(stderr, "rebase [-low_address] [-high_address] [-v] [-arch <arch>] files...\n");
+	fprintf(stdout, "rebase [-low_address] [-high_address] [-v] [-arch <arch>] files...\n");
 }
 
 
@@ -1007,6 +1007,18 @@ int main(int argc, const char* argv[])
 		for(int i=1; i < argc; ++i) {
 			const char* arg = argv[i];
 			if ( arg[0] == '-' ) {
+				if(strcmp(arg, "--version") == 0){
+					/* Implement a gnu-style --version.  */
+					fprintf(stdout, "xtools-%s rebase %s\nBased on Apple Inc. ld64-%s\n",
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+					exit(0);
+				} else if(strcmp(arg, "--help") == 0){
+					usage();
+#ifdef XTOOLS_BUGURL
+					fprintf(stdout, "Please report bugs to %s\n", XTOOLS_BUGURL);
+#endif
+					exit(0);
+				}
 				if ( strcmp(arg, "-v") == 0 ) {
 					verbose = true;
 				}
