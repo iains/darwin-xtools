@@ -1,0 +1,26 @@
+
+#cmakedefine DEFAULT_MACOSX_MIN_VERSION "@DEFAULT_MACOSX_MIN_VERSION@"
+#cmakedefine DEFAULT_IPHONEOS_MIN_VERSION "@DEFAULT_IPHONEOS_MIN_VERSION@"
+
+#cmakedefine01 SUPPORT_ARCH_ppc
+#cmakedefine01 SUPPORT_ARCH_ppc64
+
+#cmakedefine01 SUPPORT_ARCH_i386
+#cmakedefine01 SUPPORT_ARCH_x86_64
+#cmakedefine01 SUPPORT_ARCH_x86_64h
+
+#cmakedefine01 SUPPORT_ARCH_armv4t
+#cmakedefine01 SUPPORT_ARCH_armv6
+#cmakedefine01 SUPPORT_ARCH_armv6m
+#cmakedefine01 SUPPORT_ARCH_armv7
+#cmakedefine01 SUPPORT_ARCH_armv7f
+#cmakedefine01 SUPPORT_ARCH_armv7k
+#cmakedefine01 SUPPORT_ARCH_armv7s
+#cmakedefine01 SUPPORT_ARCH_armv7em
+#cmakedefine01 SUPPORT_ARCH_armv7m
+#cmakedefine01 SUPPORT_ARCH_armv8
+
+#cmakedefine01 SUPPORT_ARCH_arm64
+#cmakedefine01 SUPPORT_ARCH_arm64v8
+
+#define ALL_SUPPORTED_ARCHS "@LD64_SUPPORTED_TARGETS@"
