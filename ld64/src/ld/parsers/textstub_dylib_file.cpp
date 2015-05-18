@@ -308,6 +308,16 @@ ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const ch
 		if (tapi::LinkerInterfaceFile::isSupported(path, fileContent, fileLength))
 			return Parser<arm64>::parse(path, fileContent, fileLength, modTime, ordinal, opts, indirectDylib);
 #endif
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+		if (tapi::LinkerInterfaceFile::isSupported(path, fileContent, fileLength))
+			return Parser<ppc>::parse(path, fileContent, fileLength, modTime, ordinal, opts, indirectDylib);
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+		if (tapi::LinkerInterfaceFile::isSupported(path, fileContent, fileLength))
+			return Parser<ppc64>::parse(path, fileContent, fileLength, modTime, ordinal, opts, indirectDylib);
+#endif
 	}
 	return nullptr;
 }
