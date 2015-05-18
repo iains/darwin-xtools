@@ -35,6 +35,9 @@ set_source_files_properties(dyld_bind_info.c PROPERTIES COMPILE_FLAGS -std=c99)
 
 add_executable(otool ${OTOOL_SRCS} ${COFF_PRINT})
 target_link_libraries(otool stuff)
+if(XTOOLS_NEEDS_STRLIB)
+  target_link_libraries(otool strlib)
+endif()
 set_target_properties(otool PROPERTIES LINKER_LANGUAGE CXX)
 
 # Prefer to build tools without deps on installed dylibs.
