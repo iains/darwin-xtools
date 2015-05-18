@@ -738,6 +738,33 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 		case ld::Fixup::kindStoreBigEndian64:
 			printf(", then store 64-bit big endian");
 			break;
+		case ld::Fixup::kindStorePPCBranch24:
+			printf(", then store as PPC branch24");
+			break;
+		case ld::Fixup::kindStorePPCBranch14:
+			printf(", then store as PPC branch14");
+			break;
+		case ld::Fixup::kindStorePPCPicLow14:
+			printf(", then store as PPC low14 pic");
+			break;
+		case ld::Fixup::kindStorePPCPicLow16:
+			printf(", then store as PPC low14 pic");
+			break;
+		case ld::Fixup::kindStorePPCPicHigh16AddLow:
+			printf(", then store as PPC high16 pic");
+			break;
+		case ld::Fixup::kindStorePPCAbsLow14:
+			printf(", then store as PPC low14 abs");
+			break;
+		case ld::Fixup::kindStorePPCAbsLow16:
+			printf(", then store as PPC low14 abs");
+			break;
+		case ld::Fixup::kindStorePPCAbsHigh16AddLow:
+			printf(", then store as PPC high16 abs");
+			break;
+		case ld::Fixup::kindStorePPCAbsHigh16:
+			printf(", then store as PPC high16 abs, no carry");
+			break;
 		case ld::Fixup::kindStoreX86BranchPCRel8:
 			printf(", then store as x86 8-bit pcrel branch");
 			break;
@@ -851,6 +878,12 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 			break;
 		case ld::Fixup::kindStoreX86DtraceIsEnableSiteClear:
 			printf("x86 dtrace static is-enabled site");
+			break;
+		case ld::Fixup::kindStorePPCDtraceCallSiteNop:
+			printf("ppc dtrace static probe site");
+			break;
+		case ld::Fixup::kindStorePPCDtraceIsEnableSiteClear:
+			printf("ppc dtrace static is-enabled site");
 			break;
 		case ld::Fixup::kindStoreARMDtraceCallSiteNop:
 			printf("ARM dtrace static probe site");
@@ -981,6 +1014,9 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 			break;
 		case ld::Fixup::kindStoreTargetAddressARMLoad12:
 			printf("ARM store 12-bit pc-rel branch to %s", referenceTargetAtomName(ref));
+			break;
+		case ld::Fixup::kindStoreTargetAddressPPCBranch24:
+			printf("PowerPC store 24-bit pc-rel load of %s", referenceTargetAtomName(ref));
 			break;
 		case ld::Fixup::kindSetTargetTLVTemplateOffset:
 		case ld::Fixup::kindSetTargetTLVTemplateOffsetLittleEndian32:

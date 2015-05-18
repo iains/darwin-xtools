@@ -1008,6 +1008,60 @@ public:
 
 
 template <>
+bool Parser<ppc>::validFile(const uint8_t* fileContent, bool executableOrDyliborBundle)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return false;
+	if ( header->cputype() != CPU_TYPE_POWERPC )
+		return false;
+	switch ( header->filetype() ) {
+		case MH_DYLIB:
+		case MH_DYLIB_STUB:
+			return true;
+		case MH_BUNDLE:
+			if ( executableOrDyliborBundle )
+				return true;
+			else
+				throw "can't link with bundle (MH_BUNDLE) only dylibs (MH_DYLIB)";
+		case MH_EXECUTE:
+			if ( executableOrDyliborBundle )
+				return true;
+			else
+				throw "can't link with a main executable";
+		default:
+			return false;
+	}
+}
+
+template <>
+bool Parser<ppc64>::validFile(const uint8_t* fileContent, bool executableOrDyliborBundle)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC_64 )
+		return false;
+	if ( header->cputype() != CPU_TYPE_POWERPC64 )
+		return false;
+	switch ( header->filetype() ) {
+		case MH_DYLIB:
+		case MH_DYLIB_STUB:
+			return true;
+		case MH_BUNDLE:
+			if ( executableOrDyliborBundle )
+				return true;
+			else
+				throw "can't link with bundle (MH_BUNDLE) only dylibs (MH_DYLIB)";
+		case MH_EXECUTE:
+			if ( executableOrDyliborBundle )
+				return true;
+			else
+				throw "can't link with a main executable";
+		default:
+			return false;
+	}
+}
+
+template <>
 bool Parser<x86>::validFile(const uint8_t* fileContent, bool executableOrDyliborBundle)
 {
 	const macho_header<P>* header = (const macho_header<P>*)fileContent;
@@ -1142,7 +1196,41 @@ bool isDylibFile(const uint8_t* fileContent, cpu_type_t* result, cpu_subtype_t* 
 		*subResult = CPU_SUBTYPE_ARM64_ALL;
 		return true;
 	}
+	if ( Parser<ppc>::validFile(fileContent, false) ) {
+		*result = CPU_TYPE_POWERPC;
+		const macho_header<Pointer32<BigEndian> >* header = (const macho_header<Pointer32<BigEndian> >*)fileContent;
+		*subResult = header->cpusubtype();
+		return true;
+	}
+	if ( Parser<ppc64>::validFile(fileContent, false) ) {
+		*result = CPU_TYPE_POWERPC64;
+		const macho_header<Pointer64<BigEndian> >* header = (const macho_header<Pointer64<BigEndian> >*)fileContent;
+		*subResult = header->cpusubtype();
+		return true;
+	}
 	return false;
+}
+
+template <>
+const char* Parser<ppc>::fileKind(const uint8_t* fileContent)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return NULL;
+	if ( header->cputype() != CPU_TYPE_POWERPC )
+		return NULL;
+	return "ppc";
+}
+
+template <>
+const char* Parser<ppc64>::fileKind(const uint8_t* fileContent)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return NULL;
+	if ( header->cputype() != CPU_TYPE_POWERPC64 )
+		return NULL;
+	return "ppc64";
 }
 
 template <>
@@ -1210,6 +1298,12 @@ const char* archName(const uint8_t* fileContent)
 	if ( Parser<arm>::validFile(fileContent, true) ) {
 		return Parser<arm>::fileKind(fileContent);
 	}
+	if ( Parser<ppc>::validFile(fileContent, true) ) {
+		return Parser<ppc>::fileKind(fileContent);
+	}
+	if ( Parser<ppc64>::validFile(fileContent, true) ) {
+		return Parser<ppc64>::fileKind(fileContent);
+	}
 #if SUPPORT_ARCH_arm64
 	if ( Parser<arm64>::validFile(fileContent, false) ) {
 		return Parser<arm64>::fileKind(fileContent);
@@ -1249,6 +1343,18 @@ ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength,
 		case CPU_TYPE_ARM64:
 			if ( Parser<arm64>::validFile(fileContent, bundleLoader) )
 				return Parser<arm64>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			if ( Parser<ppc>::validFile(fileContent, bundleLoader) )
+				return Parser<ppc>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+			if ( Parser<ppc64>::validFile(fileContent, bundleLoader) )
+				return Parser<ppc64>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
 			break;
 #endif
 	}

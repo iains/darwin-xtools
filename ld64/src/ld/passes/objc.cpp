@@ -1199,6 +1199,12 @@ void doPass(const Options& opts, ld::Internal& state)
 							  opts.objCABIVersion2POverride() ? true : false, state.swiftVersion));
 				break;
 #endif
+#if SUPPORT_ARCH_ppc
+			case CPU_TYPE_POWERPC:
+				state.addAtom(*new ObjCImageInfoAtom<ppc>(state.objcObjectConstraint, compaction,
+		                      false, state.swiftVersion));
+				break;
+#endif
 #if SUPPORT_ARCH_arm_any
 			case CPU_TYPE_ARM:
 				state.addAtom(*new ObjCImageInfoAtom<arm>(state.objcObjectConstraint, compaction, 
@@ -1209,6 +1215,12 @@ void doPass(const Options& opts, ld::Internal& state)
 			case CPU_TYPE_ARM64:
 				state.addAtom(*new ObjCImageInfoAtom<arm64>(state.objcObjectConstraint, compaction, 
 							  true, state.swiftVersion));
+				break;
+#endif
+#if SUPPORT_ARCH_ppc64
+			case CPU_TYPE_POWERPC64:
+				state.addAtom(*new ObjCImageInfoAtom<ppc64>(state.objcObjectConstraint, compaction,
+				              true, state.swiftVersion));
 				break;
 #endif
 			default:
@@ -1238,6 +1250,14 @@ void doPass(const Options& opts, ld::Internal& state)
 #if SUPPORT_ARCH_arm64
 			case CPU_TYPE_ARM64:
 				// disabled until tested
+				break;
+#endif
+#if SUPPORT_ARCH_ppc64
+			case CPU_TYPE_POWERPC64:
+				break;
+#endif
+#if SUPPORT_ARCH_ppc
+			case CPU_TYPE_POWERPC:
 				break;
 #endif
 			default:

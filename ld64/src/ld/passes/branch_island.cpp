@@ -22,8 +22,10 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-
 #include <stdint.h>
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#include <stdio.h>
 #include <math.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -60,6 +62,37 @@ public:
 static bool _s_log = false;
 static ld::Section _s_text_section("__TEXT", "__text", ld::Section::typeCode);
 
+class PPCBranchIslandAtom : public ld::Atom {
+public:
+	PPCBranchIslandAtom(const char* nm, const ld::Atom* target, TargetAndOffset finalTarget)
+				: ld::Atom(_s_text_section, ld::Atom::definitionRegular, ld::Atom::combineNever,
+							ld::Atom::scopeLinkageUnit, ld::Atom::typeBranchIsland,
+							ld::Atom::symbolTableIn, false, false, false, ld::Atom::Alignment(2)),
+				_name(nm),
+				_fixup1(0, ld::Fixup::k1of1, ld::Fixup::kindStoreTargetAddressPPCBranch24, target),
+				_fixup2(0, ld::Fixup::k1of1, ld::Fixup::kindIslandTarget, finalTarget.atom) {
+					if (_s_log) fprintf(stderr, "%s: PPC jump instruction branch island to final target %s\n",
+										target->name(), finalTarget.atom->name());
+				}
+
+	virtual const ld::File*					file() const					{ return NULL; }
+	virtual bool							translationUnitSource(const char** dir, const char**) const
+																			{ return false; }
+	virtual const char*						name() const					{ return _name; }
+	virtual uint64_t						size() const					{ return 4; }
+	virtual uint64_t						objectAddress() const			{ return 0; }
+	virtual void							copyRawContent(uint8_t buffer[]) const {
+		OSWriteBigInt32(buffer, 0, 0x48000000);
+	}
+	virtual void							setScope(Scope)					{ }
+	virtual ld::Fixup::iterator				fixupsBegin() const				{ return (ld::Fixup*)&_fixup1; }
+	virtual ld::Fixup::iterator				fixupsEnd()	const 				{ return &((ld::Fixup*)&_fixup2)[1]; }
+
+private:
+	const char*								_name;
+	ld::Fixup								_fixup1;
+	ld::Fixup								_fixup2;
+};
 
 #if SUPPORT_ARCH_arm64
 
@@ -273,18 +306,27 @@ private:
 static ld::Atom* makeBranchIsland(const Options& opts, ld::Fixup::Kind kind, int islandRegion, const ld::Atom* nextTarget, 
 									TargetAndOffset finalTarget, const ld::Section& inSect, bool crossSectionBranch)
 {
-	char* name;
+	char *name = NULL;
+	const char *aname;
+	if (finalTarget.atom->name() == NULL || finalTarget.atom->name()[0] == 0)
+	  aname = "anon";
+	else
+	  aname = finalTarget.atom->name();
 	if ( finalTarget.offset == 0 ) {
 		if ( islandRegion == 0 )
-			asprintf(&name, "%s.island", finalTarget.atom->name());
+			asprintf(&name, "%s.island", aname);
 		else
-			asprintf(&name, "%s.island.%d", finalTarget.atom->name(), islandRegion+1);
+			asprintf(&name, "%s.island.%d", aname, islandRegion);
 	}
 	else {
-		asprintf(&name, "%s_plus_%d.island.%d", finalTarget.atom->name(), finalTarget.offset, islandRegion);
+		asprintf(&name, "%s_plus_%d.island.%d", aname, finalTarget.offset, islandRegion);
 	}
 
 	switch ( kind ) {
+		case ld::Fixup::kindStorePPCBranch24:
+		case ld::Fixup::kindStoreTargetAddressPPCBranch24:
+			return new PPCBranchIslandAtom(name, nextTarget, finalTarget);
+			break;
 		case ld::Fixup::kindStoreARMBranch24:
 		case ld::Fixup::kindStoreThumbBranch22:
 		case ld::Fixup::kindStoreTargetAddressARMBranch24:
@@ -324,6 +366,10 @@ static ld::Atom* makeBranchIsland(const Options& opts, ld::Fixup::Kind kind, int
 static uint64_t textSizeWhenMightNeedBranchIslands(const Options& opts, bool seenThumbBranch)
 {
 	switch ( opts.architecture() ) {
+		case CPU_TYPE_POWERPC:
+		case CPU_TYPE_POWERPC64:
+			return 32000000;  // PPC can branch +/- 32MB
+			break;
 		case CPU_TYPE_ARM:
 			if ( ! seenThumbBranch )
 				return 32000000;  // ARM can branch +/- 32MB
@@ -346,6 +392,10 @@ static uint64_t textSizeWhenMightNeedBranchIslands(const Options& opts, bool see
 static uint64_t maxDistanceBetweenIslands(const Options& opts, bool seenThumbBranch)
 {
 	switch ( opts.architecture() ) {
+		case CPU_TYPE_POWERPC:
+		case CPU_TYPE_POWERPC64:
+				return 30*1024*1024;	// 2MB of branch islands per 32MB
+			break;
 		case CPU_TYPE_ARM:
 			if ( ! seenThumbBranch )
 				return 30*1024*1024;	// 2MB of branch islands per 32MB
@@ -365,8 +415,8 @@ static uint64_t maxDistanceBetweenIslands(const Options& opts, bool seenThumbBra
 }
 
 
-//
-// PowerPC can do PC relative branches as far as +/-16MB.
+// FIXME: comment stuff is out of date.
+// PowerPC can do PC relative branches as far as +/-32MB.
 // If a branch target is >16MB then we insert one or more
 // "branch islands" between the branch and its target that
 // allows island hopping to the target.
@@ -387,7 +437,6 @@ static uint64_t maxDistanceBetweenIslands(const Options& opts, bool seenThumbBra
 // 14MB which means the region would have to be 2MB (512,000 islands)
 // before any branches could be pushed out of range.
 //
-
 
 static void makeIslandsForSection(const Options& opts, ld::Internal& state, ld::Internal::FinalSection* textSection)
 {
@@ -424,10 +473,12 @@ static void makeIslandsForSection(const Options& opts, ld::Internal& state, ld::
 					// fall into arm branch case
 				case ld::Fixup::kindStoreARMBranch24:
 				case ld::Fixup::kindStoreTargetAddressARMBranch24:
+				case ld::Fixup::kindStorePPCBranch24:
+				case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 					haveBranch = true;
 					break;
                 default:
-                    break;   
+                    break;
 			}
 			if ( haveBranch && (target->contentType() != ld::Atom::typeStub) ) {
 				// <rdar://problem/14792124> haveCrossSectionBranches only applies to -preload builds
@@ -451,7 +502,8 @@ static void makeIslandsForSection(const Options& opts, ld::Internal& state, ld::
 	uint64_t totalTextSize = offset;
 	if ( (totalTextSize < textSizeWhenMightNeedBranchIslands(opts, hasThumbBranches)) && !haveCrossSectionBranches )
 		return;
-	if (_s_log) fprintf(stderr, "ld: section %s size=%llu, might need branch islands\n", textSection->sectionName(), totalTextSize);
+//if (_s_log)
+fprintf(stderr, "ld: section %s size=%" PRIu64 ", might need branch islands\n", textSection->sectionName(), totalTextSize);
 	
 	// Figure out how many regions of branch islands will be needed, and their locations.
 	// Construct a vector containing the atoms after which branch islands will be inserted,
@@ -528,6 +580,8 @@ static void makeIslandsForSection(const Options& opts, ld::Internal& state, ld::
 				case ld::Fixup::kindAddAddend:
 					addend = fit->u.addend;
 					break;
+				case ld::Fixup::kindStorePPCBranch24:
+				case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 				case ld::Fixup::kindStoreARMBranch24:
 				case ld::Fixup::kindStoreThumbBranch22:
 				case ld::Fixup::kindStoreTargetAddressARMBranch24:
@@ -552,6 +606,7 @@ static void makeIslandsForSection(const Options& opts, ld::Internal& state, ld::
 				if ( target->section().type() == ld::Section::typeStub )
 					dstAddr = totalTextSize;
 				int64_t displacement = dstAddr - srcAddr;
+				// FIXME: Do we really mean to truncate?
 				TargetAndOffset finalTargetAndOffset = { target, (uint32_t)addend };
 				const int64_t kBranchLimit = kBetweenRegions;
 				if ( crossSectionBranch && ((displacement > kBranchLimit) || (displacement < (-kBranchLimit))) ) {
@@ -707,9 +762,11 @@ void doPass(const Options& opts, ld::Internal& state)
 	// Allow user to disable branch island generation
 	if ( !opts.allowBranchIslands() )
 		return;
-	
-	// only ARM[64] needs branch islands
+
+	// only ARM[64] and PPC need branch islands
 	switch ( opts.architecture() ) {
+		case CPU_TYPE_POWERPC:
+		case CPU_TYPE_POWERPC64:
 		case CPU_TYPE_ARM:
 #if SUPPORT_ARCH_arm64
 		case CPU_TYPE_ARM64:
@@ -718,11 +775,11 @@ void doPass(const Options& opts, ld::Internal& state)
 		default:
 			return;
 	}
-	
+
 	if ( opts.outputKind() == Options::kPreload ) {
 		buildAddressMap(opts, state);
 	}
-	
+
 	// scan sections and add island to each code section
 	for (std::vector<ld::Internal::FinalSection*>::iterator sit=state.sections.begin(); sit != state.sections.end(); ++sit) {
 		ld::Internal::FinalSection* sect = *sit;
