@@ -174,7 +174,15 @@ private:
 	static compact_unwind_encoding_t createCompactEncodingFromProlog(A& addressSpace, pint_t funcAddr,
 												const Registers_arm&, const typename CFI_Parser<A>::PrologInfo& prolog,
 												char warningBuffer[1024]);
-	
+
+	// ppc64 specific variants
+	static int    lastRestoreReg(const Registers_ppc64&);
+	static bool   isReturnAddressRegister(int regNum, const Registers_ppc64&);
+	static pint_t getCFA(A& addressSpace, const typename CFI_Parser<A>::PrologInfo& prolog, const Registers_ppc64&);
+	static compact_unwind_encoding_t encodeToUseDwarf(const Registers_ppc64&);
+	static compact_unwind_encoding_t createCompactEncodingFromProlog(A& addressSpace, pint_t funcAddr,
+												const Registers_ppc64&, const typename CFI_Parser<A>::PrologInfo& prolog,
+												char warningBuffer[1024]);
 };
 
 
@@ -1782,6 +1790,21 @@ compact_unwind_encoding_t DwarfInstructions<A,R>::createCompactEncodingFromProlo
 }
 
 
+//
+//	ppc64 specific functions
+//
+template <typename A, typename R>
+int DwarfInstructions<A,R>::lastRestoreReg(const Registers_ppc64&)
+{
+	COMPILE_TIME_ASSERT( (int)CFI_Parser<A>::kMaxRegisterNumber > (int)UNW_PPC_SPEFSCR );
+	return UNW_PPC_SPEFSCR;
+}
+
+template <typename A, typename R>
+bool DwarfInstructions<A,R>::isReturnAddressRegister(int regNum, const Registers_ppc64&)
+{
+	return (regNum == UNW_PPC_LR);
+}
 
 //
 // arm64 specific functions
@@ -1843,6 +1866,24 @@ bool DwarfInstructions<A,R>::checkRegisterPair(uint32_t reg, const typename CFI_
 		return true;
 	}
 	return false;
+}
+template <typename A, typename R>
+typename A::pint_t DwarfInstructions<A,R>::getCFA(A& addressSpace, const typename CFI_Parser<A>::PrologInfo& prolog,
+										const Registers_ppc64& registers)
+{
+	if ( prolog.cfaRegister != 0 )
+		return registers.getRegister(prolog.cfaRegister) + prolog.cfaRegisterOffset;
+	else if ( prolog.cfaExpression != 0 )
+		return evaluateExpression(prolog.cfaExpression, addressSpace, registers, 0);
+	else
+		ABORT("getCFA(): unknown location for ppc64 cfa");
+}
+
+
+template <typename A, typename R>
+compact_unwind_encoding_t DwarfInstructions<A,R>::encodeToUseDwarf(const Registers_ppc64&)
+{
+	return UNWIND_X86_MODE_DWARF;
 }
 
 
@@ -1971,6 +2012,14 @@ compact_unwind_encoding_t DwarfInstructions<A,R>::createCompactEncodingFromProlo
 		encoding |= UNWIND_ARM64_FRAME_D14_D15_PAIR;
 
   return encoding;
+}
+template <typename A, typename R>
+compact_unwind_encoding_t DwarfInstructions<A,R>::createCompactEncodingFromProlog(A& addressSpace, pint_t funcAddr,
+												const Registers_ppc64& r, const typename CFI_Parser<A>::PrologInfo& prolog,
+												char warningBuffer[1024])
+{
+	warningBuffer[0] = '\0';
+	return UNWIND_X86_MODE_DWARF;
 }
 
 
