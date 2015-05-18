@@ -468,6 +468,7 @@
 				F9BA8A7E1096150F0097A440 /* stub_x86_classic.hpp */,
 				F989D0391062E6350014B60C /* stub_x86_64.hpp */,
 				F92D9C2710657AAB00FF369B /* stub_x86_64_classic.hpp */,
+				F984963310AB9318009E9878 /* stub_ppc_classic.hpp */,
 			);
 			path = stubs;
 			sourceTree = "<group>";

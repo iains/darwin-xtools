@@ -424,6 +424,16 @@ struct unw_addr_space_ppc : public unw_addr_space
 	OtherAddressSpace<Pointer32<BigEndian> >		oas;
 };
 
+///
+/// unw_addr_space_ppc is the concrete instance that a unw_addr_space_t points to when examining
+/// a 64-bit PowerPC process.
+///
+struct unw_addr_space_ppc64 : public unw_addr_space
+{
+													unw_addr_space_ppc(task_t task) : oas(task) {}
+	OtherAddressSpace<Pointer64<BigEndian> >		oas;
+};
+
 
 #endif // UNW_REMOTE
 

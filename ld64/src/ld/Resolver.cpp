@@ -306,6 +306,26 @@ void Resolver::buildAtomList()
 	//_symbolTable.printStatistics();
 }
 
+unsigned int Resolver::ppcSubTypeIndex(uint32_t subtype)
+{
+	switch ( subtype ) {
+		case CPU_SUBTYPE_POWERPC_ALL:
+			return 0;
+		case CPU_SUBTYPE_POWERPC_750:
+			// G3
+			return 1;
+		case CPU_SUBTYPE_POWERPC_7400:
+		case CPU_SUBTYPE_POWERPC_7450:
+			// G4
+			return 2;
+		case CPU_SUBTYPE_POWERPC_970:
+			// G5 can run everything
+			return 3;
+		default:
+			throw "Unhandled PPC cpu subtype!";
+			break;
+	}
+}
 
 void Resolver::doLinkerOption(const std::vector<const char*>& linkerOption, const char* fileName)
 {
@@ -491,6 +511,29 @@ void Resolver::doFile(const ld::File& file)
 		// update cpu-sub-type
 		cpu_subtype_t nextObjectSubType = file.cpuSubType();
 		switch ( _options.architecture() ) {
+			case CPU_TYPE_POWERPC:
+				// no checking when -force_cpusubtype_ALL is used
+				if ( _options.forceCpuSubtypeAll() )
+					return;
+				if ( _options.preferSubArchitecture() ) {
+					// warn if some .o file is not compatible with desired output sub-type
+					if ( _options.subArchitecture() != nextObjectSubType ) {
+						if ( ppcSubTypeIndex(nextObjectSubType) > ppcSubTypeIndex(_options.subArchitecture()) ) {
+							if ( !_inputFiles.inferredArch() )
+								warning("cpu-sub-type of %s is not compatible with command line cpu-sub-type", file.path());
+							_internal.cpuSubType = nextObjectSubType;
+						}
+					}
+				}
+				else {
+					// command line to linker just had -arch ppc
+					// figure out final sub-type based on sub-type of all .o files
+					if ( ppcSubTypeIndex(nextObjectSubType) > ppcSubTypeIndex(_internal.cpuSubType) ) {
+						_internal.cpuSubType = nextObjectSubType;
+					}
+				}
+				break;
+
 			case CPU_TYPE_ARM:
 				if ( _options.subArchitecture() != nextObjectSubType ) {
 					if ( (_options.subArchitecture() == CPU_SUBTYPE_ARM_ALL) && _options.forceCpuSubtypeAll() ) {
@@ -510,6 +553,9 @@ void Resolver::doFile(const ld::File& file)
 				}
 				break;
 			
+			case CPU_TYPE_POWERPC64:
+				break;
+
 			case CPU_TYPE_I386:
 				_internal.cpuSubType = CPU_SUBTYPE_I386_ALL;
 				break;
@@ -773,6 +819,8 @@ bool Resolver::isDtraceProbe(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreARM64DtraceIsEnableSiteClear:
 		case ld::Fixup::kindStoreThumbDtraceCallSiteNop:
 		case ld::Fixup::kindStoreThumbDtraceIsEnableSiteClear:
+		case ld::Fixup::kindStorePPCDtraceCallSiteNop:
+		case ld::Fixup::kindStorePPCDtraceIsEnableSiteClear:
 		case ld::Fixup::kindDtraceExtra:
 			return true;
 		default: 
@@ -1005,6 +1053,7 @@ void Resolver::markLive(const ld::Atom& atom, WhyLiveBackChain* previous)
 			case ld::Fixup::kindStoreTargetAddressARM64TLVPLoadPage21:
 			case ld::Fixup::kindStoreTargetAddressARM64TLVPLoadNowLeaPage21:
 #endif
+			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 				if ( fit->binding == ld::Fixup::bindingByContentBound ) {
 					// normally this was done in convertReferencesToIndirect()
 					// but a archive loaded .o file may have a forward reference

@@ -1938,6 +1938,8 @@ const char*	DyldInfoPrinter<ppc>::relocTypeName(uint8_t r_type)
 {
 	if ( r_type == GENERIC_RELOC_VANILLA )
 		return "pointer";
+	else if ( r_type == PPC_RELOC_PB_LA_PTR )
+		return "pb pointer";
 	else
 		return "??";
 }

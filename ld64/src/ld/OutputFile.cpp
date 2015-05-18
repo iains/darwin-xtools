@@ -727,6 +727,38 @@ void OutputFile::rangeCheckThumbBranch22(int64_t displacement, ld::Internal& sta
 	}
 }
 
+bool OutputFile::checkPPCBranch24Displacement(int64_t displacement)
+{
+	const int64_t lim = 0x01FFFFFC;
+	return ( (displacement < lim) && (displacement > (-lim)) );
+}
+
+void OutputFile::rangeCheckPPCBranch24(int64_t displacement, ld::Internal& state, const ld::Atom* atom, const ld::Fixup* fixup)
+{
+  if (checkPPCBranch24Displacement (displacement))
+    return;
+
+  printSectionLayout(state);
+
+  const ld::Atom* target;
+  throwf("bl PPC branch out of range (%" PRId64 " max is +/-32MB): from %s (0x%08" PRIX64 ") to %s (0x%08" PRIX64 ")",
+         displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),
+         addressOf(state, fixup, &target));
+}
+
+void OutputFile::rangeCheckPPCBranch14(int64_t displacement, ld::Internal& state, const ld::Atom* atom, const ld::Fixup* fixup)
+{
+	const int64_t b_sixtyFourKiloLimit = 0x0000FFFF;
+	if ( (displacement > b_sixtyFourKiloLimit) || (displacement < (-b_sixtyFourKiloLimit)) ) {
+		// show layout of final image
+		printSectionLayout(state);
+
+		const ld::Atom* target;
+		throwf("bcc PPC branch out of range (%lld max is +/-64KB): from %s (0x%08llX) to %s (0x%08llX)",
+				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),
+				addressOf(state, fixup, &target));
+	}
+}
 
 void OutputFile::rangeCheckARM64Branch26(int64_t displacement, ld::Internal& state, const ld::Atom* atom, const ld::Fixup* fixup)
 {
@@ -1307,6 +1339,7 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 	int64_t delta;
 	uint32_t instruction;
 	uint32_t newInstruction;
+	uint16_t instructionLowHalf;
 	bool is_bl;
 	bool is_blx;
 	bool is_b;
@@ -1502,6 +1535,70 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 				}
 				set32LE(fixUpLocation, newInstruction);
 				break;
+			case ld::Fixup::kindStorePPCBranch14:
+				delta = accumulator - (atom->finalAddress() + fit->offsetInAtom);
+				rangeCheckPPCBranch14(delta, state, atom, fit);
+				instruction = get32BE(fixUpLocation);
+				newInstruction = (instruction & 0xFFFF0003) | ((uint32_t)delta & 0x0000FFFC);
+				set32BE(fixUpLocation, newInstruction);
+				break;
+			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
+				accumulator = addressOf(state, fit, &toTarget);
+				if ( toTarget->contentType() == ld::Atom::typeBranchIsland ) {
+					// Branching to island.  If ultimate target is in range, branch there directly.
+					for (ld::Fixup::iterator islandfit = toTarget->fixupsBegin(), end=toTarget->fixupsEnd();
+					     islandfit != end; ++islandfit) {
+						if ( islandfit->kind == ld::Fixup::kindIslandTarget ) {
+							const ld::Atom* islandTarget = NULL;
+							uint64_t islandTargetAddress = addressOf(state, islandfit, &islandTarget);
+							delta = islandTargetAddress - (atom->finalAddress() + fit->offsetInAtom + 4);
+							if ( checkPPCBranch24Displacement(delta) ) {
+								toTarget = islandTarget;
+								accumulator = islandTargetAddress;
+								thumbTarget = targetIsThumb(state, islandfit);
+							}
+							break;
+						}
+					}
+				}
+				if ( fit->contentDetlaToAddendOnly )
+					accumulator = 0;
+				// fall into kindStorePPCBranch24 case
+			case ld::Fixup::kindStorePPCBranch24:
+				delta = accumulator - (atom->finalAddress() + fit->offsetInAtom);
+				rangeCheckPPCBranch24(delta, state, atom, fit);
+				instruction = get32BE(fixUpLocation);
+				newInstruction = (instruction & 0xFC000003) | ((uint32_t)delta & 0x03FFFFFC);
+				set32BE(fixUpLocation, newInstruction);
+				break;
+			case ld::Fixup::kindStorePPCPicLow14:
+			case ld::Fixup::kindStorePPCAbsLow14:
+				instruction = get32BE(fixUpLocation);
+				if ( (accumulator & 0x3) != 0 )
+					throwf("bad offset (0x%08X) for lo14 instruction pic-base fix-up", (uint32_t)accumulator);
+				newInstruction = (instruction & 0xFFFF0003) | (accumulator & 0xFFFC);
+				set32BE(fixUpLocation, newInstruction);
+				break;
+			case ld::Fixup::kindStorePPCAbsLow16:
+			case ld::Fixup::kindStorePPCPicLow16:
+				instruction = get32BE(fixUpLocation);
+				newInstruction = (instruction & 0xFFFF0000) | (accumulator & 0xFFFF);
+				set32BE(fixUpLocation, newInstruction);
+				break;
+			case ld::Fixup::kindStorePPCAbsHigh16AddLow:
+			case ld::Fixup::kindStorePPCPicHigh16AddLow:
+				instructionLowHalf = (accumulator >> 16) & 0xFFFF;
+				if ( accumulator & 0x00008000 )
+					++instructionLowHalf;
+				instruction = get32BE(fixUpLocation);
+				newInstruction = (instruction & 0xFFFF0000) | instructionLowHalf;
+				set32BE(fixUpLocation, newInstruction);
+				break;
+			case ld::Fixup::kindStorePPCAbsHigh16:
+				instruction = get32BE(fixUpLocation);
+				newInstruction = (instruction & 0xFFFF0000) | ((accumulator >> 16) & 0xFFFF);
+				set32BE(fixUpLocation, newInstruction);
+				break;
 			case ld::Fixup::kindDtraceExtra:
 				break;
 			case ld::Fixup::kindStoreX86DtraceCallSiteNop:
@@ -1522,6 +1619,18 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 					fixUpLocation[1] = 0x90;		// 1-byte nop
 					fixUpLocation[2] = 0x90;		// 1-byte nop
 					fixUpLocation[3] = 0x90;		// 1-byte nop
+				}
+				break;
+			case ld::Fixup::kindStorePPCDtraceCallSiteNop:
+				if ( _options.outputKind() != Options::kObjectFile ) {
+					// change call site to a NOP
+					set32BE(fixUpLocation, 0x60000000);
+				}
+				break;
+			case ld::Fixup::kindStorePPCDtraceIsEnableSiteClear:
+				if ( _options.outputKind() != Options::kObjectFile ) {
+					// change call site to a li r3,0
+					set32BE(fixUpLocation, 0x38600000);
 				}
 				break;
 			case ld::Fixup::kindStoreARMDtraceCallSiteNop:
@@ -2499,12 +2608,16 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 		}
 	}
 #endif // SUPPORT_ARCH_arm64
-
 }
 
 void OutputFile::copyNoOps(uint8_t* from, uint8_t* to, bool thumb)
 {
 	switch ( _options.architecture() ) {
+		case CPU_TYPE_POWERPC:
+		case CPU_TYPE_POWERPC64:
+			for (uint8_t* p=from; p < to; p += 4)
+				OSWriteBigInt32((uint32_t*)p, 0, 0x60000000);
+			break;
 		case CPU_TYPE_I386:
 		case CPU_TYPE_X86_64:
 			for (uint8_t* p=from; p < to; ++p)
@@ -3156,6 +3269,66 @@ void OutputFile::addLinkEdit(ld::Internal& state)
 		return addPreloadLinkEdit(state);
 	
 	switch ( _options.architecture() ) {
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			if ( _hasSectionRelocations ) {
+				_sectionsRelocationsAtom = new SectionRelocationsAtom<ppc>(_options, state, *this);
+				sectionRelocationsSection = state.addAtom(*_sectionsRelocationsAtom);
+			}
+			if ( _hasDyldInfo ) {
+				_rebasingInfoAtom = new RebaseInfoAtom<ppc>(_options, state, *this);
+				rebaseSection = state.addAtom(*_rebasingInfoAtom);
+
+				_bindingInfoAtom = new BindingInfoAtom<ppc>(_options, state, *this);
+				bindingSection = state.addAtom(*_bindingInfoAtom);
+
+				_weakBindingInfoAtom = new WeakBindingInfoAtom<ppc>(_options, state, *this);
+				weakBindingSection = state.addAtom(*_weakBindingInfoAtom);
+
+				_lazyBindingInfoAtom = new LazyBindingInfoAtom<ppc>(_options, state, *this);
+				lazyBindingSection = state.addAtom(*_lazyBindingInfoAtom);
+
+				_exportInfoAtom = new ExportInfoAtom<ppc>(_options, state, *this);
+				exportSection = state.addAtom(*_exportInfoAtom);
+			}
+			if ( _hasLocalRelocations ) {
+				_localRelocsAtom = new LocalRelocationsAtom<ppc>(_options, state, *this);
+				localRelocationsSection = state.addAtom(*_localRelocsAtom);
+			}
+			if ( _hasSplitSegInfo ) {
+				_splitSegInfoAtom = new SplitSegInfoAtom<ppc>(_options, state, *this);
+				splitSegInfoSection = state.addAtom(*_splitSegInfoAtom);
+			}
+			// FIXME: The next three are entered for compatibility, but unless dyld is
+			// updated are probably useless.
+			if ( _hasFunctionStartsInfo ) {
+				_functionStartsAtom = new FunctionStartsAtom<ppc>(_options, state, *this);
+				functionStartsSection = state.addAtom(*_functionStartsAtom);
+			}
+			if ( _hasDataInCodeInfo ) {
+				_dataInCodeAtom = new DataInCodeAtom<ppc>(_options, state, *this);
+				dataInCodeSection = state.addAtom(*_dataInCodeAtom);
+			}
+			if ( _hasOptimizationHints ) {
+				_optimizationHintsAtom = new OptimizationHintsAtom<ppc>(_options, state, *this);
+				optimizationHintsSection = state.addAtom(*_optimizationHintsAtom);
+			}
+			if ( _hasSymbolTable ) {
+				_symbolTableAtom = new SymbolTableAtom<ppc>(_options, state, *this);
+				symbolTableSection = state.addAtom(*_symbolTableAtom);
+			}
+			if ( _hasExternalRelocations ) {
+				_externalRelocsAtom = new ExternalRelocationsAtom<ppc>(_options, state, *this);
+				externalRelocationsSection = state.addAtom(*_externalRelocsAtom);
+			}
+			if ( _hasSymbolTable ) {
+				_indirectSymbolTableAtom = new IndirectSymbolTableAtom<ppc>(_options, state, *this);
+				indirectSymbolTableSection = state.addAtom(*_indirectSymbolTableAtom);
+				_stringPoolAtom = new StringPoolAtom(_options, state, *this, 4);
+				stringPoolSection = state.addAtom(*_stringPoolAtom);
+			}
+			break;
+#endif
 #if SUPPORT_ARCH_i386
 		case CPU_TYPE_I386:
 			if ( _hasSectionRelocations ) {
@@ -3394,6 +3567,66 @@ void OutputFile::addLinkEdit(ld::Internal& state)
 			}
 			break;
 #endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+			if ( _hasSectionRelocations ) {
+				_sectionsRelocationsAtom = new SectionRelocationsAtom<ppc64>(_options, state, *this);
+				sectionRelocationsSection = state.addAtom(*_sectionsRelocationsAtom);
+			}
+			if ( _hasDyldInfo ) {
+				_rebasingInfoAtom = new RebaseInfoAtom<ppc64>(_options, state, *this);
+				rebaseSection = state.addAtom(*_rebasingInfoAtom);
+
+				_bindingInfoAtom = new BindingInfoAtom<ppc64>(_options, state, *this);
+				bindingSection = state.addAtom(*_bindingInfoAtom);
+
+				_weakBindingInfoAtom = new WeakBindingInfoAtom<ppc64>(_options, state, *this);
+				weakBindingSection = state.addAtom(*_weakBindingInfoAtom);
+
+				_lazyBindingInfoAtom = new LazyBindingInfoAtom<ppc64>(_options, state, *this);
+				lazyBindingSection = state.addAtom(*_lazyBindingInfoAtom);
+
+				_exportInfoAtom = new ExportInfoAtom<ppc64>(_options, state, *this);
+				exportSection = state.addAtom(*_exportInfoAtom);
+			}
+			if ( _hasLocalRelocations ) {
+				_localRelocsAtom = new LocalRelocationsAtom<ppc64>(_options, state, *this);
+				localRelocationsSection = state.addAtom(*_localRelocsAtom);
+			}
+			if  ( _hasSplitSegInfo ) {
+				_splitSegInfoAtom = new SplitSegInfoAtom<ppc64>(_options, state, *this);
+				splitSegInfoSection = state.addAtom(*_splitSegInfoAtom);
+			}
+			// FIXME: The next three are entered for compatibility, but unless dyld is
+			// updated are probably useless.
+			if ( _hasFunctionStartsInfo ) {
+				_functionStartsAtom = new FunctionStartsAtom<ppc64>(_options, state, *this);
+				functionStartsSection = state.addAtom(*_functionStartsAtom);
+			}
+			if ( _hasDataInCodeInfo ) {
+				_dataInCodeAtom = new DataInCodeAtom<ppc64>(_options, state, *this);
+				dataInCodeSection = state.addAtom(*_dataInCodeAtom);
+			}
+			if ( _hasOptimizationHints ) {
+				_optimizationHintsAtom = new OptimizationHintsAtom<ppc64>(_options, state, *this);
+				optimizationHintsSection = state.addAtom(*_optimizationHintsAtom);
+			}
+			if ( _hasSymbolTable ) {
+				_symbolTableAtom = new SymbolTableAtom<ppc64>(_options, state, *this);
+				symbolTableSection = state.addAtom(*_symbolTableAtom);
+			}
+			if ( _hasExternalRelocations ) {
+				_externalRelocsAtom = new ExternalRelocationsAtom<ppc64>(_options, state, *this);
+				externalRelocationsSection = state.addAtom(*_externalRelocsAtom);
+			}
+			if ( _hasSymbolTable ) {
+				_indirectSymbolTableAtom = new IndirectSymbolTableAtom<ppc64>(_options, state, *this);
+				indirectSymbolTableSection = state.addAtom(*_indirectSymbolTableAtom);
+				_stringPoolAtom = new StringPoolAtom(_options, state, *this, 8);
+				stringPoolSection = state.addAtom(*_stringPoolAtom);
+			}
+			break;
+#endif
 		default:
 			throw "unknown architecture";
 	}
@@ -3423,6 +3656,18 @@ void OutputFile::addLoadCommands(ld::Internal& state)
 #if SUPPORT_ARCH_i386
 		case CPU_TYPE_I386:
 			_headersAndLoadCommandAtom = new HeaderAndLoadCommandsAtom<x86>(_options, state, *this);
+			headerAndLoadCommandsSection = state.addAtom(*_headersAndLoadCommandAtom);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			_headersAndLoadCommandAtom = new HeaderAndLoadCommandsAtom<ppc>(_options, state, *this);
+			headerAndLoadCommandsSection = state.addAtom(*_headersAndLoadCommandAtom);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+			_headersAndLoadCommandAtom = new HeaderAndLoadCommandsAtom<ppc64>(_options, state, *this);
 			headerAndLoadCommandsSection = state.addAtom(*_headersAndLoadCommandAtom);
 			break;
 #endif
@@ -3585,6 +3830,11 @@ bool OutputFile::isPcRelStore(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreARMBranch24:
 		case ld::Fixup::kindStoreThumbBranch22:
 		case ld::Fixup::kindStoreARMLoad12:
+		case ld::Fixup::kindStorePPCBranch24:
+		case ld::Fixup::kindStorePPCBranch14:
+		case ld::Fixup::kindStorePPCPicLow14:
+		case ld::Fixup::kindStorePPCPicLow16:
+		case ld::Fixup::kindStorePPCPicHigh16AddLow:
 		case ld::Fixup::kindStoreTargetAddressX86PCRel32:
 		case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoad:
 		case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoadNowLEA:
@@ -3608,6 +3858,7 @@ bool OutputFile::isPcRelStore(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLeaPage21:
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLeaPageOff12:
 #endif
+		case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 			return true;
 		case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 #if SUPPORT_ARCH_arm64
@@ -3671,6 +3922,7 @@ bool OutputFile::setsTarget(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLeaPage21:
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLeaPageOff12:
 #endif
+		case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 			return true;
 		case ld::Fixup::kindStoreX86DtraceCallSiteNop:
 		case ld::Fixup::kindStoreX86DtraceIsEnableSiteClear:
@@ -3680,6 +3932,8 @@ bool OutputFile::setsTarget(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreARM64DtraceIsEnableSiteClear:
 		case ld::Fixup::kindStoreThumbDtraceCallSiteNop:
 		case ld::Fixup::kindStoreThumbDtraceIsEnableSiteClear:
+		case ld::Fixup::kindStorePPCDtraceCallSiteNop:
+		case ld::Fixup::kindStorePPCDtraceIsEnableSiteClear:
 			return (_options.outputKind() == Options::kObjectFile);
 		default:
 			break;
@@ -4297,6 +4551,25 @@ void OutputFile::addClassicRelocs(ld::Internal& state, ld::Internal::FinalSectio
 				sect->hasLocalRelocs = true;
 			}
 			break;
+		case ld::Fixup::kindStorePPCAbsLow14:
+		case ld::Fixup::kindStorePPCAbsLow16:
+		case ld::Fixup::kindStorePPCAbsHigh16AddLow:
+		case ld::Fixup::kindStorePPCAbsHigh16:
+			{
+				assert(target != NULL);
+				if ( target->definition() == ld::Atom::definitionProxy )
+					throwf("half word text relocs not supported in %s", atom->name());
+				if ( _options.outputSlidable() ) {
+					if ( inReadOnlySeg )
+						noteTextReloc(atom, target);
+					uint32_t machoSectionIndex = (target->definition() == ld::Atom::definitionAbsolute)
+													? R_ABS : target->machoSection();
+					_localRelocsAtom->addTextReloc(relocAddress, fixupWithTarget->kind,
+													target->finalAddress(), machoSectionIndex);
+					sect->hasLocalRelocs = true;
+				}
+			}
+			break;
 		case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 #if SUPPORT_ARCH_arm64
 		case ld::Fixup::kindStoreTargetAddressARM64Branch26:
@@ -4517,6 +4790,7 @@ void OutputFile::makeSplitSegInfo(ld::Internal& state)
 					case ld::Fixup::kindStoreX86PCRel32GOT:
 					case ld::Fixup::kindStoreX86PCRel32TLVLoad:
 					case ld::Fixup::kindStoreX86PCRel32TLVLoadNowLEA:
+					case ld::Fixup::kindStorePPCPicHigh16AddLow:
 					case ld::Fixup::kindStoreTargetAddressX86PCRel32:
 					case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoad:
 					case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoadNowLEA:

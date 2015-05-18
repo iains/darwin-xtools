@@ -30,6 +30,7 @@
 #include <mach-o/fat.h>
 #include <mach-o/stab.h>
 #include <mach-o/reloc.h>
+#include <mach-o/ppc/reloc.h>
 #include <mach-o/x86_64/reloc.h>
 #include <mach-o/compact_unwind_encoding.h>
 #include <mach/machine.h>
@@ -533,6 +534,16 @@ static const ArchInfo archInfoArray[] = {
 #if SUPPORT_ARCH_i386
 	{ "i386",   CPU_TYPE_I386,   CPU_SUBTYPE_I386_ALL,   "i386-",    "", false, false },
 #endif
+#if SUPPORT_ARCH_ppc64
+	{ "ppc64",  CPU_TYPE_POWERPC64, CPU_SUBTYPE_POWERPC_ALL, "powerpc64-",   "ppc64-", false, false },
+#endif
+#if SUPPORT_ARCH_ppc
+	{ "ppc750",  CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_750, "powerpc-",  "ppc-", true, false },
+	{ "ppc7400", CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_7400, "powerpc-", "ppc-", true, false },
+	{ "ppc7450", CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_7450, "powerpc-", "ppc-", true, false },
+	{ "ppc970",  CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970,  "powerpc-", "ppc-", true, false },
+	{ "ppc",     CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL,  "powerpc-", "ppc-", false, false },
+#endif
 #if SUPPORT_ARCH_armv4t
 	{ "armv4t", CPU_TYPE_ARM,    CPU_SUBTYPE_ARM_V4T,    "armv4t-",  "", true,  false },
 	#define SUPPORT_ARCH_arm_any 1
@@ -586,7 +597,6 @@ static const ArchInfo archInfoArray[] = {
 	{ NULL, 0, 0, NULL, NULL, false, false }
 };
 
- 
 // weird, but this include must wait until after SUPPORT_ARCH_arm_any is set up
 #if SUPPORT_ARCH_arm_any
 #include <mach-o/arm/reloc.h>

@@ -187,6 +187,7 @@ protected:
 								_beginAtoms(NULL), _endAtoms(NULL), _hasAliases(false) { }
 
 
+	bool							addRelocFixup_powerpc(class Parser<A>& parser,const macho_relocation_info<typename A::P>* reloc);
 	Atom<A>*						findContentAtomByAddress(pint_t addr, class Atom<A>* start, class Atom<A>* end);
 	uint32_t						x86_64PcRelOffset(uint8_t r_type);
 	void							addLOH(class Parser<A>& parser, int kind, int count, const uint64_t addrs[]);
@@ -1288,6 +1289,31 @@ Parser<A>::Parser(const uint8_t* fileContent, uint64_t fileLength, const char* p
 {
 }
 
+template <>
+bool Parser<ppc>::validFile(const uint8_t* fileContent, bool, cpu_subtype_t)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return false;
+	if ( header->cputype() != CPU_TYPE_POWERPC )
+		return false;
+	if ( header->filetype() != MH_OBJECT )
+		return false;
+	return true;
+}
+
+template <>
+bool Parser<ppc64>::validFile(const uint8_t* fileContent, bool, cpu_subtype_t)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC_64 )
+		return false;
+	if ( header->cputype() != CPU_TYPE_POWERPC64 )
+		return false;
+	if ( header->filetype() != MH_OBJECT )
+		return false;
+	return true;
+}
 
 template <>
 bool Parser<x86>::validFile(const uint8_t* fileContent, bool, cpu_subtype_t)
@@ -1350,6 +1376,39 @@ bool Parser<arm64>::validFile(const uint8_t* fileContent, bool subtypeMustMatch,
 	return true;
 }
 
+template <>
+const char* Parser<ppc>::fileKind(const uint8_t* fileContent)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return NULL;
+	if ( header->cputype() != CPU_TYPE_POWERPC )
+		return NULL;
+	switch ( header->cpusubtype() ) {
+		case CPU_SUBTYPE_POWERPC_750:
+			return "ppc750";
+		case CPU_SUBTYPE_POWERPC_7400:
+			return "ppc7400";
+		case CPU_SUBTYPE_POWERPC_7450:
+			return "ppc7450";
+		case CPU_SUBTYPE_POWERPC_970:
+			return "ppc970";
+		case CPU_SUBTYPE_POWERPC_ALL:
+			return "ppc";
+	}
+	return "ppc???";
+}
+
+template <>
+const char* Parser<ppc64>::fileKind(const uint8_t* fileContent)
+{
+	const macho_header<P>* header = (const macho_header<P>*)fileContent;
+	if ( header->magic() != MH_MAGIC )
+		return NULL;
+	if ( header->cputype() != CPU_TYPE_POWERPC64 )
+		return NULL;
+	return "ppc64";
+}
 
 template <>
 const char* Parser<x86>::fileKind(const uint8_t* fileContent)
@@ -1966,6 +2025,8 @@ static void versionToString(uint32_t value, char buffer[32])
 		sprintf(buffer, "%d.%d", value >> 16, (value >> 8) & 0xFF);
 }
 
+template <> uint8_t Parser<ppc>::loadCommandSizeMask()		{ return 0x03; }
+template <> uint8_t Parser<ppc64>::loadCommandSizeMask()	{ return 0x07; }
 template <> uint8_t Parser<x86>::loadCommandSizeMask()		{ return 0x03; }
 template <> uint8_t Parser<x86_64>::loadCommandSizeMask()	{ return 0x07; }
 template <> uint8_t Parser<arm>::loadCommandSizeMask()		{ return 0x03; }
@@ -3048,6 +3109,9 @@ void Parser<A>::addFixups(const SourceLocation& src, ld::Fixup::Kind setKind, co
 				firstKind = ld::Fixup::kindStoreTargetAddressARM64TLVPLoadPageOff12;
 				break;
 #endif
+			case ld::Fixup::kindStorePPCBranch24:
+				firstKind = ld::Fixup::kindStoreTargetAddressPPCBranch24;
+				break;
 			default:
 				combined = false;
 				cl = ld::Fixup::k1of2;
@@ -4363,7 +4427,7 @@ bool CFISection<A>::needsRelocating()
 
 template <>
 void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
-									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[], 
+									struct libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// copy __eh_frame data to buffer
@@ -4425,7 +4489,7 @@ void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[], 
+									struct libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[], 
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// create ObjectAddressSpace object for use by libunwind
@@ -4441,12 +4505,47 @@ void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer,
 		throwf("malformed __eh_frame section: %s", msg);
 }
 
+// need to change libunwind parseCFIs() to work for ppc
+template <>
+void CFISection<ppc>::cfiParse(class Parser<ppc>& parser, uint8_t* buffer,
+									struct libunwind::CFI_Atom_Info<CFISection<ppc>::OAS>::CFI_Atom_Info cfiArray[],
+									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
+{
+	// create ObjectAddressSpace object for use by libunwind
+	OAS oas(*this, (uint8_t*)this->file().fileContent()+this->_machOSection->offset());
 
+	// use libuwind to parse __eh_frame data into array of CFI_Atom_Info
+	const char* msg;
+	msg = libunwind::DwarfInstructions<OAS, libunwind::Registers_ppc>::parseCFIs(
+							oas, this->_machOSection->addr(), this->_machOSection->size(),
+							cuStarts, cuCount, parser.keepDwarfUnwind(), parser.forceDwarfConversion(), parser.neverConvertDwarf(),
+							cfiArray, count, (void*)&parser, warnFunc);
+	if ( msg != NULL )
+		throwf("malformed __eh_frame section: %s", msg);
+}
 
+template <>
+void CFISection<ppc64>::cfiParse(class Parser<ppc64>& parser, uint8_t* buffer,
+									struct libunwind::CFI_Atom_Info<CFISection<ppc64>::OAS>::CFI_Atom_Info cfiArray[],
+									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
+{
+	// FIXME: libunwind does not support ppc64 - is this OK?
+	// create ObjectAddressSpace object for use by libunwind
+	OAS oas(*this, (uint8_t*)this->file().fileContent()+this->_machOSection->offset());
+	
+	// use libuwind to parse __eh_frame data into array of CFI_Atom_Info
+	const char* msg;
+	msg = libunwind::DwarfInstructions<OAS, libunwind::Registers_ppc64>::parseCFIs(
+							oas, this->_machOSection->addr(), this->_machOSection->size(), 
+							cuStarts, cuCount, parser.keepDwarfUnwind(), parser.forceDwarfConversion(), parser.neverConvertDwarf(),
+							cfiArray, count, (void*)&parser, warnFunc);
+	if ( msg != NULL ) 
+		throwf("malformed __eh_frame section: %s", msg);
+}
 
 template <>
 void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[], 
+								struct libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	if ( !parser.armUsesZeroCostExceptions() ) {
@@ -4472,7 +4571,7 @@ void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<arm64>::cfiParse(class Parser<arm64>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm64>::OAS>::CFI_Atom_Info cfiArray[], 
+									struct libunwind::CFI_Atom_Info<CFISection<arm64>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// copy __eh_frame data to buffer
@@ -4572,6 +4671,8 @@ template <> bool CFISection<x86_64>::bigEndian() { return false; }
 template <> bool CFISection<x86>::bigEndian() { return false; }
 template <> bool CFISection<arm>::bigEndian() { return false; }
 template <> bool CFISection<arm64>::bigEndian() { return false; }
+template <> bool CFISection<ppc>::bigEndian() { return true; }
+template <> bool CFISection<ppc64>::bigEndian() { return true; }
 
 
 template <>
@@ -4667,7 +4768,54 @@ void CFISection<arm>::addCiePersonalityFixups(class Parser<arm>& parser, const C
 	}
 }
 
+template <>
+void CFISection<ppc>::addCiePersonalityFixups(class Parser<ppc>& parser, const CFI_Atom_Info* cieInfo)
+{
+	uint8_t personalityEncoding = cieInfo->u.cieInfo.personality.encodingOfTargetAddress;
+	if ( (personalityEncoding == 0x9B) || (personalityEncoding == 0x90) ) {
+		uint32_t offsetInCFI = cieInfo->u.cieInfo.personality.offsetInCFI;
+		uint32_t nlpAddr = cieInfo->u.cieInfo.personality.targetAddress;
+		Atom<ppc>* cieAtom = this->findAtomByAddress(cieInfo->address);
+		Atom<ppc>* nlpAtom = parser.findAtomByAddress(nlpAddr);
+		assert(nlpAtom->contentType() == ld::Atom::typeNonLazyPointer);
+		Parser<ppc>::SourceLocation src(cieAtom, cieInfo->u.cieInfo.personality.offsetInCFI);
 
+		parser.addFixup(src, ld::Fixup::k1of4, ld::Fixup::kindSetTargetAddress, ld::Fixup::bindingByContentBound, nlpAtom);
+		parser.addFixup(src, ld::Fixup::k2of4, ld::Fixup::kindSubtractTargetAddress, cieAtom);
+		parser.addFixup(src, ld::Fixup::k3of4, ld::Fixup::kindSubtractAddend, offsetInCFI);
+		parser.addFixup(src, ld::Fixup::k4of4, ld::Fixup::kindStoreBigEndian32);
+	}
+	else if ( personalityEncoding != 0 ) {
+		throwf("unsupported address encoding (%02X) of personality function in CIE",
+					personalityEncoding);
+	}
+}
+
+template <>
+void CFISection<ppc64>::addCiePersonalityFixups(class Parser<ppc64>& parser, const CFI_Atom_Info* cieInfo)
+{
+	uint8_t personalityEncoding = cieInfo->u.cieInfo.personality.encodingOfTargetAddress;
+	if ( (personalityEncoding == 0x9B) || (personalityEncoding == 0x90) ) {
+		uint32_t offsetInCFI = cieInfo->u.cieInfo.personality.offsetInCFI;
+		uint32_t nlpAddr = cieInfo->u.cieInfo.personality.targetAddress;
+		Atom<ppc64>* cieAtom = this->findAtomByAddress(cieInfo->address);
+		Atom<ppc64>* nlpAtom = parser.findAtomByAddress(nlpAddr);
+		assert(nlpAtom->contentType() == ld::Atom::typeNonLazyPointer);
+		Parser<ppc64>::SourceLocation src(cieAtom, cieInfo->u.cieInfo.personality.offsetInCFI);
+
+		parser.addFixup(src, ld::Fixup::k1of4, ld::Fixup::kindSetTargetAddress, ld::Fixup::bindingByContentBound, nlpAtom);
+		parser.addFixup(src, ld::Fixup::k2of4, ld::Fixup::kindSubtractTargetAddress, cieAtom);
+		parser.addFixup(src, ld::Fixup::k3of4, ld::Fixup::kindSubtractAddend, offsetInCFI);
+//FIXME: this is a bit of a bodge - 0x90 implies abs addr, 0x9b implies 4byte offset.
+		parser.addFixup(src, ld::Fixup::k4of4, ld::Fixup::kindStoreBigEndian32);
+	}
+//	else if ( personalityEncoding != DW_EH_PE_omit ) {
+	else if ( personalityEncoding != 0 ) {
+		throwf("unsupported address encoding (%02X) of personality function in CIE", 
+					personalityEncoding);
+	}
+}
+>>>>>>> ld64 - Restore ppc (127-2 version) plus base ppc64 and libunwind (updated to current branch islands).
 
 template <typename A>
 void CFISection<A>::addCiePersonalityFixups(class Parser<A>& parser, const CFI_Atom_Info* cieInfo)
@@ -5570,6 +5718,17 @@ ld::Fixup::Kind NonLazyPointerSection<arm64>::fixupKind()
 	return ld::Fixup::kindStoreLittleEndian64;
 }
 
+template <>
+ld::Fixup::Kind NonLazyPointerSection<ppc>::fixupKind()
+{
+	return ld::Fixup::kindStoreBigEndian32;
+}
+
+template <>
+ld::Fixup::Kind NonLazyPointerSection<ppc64>::fixupKind()
+{
+	return ld::Fixup::kindStoreBigEndian64;
+}
 
 template <>
 void NonLazyPointerSection<x86_64>::makeFixups(class Parser<x86_64>& parser, const struct Parser<x86_64>::CFI_CU_InfoArrays&)
@@ -6580,6 +6739,406 @@ bool Section<x86>::addRelocFixup(class Parser<x86>& parser, const macho_relocati
 
 
 	
+//
+// ppc and ppc64 both use the same relocations, so process them in one common routine
+//
+template <typename A>
+bool Section<A>::addRelocFixup_powerpc(class Parser<A>& parser,
+										  const macho_relocation_info<typename A::P>* reloc)
+{
+	const macho_section<P>* sect = this->machoSection();
+	bool result = false;
+	uint32_t srcAddr;
+	uint32_t dstAddr;
+	uint32_t* fixUpPtr;
+	int32_t displacement = 0;
+	uint32_t instruction = 0;
+	int16_t lowBits;
+	pint_t contentValue = 0;
+	typename Parser<A>::SourceLocation	src;
+	typename Parser<A>::TargetDesc		target;
+
+	if ( (reloc->r_address() & R_SCATTERED) == 0 ) {
+		srcAddr = sect->addr() + reloc->r_address();
+		src.atom = this->findAtomByAddress(srcAddr);
+		src.offsetInAtom = srcAddr - src.atom->_objAddress;
+		const macho_relocation_info<P>* nextReloc = &reloc[1];
+		fixUpPtr = (uint32_t*)(file().fileContent() + sect->offset() + reloc->r_address());
+		if ( reloc->r_type() != PPC_RELOC_PAIR )
+			instruction = BigEndian::get32(*fixUpPtr);
+		if ( reloc->r_extern() ) {
+			target.atom = NULL;
+			const macho_nlist<P>& targetSymbol = parser.symbolFromIndex(reloc->r_symbolnum());
+			target.name = parser.nameFromSymbol(targetSymbol);
+			target.weakImport = parser.weakImportFromSymbol(targetSymbol);
+		}
+		switch ( reloc->r_type() ) {
+			case PPC_RELOC_BR24:
+				assert((instruction & 0x4C000000) == 0x48000000);
+				displacement = (instruction & 0x03FFFFFC);
+				if ( (displacement & 0x02000000) != 0 )
+					displacement |= 0xFC000000;
+				if ( reloc->r_extern() ) {
+					target.addend = srcAddr + displacement;
+				}
+				else {
+					dstAddr = srcAddr + displacement;
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				// special case "calls" for dtrace
+				if ( (target.name != NULL) && (strncmp(target.name, "___dtrace_probe$", 16) == 0) ) {
+					parser.addFixup(src, ld::Fixup::k1of1,
+															ld::Fixup::kindStorePPCDtraceCallSiteNop, false, target.name);
+					parser.addDtraceExtraInfos(src, &target.name[16]);
+				}
+				else if ( (target.name != NULL) && (strncmp(target.name, "___dtrace_isenabled$", 20) == 0) ) {
+					parser.addFixup(src, ld::Fixup::k1of1,
+															ld::Fixup::kindStorePPCDtraceIsEnableSiteClear, false, target.name);
+					parser.addDtraceExtraInfos(src, &target.name[20]);
+				}
+				else {
+					parser.addFixups(src, ld::Fixup::kindStorePPCBranch24, target);
+				}
+				break;
+			case PPC_RELOC_BR14:
+				displacement = (instruction & 0x0000FFFC);
+				if ( (displacement & 0x00008000) != 0 )
+					displacement |= 0xFFFF0000;
+				if ( reloc->r_extern() ) {
+					target.addend = srcAddr + displacement;
+				}
+				else {
+					dstAddr = srcAddr + displacement;
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				parser.addFixups(src, ld::Fixup::kindStorePPCBranch14, target);
+				break;
+			case PPC_RELOC_PAIR:
+				// skip, processed by a previous look ahead
+				break;
+			case PPC_RELOC_LO16:
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+					throw "PPC_RELOC_LO16 missing following pair";
+				result = true;
+				lowBits = (instruction & 0x0000FFFF);
+				dstAddr = (nextReloc->r_address() << 16) + ((uint32_t)lowBits & 0x0000FFFF);
+				if ( reloc->r_extern() ) {
+					target.addend = dstAddr;
+				}
+				else {
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsLow16, target);
+				break;
+			case PPC_RELOC_LO14:
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+					throw "PPC_RELOC_LO14 missing following pair";
+				result = true;
+				lowBits = (instruction & 0xFFFC);
+				dstAddr = (nextReloc->r_address() << 16) + ((uint32_t)lowBits & 0x0000FFFF);
+				if ( reloc->r_extern() ) {
+					target.addend = dstAddr;
+				}
+				else {
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsLow14, target);
+				break;
+			case PPC_RELOC_HI16:
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+					throw "PPC_RELOC_HI16 missing following pair";
+				result = true;
+				lowBits = (nextReloc->r_address() & 0xFFFF);
+				dstAddr = ((instruction & 0xFFFF) << 16) | (lowBits & 0x0000FFFF);
+				if ( reloc->r_extern() ) {
+					target.addend = dstAddr;
+				}
+				else {
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsHigh16, target);
+				break;
+			case PPC_RELOC_HA16:
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+					throw "PPC_RELOC_HA16 missing following pair";
+				result = true;
+				lowBits = (nextReloc->r_address() & 0x0000FFFF);
+				dstAddr = ((instruction & 0xFFFF) << 16) + (int32_t)lowBits;
+				if ( reloc->r_extern() ) {
+					target.addend = dstAddr;
+				}
+				else {
+					parser.findTargetFromAddressAndSectionNum(dstAddr, reloc->r_symbolnum(), target);
+				}
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsHigh16AddLow, target);
+				break;
+			case PPC_RELOC_VANILLA:
+				contentValue = P::getP(*((pint_t*)fixUpPtr));
+				if ( reloc->r_extern() ) {
+					target.addend = contentValue;
+				}
+				else {
+					parser.findTargetFromAddressAndSectionNum(contentValue, reloc->r_symbolnum(), target);
+				}
+				switch ( reloc->r_length() ) {
+					case 0:
+					case 1:
+						throw "bad r_length in PPC_RELOC_VANILLA";
+					case 2:
+						parser.addFixups(src, ld::Fixup::kindStoreBigEndian32, target);
+						break;
+					case 3:
+						parser.addFixups(src, ld::Fixup::kindStoreBigEndian64, target);
+						break;
+				}
+				break;
+			case PPC_RELOC_JBSR:
+				// this is from -mlong-branch codegen.  We ignore the jump island and make reference to the real target
+				if ( nextReloc->r_type() != PPC_RELOC_PAIR )
+					throw "PPC_RELOC_JBSR missing following pair";
+				if ( !parser._hasLongBranchStubs )
+					warning("object file compiled with -mlong-branch which is no longer needed. "
+							"To remove this warning, recompile without -mlong-branch: %s", parser._path);
+				parser._hasLongBranchStubs = true;
+				result = true;
+				if ( reloc->r_extern() ) {
+					throw "PPC_RELOC_JBSR should not be using an external relocation";
+				}
+				parser.findTargetFromAddressAndSectionNum(nextReloc->r_address(), reloc->r_symbolnum(), target);
+				parser.addFixups(src, ld::Fixup::kindStorePPCBranch24, target);
+				break;
+			default:
+				warning("unknown relocation type %d", reloc->r_type());
+		}
+	}
+	else {
+		const macho_scattered_relocation_info<P>* sreloc = (macho_scattered_relocation_info<P>*)reloc;
+		// file format allows pair to be scattered or not
+		const macho_scattered_relocation_info<P>* nextSReloc = &sreloc[1];
+		const macho_relocation_info<P>* nextReloc = &reloc[1];
+		srcAddr = sect->addr() + sreloc->r_address();
+		dstAddr = sreloc->r_value();
+		fixUpPtr = (uint32_t*)(file().fileContent() + sect->offset() + sreloc->r_address());
+		instruction = BigEndian::get32(*fixUpPtr);
+		src.atom = this->findAtomByAddress(srcAddr);
+		src.offsetInAtom = srcAddr - src.atom->_objAddress;
+		typename Parser<A>::TargetDesc		picBase;
+		bool nextRelocIsPair = false;
+		uint32_t nextRelocAddress = 0;
+		uint32_t nextRelocValue = 0;
+		if ( (nextReloc->r_address() & R_SCATTERED) == 0 ) {
+			if ( nextReloc->r_type() == PPC_RELOC_PAIR ) {
+				nextRelocIsPair = true;
+				nextRelocAddress = nextReloc->r_address();
+				result = true;
+			}
+		}
+		else {
+			if ( nextSReloc->r_type() == PPC_RELOC_PAIR ) {
+				nextRelocIsPair = true;
+				nextRelocAddress = nextSReloc->r_address();
+				nextRelocValue = nextSReloc->r_value();
+				result = true;
+			}
+		}
+		switch ( sreloc->r_type() ) {
+			case PPC_RELOC_VANILLA:
+				// with a scattered relocation we get both the target (sreloc->r_value()) and the target+offset (*fixUpPtr)
+				target.atom = parser.findAtomByAddress(sreloc->r_value());
+				switch ( sreloc->r_length() ) {
+					case 0:
+					case 1:
+						throw "unsuppored r_length < 2 for scattered PPC_RELOC_VANILLA";
+					case 2:
+						contentValue = BigEndian::get32(*(uint32_t*)fixUpPtr);
+						target.addend = contentValue - target.atom->_objAddress;
+						parser.addFixups(src, ld::Fixup::kindStoreBigEndian32, target);
+						break;
+					case 3:
+						contentValue = BigEndian::get64(*(uint64_t*)fixUpPtr);
+						target.addend = contentValue - target.atom->_objAddress;
+						parser.addFixups(src, ld::Fixup::kindStoreBigEndian64, target);
+						break;
+				}
+				break;
+			case PPC_RELOC_BR14:
+				displacement = (instruction & 0x0000FFFC);
+				if ( (displacement & 0x00008000) != 0 )
+					displacement |= 0xFFFF0000;
+				target.atom = parser.findAtomByAddress(sreloc->r_value());
+				target.addend = (srcAddr + displacement) - target.atom->_objAddress;
+				parser.addFixups(src, ld::Fixup::kindStorePPCBranch14, target);
+				break;
+			case PPC_RELOC_BR24:
+				assert((instruction & 0x4C000000) == 0x48000000);
+				displacement = (instruction & 0x03FFFFFC);
+				if ( (displacement & 0x02000000) != 0 )
+					displacement |= 0xFC000000;
+				target.atom = parser.findAtomByAddress(sreloc->r_value());
+				target.addend = (srcAddr + displacement) - target.atom->_objAddress;
+				parser.addFixups(src, ld::Fixup::kindStorePPCBranch24, target);
+				break;
+			case PPC_RELOC_LO16_SECTDIFF:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_LO16_SECTDIFF missing following pair";
+				lowBits = (instruction & 0xFFFF);
+				dstAddr = nextRelocValue + ((nextRelocAddress << 16) | ((uint32_t)lowBits & 0x0000FFFF));
+				parser.findTargetFromAddress(sreloc->r_value(), target);
+				if ( target.atom != NULL )
+					target.addend = dstAddr - target.atom->_objAddress;
+				picBase.atom = parser.findAtomByAddress(nextRelocValue);
+				picBase.addend = nextRelocValue - picBase.atom->_objAddress;
+				picBase.weakImport = false;
+				picBase.name = NULL;
+				parser.addFixups(src, ld::Fixup::kindStorePPCPicLow16, target, picBase);
+				break;
+			case PPC_RELOC_LO14_SECTDIFF:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_LO14_SECTDIFF missing following pair";
+				lowBits = (instruction & 0xFFFC);
+				dstAddr = nextRelocValue + ((nextRelocAddress << 16) | ((uint32_t)lowBits & 0x0000FFFF));
+				parser.findTargetFromAddress(sreloc->r_value(), target);
+				if ( target.atom != NULL )
+					target.addend = dstAddr - target.atom->_objAddress;
+				picBase.atom = parser.findAtomByAddress(nextRelocValue);
+				picBase.addend = nextRelocValue - picBase.atom->_objAddress;
+				picBase.weakImport = false;
+				picBase.name = NULL;
+				parser.addFixups(src, ld::Fixup::kindStorePPCPicLow14, target, picBase);
+				break;
+			case PPC_RELOC_HA16_SECTDIFF:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_HA16_SECTDIFF missing following pair";
+				lowBits = (nextRelocAddress & 0x0000FFFF);
+				dstAddr = nextRelocValue + (((instruction & 0x0000FFFF) << 16) + (int32_t)lowBits);
+				parser.findTargetFromAddress(sreloc->r_value(), target);
+				if ( target.atom != NULL )
+					target.addend = dstAddr - target.atom->_objAddress;
+				picBase.atom = parser.findAtomByAddress(nextRelocValue);
+				picBase.addend = nextRelocValue - picBase.atom->_objAddress;
+				picBase.weakImport = false;
+				picBase.name = NULL;
+				parser.addFixups(src, ld::Fixup::kindStorePPCPicHigh16AddLow, target, picBase);
+				break;
+			case PPC_RELOC_LO14:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_LO14 missing following pair";
+				lowBits = (instruction & 0xFFFC);
+				dstAddr = ((nextRelocAddress << 16) + ((uint32_t)lowBits & 0x0000FFFF));
+				parser.findTargetFromAddress(sreloc->r_value(), dstAddr, target);
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsLow14, target);
+				break;
+			case PPC_RELOC_LO16:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_LO16 missing following pair";
+				lowBits = (instruction & 0xFFFF);
+				dstAddr = ((nextRelocAddress << 16) + ((uint32_t)lowBits & 0x0000FFFF));
+				parser.findTargetFromAddress(sreloc->r_value(), dstAddr, target);
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsLow16, target);
+				break;
+			case PPC_RELOC_HA16:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_HA16 missing following pair";
+				lowBits = (nextRelocAddress & 0xFFFF);
+				dstAddr = (((instruction & 0xFFFF) << 16) + (int32_t)lowBits);
+				parser.findTargetFromAddress(sreloc->r_value(), dstAddr, target);
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsHigh16AddLow, target);
+				break;
+			case PPC_RELOC_HI16:
+				if ( ! nextRelocIsPair )
+					throw "PPC_RELOC_HI16 missing following pair";
+				lowBits = (nextRelocAddress & 0xFFFF);
+				dstAddr = ((instruction & 0xFFFF) << 16) | (lowBits & 0x0000FFFF);
+				parser.findTargetFromAddress(sreloc->r_value(), dstAddr, target);
+				parser.addFixups(src, ld::Fixup::kindStorePPCAbsHigh16, target);
+				break;
+			case PPC_RELOC_SECTDIFF:
+			case PPC_RELOC_LOCAL_SECTDIFF:
+				{
+					if ( ! nextRelocIsPair )
+						throw "PPC_RELOC_SECTDIFF missing following pair";
+					ld::Fixup::Kind kind = ld::Fixup::kindNone;
+					switch ( sreloc->r_length() ) {
+						case 0:
+							throw "bad length for PPC_RELOC_SECTDIFF";
+						case 1:
+							contentValue = (int32_t)(int16_t)BigEndian::get16(*((uint16_t*)fixUpPtr));
+							kind = ld::Fixup::kindStoreBigEndian16;
+							break;
+						case 2:
+							contentValue = BigEndian::get32(*((uint32_t*)fixUpPtr));
+							kind = ld::Fixup::kindStoreBigEndian32;
+							break;
+						case 3:
+							contentValue = BigEndian::get64(*((uint64_t*)fixUpPtr));
+							kind = ld::Fixup::kindStoreBigEndian64;
+							break;
+						break;
+					}
+					Atom<A>* fromAtom  = parser.findAtomByAddress(nextRelocValue);
+					Atom<A>* targetAtom = parser.findAtomByAddress(sreloc->r_value());
+					uint32_t offsetInFrom = nextRelocValue - fromAtom->_objAddress;
+					uint32_t offsetInTarget = sreloc->r_value() - targetAtom->_objAddress;
+					// check for addend encoded in the section content
+					int32_t addend = contentValue - (sreloc->r_value() - nextRelocValue);
+					if ( addend < 0 ) {
+						if ( targetAtom->scope() == ld::Atom::scopeTranslationUnit ) {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, targetAtom);
+						}
+						else if ( (targetAtom->combine() == ld::Atom::combineByNameAndContent) || (targetAtom->combine() == ld::Atom::combineByNameAndReferences) ) {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, ld::Fixup::bindingByContentBound, targetAtom);
+						}
+						else {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, false, targetAtom->name());
+						}
+						parser.addFixup(src, ld::Fixup::k2of5, ld::Fixup::kindAddAddend, offsetInTarget);
+						parser.addFixup(src, ld::Fixup::k3of5, ld::Fixup::kindSubtractTargetAddress, fromAtom);
+						parser.addFixup(src, ld::Fixup::k4of5, ld::Fixup::kindSubtractAddend, offsetInFrom-addend);
+						parser.addFixup(src, ld::Fixup::k5of5, kind);
+					}
+					else {
+						if ( targetAtom->scope() == ld::Atom::scopeTranslationUnit ) {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, targetAtom);
+						}
+						else if ( (targetAtom->combine() == ld::Atom::combineByNameAndContent) || (targetAtom->combine() == ld::Atom::combineByNameAndReferences) ) {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, ld::Fixup::bindingByContentBound, targetAtom);
+						}
+						else {
+							parser.addFixup(src, ld::Fixup::k1of5, ld::Fixup::kindSetTargetAddress, false, targetAtom->name());
+						}
+						parser.addFixup(src, ld::Fixup::k2of5, ld::Fixup::kindAddAddend, offsetInTarget+addend);
+						parser.addFixup(src, ld::Fixup::k3of5, ld::Fixup::kindSubtractTargetAddress, fromAtom);
+						parser.addFixup(src, ld::Fixup::k4of5, ld::Fixup::kindSubtractAddend, offsetInFrom);
+						parser.addFixup(src, ld::Fixup::k5of5, kind);
+					}
+				}
+				break;
+			case PPC_RELOC_PAIR:
+				break;
+			case PPC_RELOC_HI16_SECTDIFF:
+				warning("unexpected scattered relocation type PPC_RELOC_HI16_SECTDIFF");
+				break;
+			default:
+				warning("unknown scattered relocation type %d", sreloc->r_type());
+		}
+	}
+	return result;
+}
+
+
+template <>
+bool Section<ppc>::addRelocFixup(class Parser<ppc>& parser, const macho_relocation_info<P>* reloc)
+{
+	return addRelocFixup_powerpc(parser, reloc);
+}
+
+
+template <>
+bool Section<ppc64>::addRelocFixup(class Parser<ppc64>& parser, const macho_relocation_info<P>* reloc)
+{
+	return addRelocFixup_powerpc(parser, reloc);
+}
+
 
 
 #if SUPPORT_ARCH_arm_any
@@ -7402,6 +7961,41 @@ bool ObjC1ClassSection<x86>::addRelocFixup(class Parser<x86>& parser, const mach
 	return FixedSizeSection<x86>::addRelocFixup(parser, reloc);
 }
 
+template <>
+bool ObjC1ClassSection<ppc>::addRelocFixup(class Parser<ppc>& parser, const macho_relocation_info<ppc::P>* reloc)
+{
+	// if this is the reloc for the super class name string, add implicit reference to super class
+	if ( ((reloc->r_address() & R_SCATTERED) == 0) && (reloc->r_type() == PPC_RELOC_VANILLA) ) {
+		assert( reloc->r_length() == 2 );
+		assert( ! reloc->r_pcrel() );
+
+		const macho_section<P>* sect = this->machoSection();
+		Parser<ppc>::SourceLocation	src;
+		uint32_t srcAddr = sect->addr() + reloc->r_address();
+		src.atom = this->findAtomByAddress(srcAddr);
+		src.offsetInAtom = srcAddr - src.atom->objectAddress();
+		if ( src.offsetInAtom == 4 ) {
+			Parser<ppc>::TargetDesc		stringTarget;
+			const uint8_t* fixUpPtr = file().fileContent() + sect->offset() + reloc->r_address();
+			uint32_t contentValue = BigEndian::get32(*((uint32_t*)fixUpPtr));
+			parser.findTargetFromAddressAndSectionNum(contentValue, reloc->r_symbolnum(), stringTarget);
+
+			assert(stringTarget.atom != NULL);
+			assert(stringTarget.atom->contentType() == ld::Atom::typeCString);
+			const char* superClassBaseName = (char*)stringTarget.atom->rawContentPointer();
+			char* superClassName = new char[strlen(superClassBaseName) + 20];
+			strcpy(superClassName, ".objc_class_name_");
+			strcat(superClassName, superClassBaseName);
+
+			parser.addFixup(src, ld::Fixup::k1of1, ld::Fixup::kindSetTargetAddress, false, superClassName);
+		}
+	}
+
+	// inherited
+	return FixedSizeSection<ppc>::addRelocFixup(parser, reloc);
+}
+
+
 
 
 template <typename A>
@@ -7414,6 +8008,38 @@ bool Objc1ClassReferences<A>::addRelocFixup(class Parser<A>& parser, const macho
 	return false;
 }
 
+
+template <>
+bool Objc1ClassReferences<ppc>::addRelocFixup(class Parser<ppc>& parser, const macho_relocation_info<ppc::P>* reloc)
+{
+	// add implict class refs, fixups not usable yet, so look at relocations
+	assert( (reloc->r_address() & R_SCATTERED) == 0 );
+	assert( reloc->r_type() == PPC_RELOC_VANILLA );
+	assert( reloc->r_length() == 2 );
+	assert( ! reloc->r_pcrel() );
+
+	const macho_section<P>* sect = this->machoSection();
+	Parser<ppc>::SourceLocation	src;
+	uint32_t srcAddr = sect->addr() + reloc->r_address();
+	src.atom = this->findAtomByAddress(srcAddr);
+	src.offsetInAtom = srcAddr - src.atom->objectAddress();
+	Parser<ppc>::TargetDesc		stringTarget;
+	const uint8_t* fixUpPtr = file().fileContent() + sect->offset() + reloc->r_address();
+	uint32_t contentValue = BigEndian::get32(*((uint32_t*)fixUpPtr));
+	parser.findTargetFromAddressAndSectionNum(contentValue, reloc->r_symbolnum(), stringTarget);
+
+	assert(stringTarget.atom != NULL);
+	assert(stringTarget.atom->contentType() == ld::Atom::typeCString);
+	const char* baseClassName = (char*)stringTarget.atom->rawContentPointer();
+	char* objcClassName = new char[strlen(baseClassName) + 20];
+	strcpy(objcClassName, ".objc_class_name_");
+	strcat(objcClassName, baseClassName);
+
+	parser.addFixup(src, ld::Fixup::k1of1, ld::Fixup::kindSetTargetAddress, false, objcClassName);
+
+	// inherited
+	return PointerToCStringSection<ppc>::addRelocFixup(parser, reloc);
+}
 
 
 template <>
@@ -7728,6 +8354,18 @@ ld::relocatable::File* parse(const uint8_t* fileContent, uint64_t fileLength,
 				return mach_o::relocatable::Parser<arm64>::parse(fileContent, fileLength, path, modTime, ordinal, opts);
 			break;
 #endif
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			if ( mach_o::relocatable::Parser<ppc>::validFile(fileContent) )
+				return mach_o::relocatable::Parser<ppc>::parse(fileContent, fileLength, path, modTime, ordinal, opts);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+			if ( mach_o::relocatable::Parser<ppc64>::validFile(fileContent) )
+				return mach_o::relocatable::Parser<ppc64>::parse(fileContent, fileLength, path, modTime, ordinal, opts);
+			break;
+#endif
 	}
 	return NULL;
 }
@@ -7746,6 +8384,10 @@ bool isObjectFile(const uint8_t* fileContent, uint64_t fileLength, const ParserO
 			return ( mach_o::relocatable::Parser<arm>::validFile(fileContent, opts.objSubtypeMustMatch, opts.subType) );
 		case CPU_TYPE_ARM64:
 			return ( mach_o::relocatable::Parser<arm64>::validFile(fileContent, opts.objSubtypeMustMatch, opts.subType) );
+		case CPU_TYPE_POWERPC:
+			return ( mach_o::relocatable::Parser<ppc>::validFile(fileContent) );
+		case CPU_TYPE_POWERPC64:
+			return ( mach_o::relocatable::Parser<ppc64>::validFile(fileContent) );
 	}
 	return false;
 }
@@ -7783,6 +8425,17 @@ bool isObjectFile(const uint8_t* fileContent, cpu_type_t* result, cpu_subtype_t*
 		*platform = Parser<arm64>::findPlatform(header);
 		return true;
 	}
+	if ( mach_o::relocatable::Parser<ppc>::validFile(fileContent) ) {
+		*result = CPU_TYPE_POWERPC;
+		const macho_header<Pointer32<BigEndian> >* header = (const macho_header<Pointer32<BigEndian> >*)fileContent;
+		*subResult = header->cpusubtype();
+		return true;
+	}
+	if ( mach_o::relocatable::Parser<ppc64>::validFile(fileContent) ) {
+		*result = CPU_TYPE_POWERPC64;
+		*subResult = CPU_SUBTYPE_POWERPC_ALL;
+		return true;
+	}
 	return false;
 }					
 
@@ -7799,6 +8452,12 @@ const char* archName(const uint8_t* fileContent)
 	}
 	if ( mach_o::relocatable::Parser<arm>::validFile(fileContent, false, 0) ) {
 		return mach_o::relocatable::Parser<arm>::fileKind(fileContent);
+	}
+	if ( mach_o::relocatable::Parser<ppc>::validFile(fileContent) ) {
+		return mach_o::relocatable::Parser<ppc>::fileKind(fileContent);
+	}
+	if ( mach_o::relocatable::Parser<ppc64>::validFile(fileContent) ) {
+		return mach_o::relocatable::Parser<ppc64>::fileKind(fileContent);
 	}
 	return NULL;
 }

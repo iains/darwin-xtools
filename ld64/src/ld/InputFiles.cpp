@@ -306,7 +306,12 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 
 	ld::relocatable::File* objResult = mach_o::relocatable::parse(p, len, info.path, info.modTime, info.ordinal, objOpts);
 	if ( objResult != NULL ) {
+#ifdef NO_64B_ATOMIC
+        /* This only applies to ppc-d9, so let's just not do anything multi-threaded there.  */
+        _totalObjectSize += len;
+#else
 		OSAtomicAdd64(len, &_totalObjectSize);
+#endif
 		OSAtomicIncrement32(&_totalObjectLoaded);
 		return objResult;
 	}
@@ -314,7 +319,12 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	// see if it is an llvm object file
 	objResult = lto::parse(p, len, info.path, info.modTime, info.ordinal, _options.architecture(), _options.subArchitecture(), _options.logAllFiles(), _options.verboseOptimizationHints());
 	if ( objResult != NULL ) {
+#ifdef NO_64B_ATOMIC
+        /* This only applies to ppc-d9, so let's just not do anything multi-threaded there.  */
+        _totalObjectSize += len;
+#else
 		OSAtomicAdd64(len, &_totalObjectSize);
+#endif
 		OSAtomicIncrement32(&_totalObjectLoaded);
 		return objResult;
 	}
@@ -364,7 +374,12 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 
 	ld::archive::File* archiveResult = ::archive::parse(p, len, info.path, info.modTime, info.ordinal, archOpts);
 	if ( archiveResult != NULL ) {
+#ifdef NO_64B_ATOMIC
+        /* This only applies to ppc-d9, so let's just not do anything multi-threaded there.  */
+        _totalArchiveSize += len;
+#else
 		OSAtomicAdd64(len, &_totalArchiveSize);
+#endif
 		OSAtomicIncrement32(&_totalArchivesLoaded);
 		return archiveResult;
 	}
@@ -828,6 +843,10 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 	warning("-arch not specified");
 #if __i386__
 	opts.setArchitecture(CPU_TYPE_I386, CPU_SUBTYPE_X86_ALL, Options::kPlatformOSX);
+#elif __ppc__
+	opts.setArchitecture(CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL, Options::kPlatformOSX);
+#elif __ppc64__
+	opts.setArchitecture(CPU_TYPE_POWERPC64, CPU_SUBTYPE_POWERPC_ALL, Options::kPlatformOSX);
 #elif __x86_64__
 	opts.setArchitecture(CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_ALL, Options::kPlatformOSX);
 #elif __arm__
