@@ -89,6 +89,7 @@ private:
 #include "stub_x86_64_classic.hpp"
 #include "stub_x86.hpp"
 #include "stub_x86_classic.hpp"
+#include "stub_ppc_classic.hpp"
 #include "stub_arm.hpp"
 #include "stub_arm_classic.hpp"
 #if SUPPORT_ARCH_arm64
@@ -118,6 +119,7 @@ const ld::Atom* Pass::stubableFixup(const ld::Fixup* fixup, ld::Internal& state)
 	if ( fixup->binding == ld::Fixup::bindingsIndirectlyBound ) {
 		const ld::Atom* target = state.indirectBindingTable[fixup->u.bindingIndex];
 		switch ( fixup->kind ) {
+			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 			case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 			case ld::Fixup::kindStoreTargetAddressARMBranch24:
 			case ld::Fixup::kindStoreTargetAddressThumbBranch22:
@@ -189,6 +191,20 @@ ld::Atom* Pass::makeStub(const ld::Atom& target, bool weakImport)
 	}
 
 	switch ( _architecture ) {
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			if ( _pic )
+				return new ld::passes::stubs::ppc::classic::StubPICAtom(*this, target, forLazyDylib, false, weakImport);
+			else
+				return new ld::passes::stubs::ppc::classic::StubNoPICAtom(*this, target, forLazyDylib, false, weakImport);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+//FIXME: Is PPC64 always PIC? ... I thought it supported mydynamic nopic.
+			return new ld::passes::stubs::ppc::classic::StubPICAtom(*this, target, forLazyDylib, true, weakImport);
+			break;
+#endif
 #if SUPPORT_ARCH_i386
 		case CPU_TYPE_I386:
 			if ( usingCompressedLINKEDIT() && !forLazyDylib )
@@ -332,7 +348,9 @@ void Pass::process(ld::Internal& state)
 				if ( _options.outputKind() != Options::kDynamicLibrary ) 
 					throwf("resolver functions (%s) can only be used in dylibs", atom->name());
 				if ( !_options.makeCompressedDyldInfo() ) {
-					if ( _options.architecture() == CPU_TYPE_ARM )
+					if ( _options.architecture() == CPU_TYPE_POWERPC )
+						throwf("resolver functions (%s) not supported for PowerPC", atom->name());
+					else if ( _options.architecture() == CPU_TYPE_ARM )
 						throwf("resolver functions (%s) can only be used when targeting iOS 4.2 or later", atom->name());
 					else
 						throwf("resolver functions (%s) can only be used when targeting Mac OS X 10.6 or later", atom->name());

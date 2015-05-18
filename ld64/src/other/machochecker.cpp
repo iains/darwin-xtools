@@ -1236,6 +1236,41 @@ void MachOChecker<arm64>::checkExternalReloation(const macho_relocation_info<P>*
 
 
 template <>
+void MachOChecker<ppc>::checkLocalReloation(const macho_relocation_info<P>* reloc)
+{
+	if ( reloc->r_address() & R_SCATTERED ) {
+		// scattered
+		const macho_scattered_relocation_info<P>* sreloc = (const macho_scattered_relocation_info<P>*)reloc;
+		// FIX
+
+	}
+	else {
+		// ignore pair relocs
+		if ( reloc->r_type() == PPC_RELOC_PAIR )
+			return;
+		// FIX
+		if ( ! this->addressInWritableSegment(reloc->r_address() + this->relocBase()) )
+			throwf("local relocation address 0x%08X not in writable segment", reloc->r_address());
+	}
+}
+
+
+template <>
+void MachOChecker<ppc64>::checkLocalReloation(const macho_relocation_info<P>* reloc)
+{
+	if ( reloc->r_length() != 3 )
+		throw "bad local relocation length";
+	if ( reloc->r_type() != GENERIC_RELOC_VANILLA )
+		throw "unknown local relocation type";
+	if ( reloc->r_pcrel() != 0 )
+		throw "bad local relocation pc_rel";
+	if ( reloc->r_extern() != 0 )
+		throw "external relocation found with local relocations";
+	if ( ! this->addressInWritableSegment(reloc->r_address() + this->relocBase()) )
+		throw "local relocation address not in writable segment";
+}
+
+template <>
 void MachOChecker<x86>::checkLocalReloation(const macho_relocation_info<P>* reloc)
 {
 	// FIX

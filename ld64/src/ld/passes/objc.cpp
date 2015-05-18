@@ -1357,8 +1357,18 @@ void doPass(const Options& opts, ld::Internal& state)
 			doPass<arm64, true>(opts, state);
 			break;
 #endif
-		default:
-			assert(0 && "unknown objc arch");
+#if SUPPORT_ARCH_ppc64
+			case CPU_TYPE_POWERPC64:
+				doPass<ppc64, false>(opts, state);
+				break;
+#endif
+#if SUPPORT_ARCH_ppc
+			case CPU_TYPE_POWERPC:
+				doPass<ppc, false>(opts, state);
+				break;
+#endif
+			default:
+				assert(0 && "unknown objc arch");
 	}
 }
 
