@@ -1,10 +1,10 @@
 message(STATUS "*top config-ix* CMAKE_SYSTEM : ${CMAKE_SYSTEM}")
 
-#include(CheckIncludeFile)
-#include(CheckIncludeFileCXX)
+include(CheckIncludeFile)
+include(CheckIncludeFileCXX)
 #include(CheckLibraryExists)
 #include(CheckSymbolExists)
-#include(CheckFunctionExists)
+include(CheckFunctionExists)
 #include(CheckCXXSourceCompiles)
 #include(TestBigEndian)
 include(CheckCCompilerFlag)
@@ -23,6 +23,18 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   check_cxx_compiler_flag(-static-libstdc++ XTOOLS_CXX_HAS_STATICCXX_FLAG)
 endif()
 
-
-
 # Check for common headers/libs that we need.
+
+if (XTOOLS_CXX_HAS_STDCXX11_FLAG)
+  check_include_file_cxx(unordered_map     XTOOLS_CXX_HAS_UNORDERED_MAP -std=c++11)
+endif()
+if (NOT XTOOLS_CXX_HAS_UNORDERED_MAP)
+  check_include_file_cxx(tr1/unordered_map XTOOLS_CXX_HAS_TR1_UNORDERED_MAP)
+endif()
+
+check_function_exists(strnlen              XTOOLS_HAS_STRNLEN)
+check_function_exists(strndup              XTOOLS_HAS_STRNDUP)
+
+if((NOT XTOOLS_HAS_STRNLEN) OR (NOT XTOOLS_HAS_STRNDUP))
+  set(XTOOLS_NEEDS_STRLIB ON)
+endif()
