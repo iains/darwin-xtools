@@ -87,8 +87,12 @@ public:
 private:
 
     friend class SnapshotArchiveFileLog;
-    
+
+#ifdef __BLOCKS__
     typedef std::vector<void(^)(void)> SnapshotLog;    
+#else
+    typedef std::vector<void (*)()> SnapshotLog;
+#endif
 
     struct strcompclass {
         bool operator() (const char *a, const char *b) const { return ::strcmp(a, b) < 0; }
