@@ -4566,7 +4566,7 @@ void OutputFile::addClassicRelocs(ld::Internal& state, ld::Internal::FinalSectio
 			{
 				assert(target != NULL);
 				if ( target->definition() == ld::Atom::definitionProxy ) {
-fprintf(stderr, "bad reloc target: %40s source %40s (offset 0x%"PRIx64") final addr 0x%"PRIx64" atom offset: 0x%x [0x%"PRIx64"]\n", 
+fprintf(stderr, "bad reloc target: %40s source %40s (offset 0x%" PRIx64 ") final addr 0x%" PRIx64 " atom offset: 0x%x [0x%" PRIx64 "]\n", 
                  target->name(), atom->name(), atom->objectAddress(), atom->finalAddress(),
                  fixupWithStore->offsetInAtom, (uint64_t)atom->finalAddress()+fixupWithStore->offsetInAtom );
 //					throwf("half word text relocs not supported in %s", atom->name());
