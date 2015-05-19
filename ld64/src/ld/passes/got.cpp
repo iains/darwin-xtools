@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <dlfcn.h>
 
+#include <algorithm>  // std::sort
 #include <vector>
 #include <map>
 
