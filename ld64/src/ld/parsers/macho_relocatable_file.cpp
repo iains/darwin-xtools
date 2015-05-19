@@ -5196,6 +5196,18 @@ const char* CUSection<A>::personalityName(class Parser<A>& parser, const macho_r
 }
 
 template <>
+bool CUSection<ppc>::encodingMeansUseDwarf(compact_unwind_encoding_t enc)
+{
+	return true; // Always DWARF
+}
+
+template <>
+bool CUSection<ppc64>::encodingMeansUseDwarf(compact_unwind_encoding_t enc)
+{
+	return true; // Always DWARF
+}
+
+template <>
 bool CUSection<x86>::encodingMeansUseDwarf(compact_unwind_encoding_t enc)
 {
 	return ((enc & UNWIND_X86_MODE_MASK) == UNWIND_X86_MODE_DWARF);
