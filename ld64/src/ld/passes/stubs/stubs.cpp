@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <libkern/OSByteOrder.h>
 
+#include <algorithm>  // std::sort
 #include <vector>
 #include <set>
 #include <map>
