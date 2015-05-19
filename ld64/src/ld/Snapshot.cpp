@@ -16,7 +16,9 @@
 #include <sys/stat.h>
 #include <libgen.h>
 #include <time.h>
+#ifdef __BLOCKS__
 #include <Block.h>
+#endif
 
 #include "Snapshot.h"
 #include "Options.h"
@@ -199,9 +201,14 @@ void Snapshot::createSnapshot()
 
         SnapshotLog::iterator it;
         for (it = fLog.begin(); it != fLog.end(); it++) {
+#ifdef __BLOCKS__
             void (^logItem)(void) = *it;
             logItem();
             Block_release(logItem);
+#else
+            void (*f)(void) = *it;
+	    if (f) f();
+#endif
         }
         fLog.erase(fLog.begin(), fLog.end());
         
@@ -280,7 +287,11 @@ void Snapshot::recordRawArgs(int argc, const char *argv[])
 void Snapshot::addSnapshotLinkArg(int argIndex, int argCount, int fileArg)
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         fLog.push_back(Block_copy(^{ this->addSnapshotLinkArg(argIndex, argCount, fileArg); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         char buf[PATH_MAX];
         const char *subdir = dataFilesString;
@@ -318,7 +329,11 @@ void Snapshot::recordArch(const char *arch)
     
     if (!archInArgs) {
         if (fRootDir == NULL) {
+#if __BLOCKS__
             fLog.push_back(Block_copy(^{ this->recordArch(arch); }));
+#else
+	    fLog.push_back(nullptr);
+#endif
         } else {
             char path_buf[PATH_MAX];
             buildUniquePath(path_buf, NULL, "arch");
@@ -336,7 +351,11 @@ void Snapshot::recordArch(const char *arch)
 void Snapshot::recordObjectFile(const char *path) 
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         fLog.push_back(Block_copy(^{ this->recordObjectFile(path); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         if (fRecordObjects) {
 			char path_buf[PATH_MAX];
@@ -398,7 +417,11 @@ void Snapshot::addDylibArg(const char *dylib)
 void Snapshot::recordDylibSymbol(ld::dylib::File* dylibFile, const char *name)
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         fLog.push_back(Block_copy(^{ this->recordDylibSymbol(dylibFile, name); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         if (fRecordDylibSymbols) {
             // find the dylib in the table
@@ -455,8 +478,12 @@ void Snapshot::recordDylibSymbol(ld::dylib::File* dylibFile, const char *name)
 void Snapshot::recordArchive(const char *archiveFile)
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         const char *copy = strdup(archiveFile);
         fLog.push_back(Block_copy(^{ this->recordArchive(archiveFile); ::free((void *)copy); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         if (fRecordArchiveFiles) {
             // lazily create a vector of .a files that have been added
@@ -487,8 +514,12 @@ void Snapshot::recordArchive(const char *archiveFile)
 void Snapshot::recordSubUmbrella(const char *frameworkPath)
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         const char *copy = strdup(frameworkPath);
         fLog.push_back(Block_copy(^{ this->recordSubUmbrella(copy); ::free((void *)copy); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         if (fRecordUmbrellaFiles) {
             const char *framework = basename((char *)frameworkPath);
@@ -507,8 +538,12 @@ void Snapshot::recordSubUmbrella(const char *frameworkPath)
 void Snapshot::recordSubLibrary(const char *dylibPath)
 {
     if (fRootDir == NULL) {
+#if __BLOCKS__
         const char *copy = strdup(dylibPath);
         fLog.push_back(Block_copy(^{ this->recordSubLibrary(copy); ::free((void *)copy); }));
+#else
+	fLog.push_back(nullptr);
+#endif
     } else {
         if (fRecordUmbrellaFiles) {
             copyFileToSnapshot(dylibPath, dylibsString);
@@ -526,7 +561,11 @@ void Snapshot::recordAssertionMessage(const char *fmt, ...)
     va_end(args);
     if (msg != NULL) {
         if (fRootDir == NULL) {
+#if __BLOCKS__
             fLog.push_back(Block_copy(^{ this->recordAssertionMessage("%s", msg); free(msg); }));
+#else
+	    fLog.push_back(nullptr);
+#endif
         } else {
             char path[PATH_MAX];
             buildPath(path, NULL, assertFileString);
