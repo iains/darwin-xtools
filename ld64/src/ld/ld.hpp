@@ -30,6 +30,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <assert.h>
+#include <string.h>
 
 #include <set>
 #include <map>
