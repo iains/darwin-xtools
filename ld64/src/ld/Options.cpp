@@ -38,6 +38,10 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <limits.h>
+#ifndef PATH_MAX
+#include <sys/syslimits.h>
+#endif
 
 #include "Options.h"
 #include "Architectures.hpp"
