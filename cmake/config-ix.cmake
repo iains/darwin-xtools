@@ -26,7 +26,11 @@ endif()
 # Check for common headers/libs that we need.
 
 if (XTOOLS_CXX_HAS_STDCXX11_FLAG)
-  check_include_file_cxx(unordered_map     XTOOLS_CXX_HAS_UNORDERED_MAP -std=c++11)
+  if(XTOOLS_CXX_HAS_STDLIB_FLAG)
+    check_include_file_cxx(unordered_map     XTOOLS_CXX_HAS_UNORDERED_MAP "-std=c++11 -stdlib=libc++")
+  else()
+    check_include_file_cxx(unordered_map     XTOOLS_CXX_HAS_UNORDERED_MAP -std=c++11)
+  endif()
 endif()
 if (NOT XTOOLS_CXX_HAS_UNORDERED_MAP)
   check_include_file_cxx(tr1/unordered_map XTOOLS_CXX_HAS_TR1_UNORDERED_MAP)
