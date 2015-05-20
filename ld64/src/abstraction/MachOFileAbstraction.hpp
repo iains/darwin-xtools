@@ -1609,7 +1609,7 @@ public:
 	static uint32_t	personalityFieldOffset()				INLINE { return offsetof(macho_compact_unwind_entry<P>,_personality); }
 	static uint32_t	lsdaFieldOffset()						INLINE { return offsetof(macho_compact_unwind_entry<P>,_lsda); }
 	
-private:
+// we cannot use offsetof unless the type is std layout. private:
 	pint_t		_codeStart;
 	uint32_t	_codeLen;
 	uint32_t	_compactUnwindInfo;

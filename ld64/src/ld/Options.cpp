@@ -22,7 +22,9 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-
+#include <stdint.h>
+#include <stdio.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <mach/vm_prot.h>
@@ -34,8 +36,13 @@
 #include <spawn.h>
 #include <cxxabi.h>
 #include <Availability.h>
+#include <ctype.h>
 
 #include <vector>
+#include <limits.h>
+#ifndef PATH_MAX
+#include <sys/syslimits.h>
+#endif
 
 #include "Options.h"
 #include "Architectures.hpp"
@@ -426,7 +433,7 @@ void Options::loadSymbolOrderFile(const char* fileOfExports, NameToOrder& orderM
 
 	::close(fd);
 
-	// parse into symbols and add to unordered_set
+	// parse into symbols and add to hash_set
 	unsigned int count = 0;
 	char * const end = &p[stat_buf.st_size];
 	enum { lineStart, inSymbol, inComment } state = lineStart;
@@ -1117,7 +1124,7 @@ void Options::loadExportFile(const char* fileOfExports, const char* option, SetW
 
 	::close(fd);
 
-	// parse into symbols and add to unordered_set
+	// parse into symbols and add to hash_set
 	char * const end = &p[stat_buf.st_size];
 	enum { lineStart, inSymbol, inComment } state = lineStart;
 	char* symbolStart = NULL;
@@ -4210,7 +4217,7 @@ void Options::checkIllegalOptionCombinations()
 				if ( fStackSize > 0x20000000 )
 					throw "-stack_size must be < 512MB";
 				if ( fStackAddr == 0 ) {
-					fStackAddr = 0x120000000;
+					fStackAddr = 0x120000000LL;
 				}
 				break;
 		}

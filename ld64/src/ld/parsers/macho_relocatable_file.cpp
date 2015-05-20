@@ -283,7 +283,7 @@ public:
 	
 private:
 	
-	const char*				personalityName(class Parser<A>& parser, const macho_relocation_info<P>* reloc);
+	const char*				personalityName(class Parser<A>& parser, const macho_relocation_info<typename A::P>* reloc);
 
 	static int				infoSorter(const void* l, const void* r);
 
@@ -3969,7 +3969,7 @@ bool CFISection<A>::needsRelocating()
 
 template <>
 void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
-									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[], 
+								  struct libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[], 
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// copy __eh_frame data to buffer
@@ -4022,16 +4022,16 @@ void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
 	// use libuwind to parse __eh_frame data into array of CFI_Atom_Info
 	const char* msg;
 	msg = libunwind::DwarfInstructions<OAS, libunwind::Registers_x86_64>::parseCFIs(
-							oas, this->_machOSection->addr(), this->_machOSection->size(), 
-							cuStarts, cuCount, parser.keepDwarfUnwind(), parser.forceDwarfConversion(), parser.neverConvertDwarf(), 
+							oas, this->_machOSection->addr(), this->_machOSection->size(),
+							cuStarts, cuCount, parser.keepDwarfUnwind(), parser.forceDwarfConversion(), parser.neverConvertDwarf(),
 							cfiArray, count, (void*)&parser, warnFunc);
 	if ( msg != NULL ) 
 		throwf("malformed __eh_frame section: %s", msg);
 }
 
 template <>
-void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[], 
+void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer,
+								struct libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// create ObjectAddressSpace object for use by libunwind
@@ -4052,7 +4052,7 @@ void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[], 
+								struct libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// arm does not use zero cost exceptions
@@ -4061,7 +4061,7 @@ void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<arm64>::cfiParse(class Parser<arm64>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm64>::OAS>::CFI_Atom_Info cfiArray[], 
+								 struct libunwind::CFI_Atom_Info<CFISection<arm64>::OAS>::CFI_Atom_Info cfiArray[],
 									uint32_t& count, const pint_t cuStarts[], uint32_t cuCount)
 {
 	// copy __eh_frame data to buffer
@@ -4481,7 +4481,7 @@ const char* CUSection<x86_64>::personalityName(class Parser<x86_64>& parser, con
 	else {
 		const pint_t* content = (pint_t*)(this->file().fileContent() + this->_machOSection->offset() + reloc->r_address());
 		pint_t personalityAddr = *content;
-		Section<x86_64>* personalitySection = parser.sectionForAddress(personalityAddr);
+		mach_o::relocatable::Section<x86_64> *personalitySection = parser.sectionForAddress(personalityAddr);
 		assert((personalitySection->type() == ld::Section::typeCode) && "personality column in __compact_unwind section is not pointer to function");
 		// atoms may not be constructed yet, so scan symbol table for labels
 		const char* name = parser.scanSymbolTableForAddress(personalityAddr);
@@ -4501,7 +4501,7 @@ const char* CUSection<x86>::personalityName(class Parser<x86>& parser, const mac
 		// support __LD, __compact_unwind personality entries which are pointer to personality non-lazy pointer
 		const pint_t* content = (pint_t*)(this->file().fileContent() + this->_machOSection->offset() + reloc->r_address());
 		pint_t nlPointerAddr = *content;
-		Section<x86>* nlSection = parser.sectionForAddress(nlPointerAddr);
+		mach_o::relocatable::Section<x86> *nlSection = parser.sectionForAddress(nlPointerAddr);
 		if ( nlSection->type() == ld::Section::typeCode ) {
 			// personality function is defined in this .o file, so this is a direct reference to it
 			// atoms may not be constructed yet, so scan symbol table for labels
@@ -4516,6 +4516,12 @@ const char* CUSection<x86>::personalityName(class Parser<x86>& parser, const mac
 	}
 }
 
+template <typename A>
+const char* CUSection<A>::personalityName(class Parser<A>& parser, const macho_relocation_info<typename A::P>* reloc)
+{
+	return NULL;
+}
+
 #if SUPPORT_ARCH_arm64
 template <>
 const char* CUSection<arm64>::personalityName(class Parser<arm64>& parser, const macho_relocation_info<arm64::P>* reloc)
@@ -4528,7 +4534,7 @@ const char* CUSection<arm64>::personalityName(class Parser<arm64>& parser, const
 	else {
 		const pint_t* content = (pint_t*)(this->file().fileContent() + this->_machOSection->offset() + reloc->r_address());
 		pint_t personalityAddr = *content;
-		Section<arm64>* personalitySection = parser.sectionForAddress(personalityAddr);
+		mach_o::relocatable::Section<arm64> *personalitySection = parser.sectionForAddress(personalityAddr);
 		assert((personalitySection->type() == ld::Section::typeCode) && "personality column in __compact_unwind section is not pointer to function");
 		// atoms may not be constructed yet, so scan symbol table for labels
 		const char* name = parser.scanSymbolTableForAddress(personalityAddr);
@@ -4536,12 +4542,6 @@ const char* CUSection<arm64>::personalityName(class Parser<arm64>& parser, const
 	}
 }
 #endif
-
-template <typename A>
-const char* CUSection<A>::personalityName(class Parser<A>& parser, const macho_relocation_info<P>* reloc)
-{
-	return NULL;
-}
 
 template <>
 bool CUSection<x86>::encodingMeansUseDwarf(compact_unwind_encoding_t enc)
@@ -6948,7 +6948,7 @@ void Section<arm64>::addLOH(class Parser<arm64>& parser, int kind, int count, co
 	extra.info.delta2 = (count > 1) ? ((addrs[1] - lowestAddress) >> 2) : 0;
 	extra.info.delta3 = (count > 2) ? ((addrs[2] - lowestAddress) >> 2) : 0;
 	extra.info.delta4 = (count > 3) ? ((addrs[3] - lowestAddress) >> 2) : 0;
-	typename Parser<arm64>::SourceLocation src(inAtom, lowestAddress- inAtom->objectAddress());
+	Parser<arm64>::SourceLocation src(inAtom, lowestAddress- inAtom->objectAddress());
 	parser.addFixup(src, ld::Fixup::k1of1, ld::Fixup::kindLinkerOptimizationHint, extra.addend);
 }
 #endif

@@ -29,6 +29,7 @@
 #include <dlfcn.h>
 #include <mach/machine.h>
 
+#include <algorithm> // std::remove_if std::sort
 #include <vector>
 #include <map>
 #include <set>

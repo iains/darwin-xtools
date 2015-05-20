@@ -33,7 +33,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include <unordered_map>
+#include <ext/hash_map>
 
 #include "MachOFileAbstraction.hpp"
 #include "Architectures.hpp"
@@ -112,7 +112,12 @@ private:
 	struct MemberState { ld::relocatable::File* file; const Entry *entry; bool logged; bool loaded; uint32_t index;};
 	bool											loadMember(MemberState& state, ld::File::AtomHandler& handler, const char *format, ...) const;
 
-	typedef std::unordered_map<const char*, const struct ranlib*, ld::CStringHash, ld::CStringEquals> NameToEntryMap;
+	class CStringEquals
+	{
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
+	typedef __gnu_cxx::hash_map<const char*, const struct ranlib*, __gnu_cxx::hash<const char*>, CStringEquals> NameToEntryMap;
 
 	typedef typename A::P							P;
 	typedef typename A::P::E						E;

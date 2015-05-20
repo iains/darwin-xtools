@@ -24,6 +24,13 @@
  
 
 #include <stdlib.h>
+#ifndef __STDC_FORMAT_MACROS
+# define __STDC_FORMAT_MACROS
+# include <inttypes.h>
+# undef __STDC_FORMAT_MACROS
+#else
+# include <inttypes.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -50,7 +57,8 @@
 #include <vector>
 #include <list>
 #include <algorithm>
-#include <unordered_set>
+#include <ext/hash_map>
+#include <ext/hash_set>
 
 #include <CommonCrypto/CommonDigest.h>
 #include <AvailabilityMacros.h>
@@ -4598,6 +4606,12 @@ public:
 };
 
 
+class CStringEquals
+{
+public:
+	bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+};
+
 const char* OutputFile::assureFullPath(const char* path)
 {
 	if ( path[0] == '/' )
@@ -4683,7 +4697,7 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 	const char* filename = NULL;
 	bool wroteStartSO = false;
 	state.stabs.reserve(atomsNeedingDebugNotes.size()*4);
-	std::unordered_set<const char*, CStringHash, CStringEquals>  seenFiles;
+	__gnu_cxx::hash_set<const char*, __gnu_cxx::hash<const char*>, CStringEquals>  seenFiles;
 	for (std::vector<const ld::Atom*>::iterator it=atomsNeedingDebugNotes.begin(); it != atomsNeedingDebugNotes.end(); it++) {
 		const ld::Atom* atom = *it;
 		const ld::File* atomFile = atom->file();

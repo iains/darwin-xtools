@@ -50,6 +50,8 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <ext/hash_map>
+#include <ext/hash_set>
 #include <dlfcn.h>
 #include <AvailabilityMacros.h>
 
@@ -287,7 +289,11 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	objOpts.subType				= _options.subArchitecture();
 	ld::relocatable::File* objResult = mach_o::relocatable::parse(p, len, info.path, info.modTime, info.ordinal, objOpts);
 	if ( objResult != NULL ) {
+#if __LP64__
 		OSAtomicAdd64(len, &_totalObjectSize);
+#else
+	    _totalObjectSize += len;
+#endif
 		OSAtomicIncrement32(&_totalObjectLoaded);
 		return objResult;
 	}
@@ -295,7 +301,11 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	// see if it is an llvm object file
 	objResult = lto::parse(p, len, info.path, info.modTime, info.ordinal, _options.architecture(), _options.subArchitecture(), _options.logAllFiles(), _options.verboseOptimizationHints());
 	if ( objResult != NULL ) {
+#if __LP64__
 		OSAtomicAdd64(len, &_totalObjectSize);
+#else
+	    _totalObjectSize += len;
+#endif
 		OSAtomicIncrement32(&_totalObjectLoaded);
 		return objResult;
 	}
@@ -317,7 +327,11 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 	archOpts.logAllFiles			= _options.logAllFiles();
 	ld::archive::File* archiveResult = ::archive::parse(p, len, info.path, info.modTime, info.ordinal, archOpts);
 	if ( archiveResult != NULL ) {
+#if __LP64__
 		OSAtomicAdd64(len, &_totalArchiveSize);
+#else
+	    _totalArchiveSize += len;
+#endif
 		OSAtomicIncrement32(&_totalArchivesLoaded);
 		return archiveResult;
 	}

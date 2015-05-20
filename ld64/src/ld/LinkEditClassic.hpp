@@ -32,7 +32,6 @@
 #include <unistd.h>
 
 #include <vector>
-#include <unordered_map>
 
 #include "Options.h"
 #include "ld.hpp"
@@ -91,8 +90,13 @@ public:
 	uint32_t									currentOffset();
 
 private:
+	class CStringEquals
+	{
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
 	enum { kBufferSize = 0x01000000 };
-	typedef std::unordered_map<const char*, int32_t, CStringHash, CStringEquals> StringToOffset;
+	typedef __gnu_cxx::hash_map<const char*, int32_t, __gnu_cxx::hash<const char*>, CStringEquals> StringToOffset;
 
 	const uint32_t							_pointerSize;
 	std::vector<char*>						_fullBuffers;

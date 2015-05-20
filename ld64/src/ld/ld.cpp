@@ -54,7 +54,8 @@ extern "C" double log2 ( double );
 #include <vector>
 #include <list>
 #include <algorithm>
-#include <unordered_map>
+#include <ext/hash_map>
+#include <ext/hash_set>
 #include <cxxabi.h>
 
 #include "Options.h"
@@ -148,7 +149,7 @@ private:
 	struct SectionEquals {
 		bool operator()(const ld::Section* left, const ld::Section* right) const;
 	};
-	typedef std::unordered_map<const ld::Section*, FinalSection*, SectionHash, SectionEquals> SectionInToOut;
+	typedef __gnu_cxx::hash_map<const ld::Section*, FinalSection*, SectionHash, SectionEquals> SectionInToOut;
 	
 
 	SectionInToOut			_sectionInToFinalMap;
@@ -169,7 +170,7 @@ std::vector<const char*> InternalState::FinalSection::_s_segmentsSeen;
 size_t InternalState::SectionHash::operator()(const ld::Section* sect) const
 {
 	size_t hash = 0;	
-	ld::CStringHash temp;
+	__gnu_cxx::hash<const char*> temp;
 	hash += temp.operator()(sect->segmentName());
 	hash += temp.operator()(sect->sectionName());
 	return hash;

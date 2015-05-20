@@ -33,7 +33,7 @@
 
 #include <vector>
 #include <set>
-#include <unordered_set>
+#include <ext/hash_set>
 
 #include "configure.h"
 
@@ -110,21 +110,13 @@ private:
 	typedef typename A::P::E				E;
 	typedef typename A::P::uint_t			pint_t;
 	
-	// utility classes for using std::unordered_map with c-strings
-	struct CStringHash {
-		size_t operator()(const char* __s) const {
-			size_t __h = 0;
-			for ( ; *__s; ++__s)
-				__h = 5 * __h + *__s;
-			return __h;
-		};
-	};
-	struct CStringEquals
+	class CStringEquals
 	{
+	public:
 		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
 	};
 
-	typedef std::unordered_set<const char*, CStringHash, CStringEquals>  StringSet;
+	typedef __gnu_cxx::hash_set<const char*, __gnu_cxx::hash<const char*>, CStringEquals>  StringSet;
 
 												MachOChecker(const uint8_t* fileContent, uint32_t fileLength, const char* path);
 	void										checkMachHeader();

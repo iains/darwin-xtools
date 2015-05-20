@@ -1326,7 +1326,7 @@ template <typename A>
 void FunctionStartsAtom<A>::encode() const
 {
 	this->_encodedData.reserve(8192);
-	const uint64_t badAddress = 0xFFFFFFFFFFFFFFFF;
+	const uint64_t badAddress = 0xFFFFFFFFFFFFFFFFULL;
 	uint64_t addr = badAddress;
 	// delta compress all function addresses
 	for (std::vector<ld::Internal::FinalSection*>::iterator it = this->_state.sections.begin(); it != this->_state.sections.end(); ++it) {

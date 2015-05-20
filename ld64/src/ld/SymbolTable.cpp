@@ -41,6 +41,8 @@
 #include <set>
 #include <vector>
 #include <algorithm>
+#include <ext/hash_map>
+#include <ext/hash_set>
 
 #include "Options.h"
 
@@ -772,7 +774,7 @@ void SymbolTable::printStatistics()
 		count[b] = 0;
 	}
 	for(unsigned int i=0; i < _cstringTable.bucket_count(); ++i) {
-		unsigned int n = _cstringTable.bucket_size(i);
+		unsigned int n = _cstringTable.elems_in_bucket(i);
 		if ( n < 10 ) 
 			count[n] += 1;
 		else

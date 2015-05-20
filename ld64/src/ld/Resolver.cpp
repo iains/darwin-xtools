@@ -47,6 +47,8 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <ext/hash_map>
+#include <ext/hash_set>
 #include <dlfcn.h>
 #include <AvailabilityMacros.h>
 

@@ -256,6 +256,7 @@ LocalAddressSpace::getEncodedP(pint_t& addr, pint_t end, uint8_t encoding)
 
 inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_t& dwarfStart, pint_t& dwarfLen, pint_t& compactStart)
 {
+#if 0
 	dyld_unwind_sections info;
 	if ( _dyld_find_unwind_sections((void*)addr, &info) ) {
 		mh				= (pint_t)info.mh;
@@ -264,6 +265,7 @@ inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_
 		compactStart	= (pint_t)info.compact_unwind_section;
 		return true;
 	}
+#endif
 	return false;
 }
 

@@ -107,7 +107,11 @@ private:
 	static void					parseWorkerThread(InputFiles *inputFiles);
 	void						startThread(void (*threadFunc)(InputFiles *)) const;
 
-	typedef std::unordered_map<const char*, ld::dylib::File*, CStringHash, CStringEquals>	InstallNameToDylib;
+	class CStringEquals {
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
+	typedef __gnu_cxx::hash_map<const char*, ld::dylib::File*, __gnu_cxx::hash<const char*>, CStringEquals>	InstallNameToDylib;
 
 	const Options&				_options;
 	std::vector<ld::File*>		_inputFiles;

@@ -30,8 +30,8 @@
 #include <mach/machine.h>
 
 #include <vector>
-#include <unordered_set>
-#include <unordered_map>
+#include <ext/hash_set>
+#include <ext/hash_map>
 
 #include "ld.hpp"
 #include "Snapshot.h"
@@ -376,8 +376,13 @@ public:
 	const std::vector<SectionRename>& sectionRenames() const { return fSectionRenames; }
 
 private:
-	typedef std::unordered_map<const char*, unsigned int, ld::CStringHash, ld::CStringEquals> NameToOrder;
-	typedef std::unordered_set<const char*, ld::CStringHash, ld::CStringEquals>  NameSet;
+	class CStringEquals
+	{
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
+	typedef __gnu_cxx::hash_map<const char*, unsigned int, __gnu_cxx::hash<const char*>, CStringEquals> NameToOrder;
+	typedef __gnu_cxx::hash_set<const char*, __gnu_cxx::hash<const char*>, CStringEquals>  NameSet;
 	enum ExportMode { kExportDefault, kExportSome, kDontExportSome };
 	enum LibrarySearchMode { kSearchDylibAndArchiveInEachDir, kSearchAllDirsForDylibsThenAllDirsForArchives };
 	enum InterposeMode { kInterposeNone, kInterposeAllExternal, kInterposeSome };

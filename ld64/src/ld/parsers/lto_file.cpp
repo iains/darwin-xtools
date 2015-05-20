@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <mach-o/dyld.h>
+#include <algorithm> // std::sort
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -217,8 +218,13 @@ private:
 	static void ltoDiagnosticHandler(lto_codegen_diagnostic_severity_t, const char*, void*);
 #endif
 
-	typedef	std::unordered_set<const char*, ld::CStringHash, ld::CStringEquals>  CStringSet;
-	typedef std::unordered_map<const char*, Atom*, ld::CStringHash, ld::CStringEquals> CStringToAtom;
+	class CStringEquals
+	{
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
+	typedef	__gnu_cxx::hash_set<const char*, __gnu_cxx::hash<const char*>, CStringEquals>  CStringSet;
+	typedef __gnu_cxx::hash_map<const char*, Atom*, __gnu_cxx::hash<const char*>, CStringEquals> CStringToAtom;
 	
 	class AtomSyncer : public ld::File::AtomHandler {
 	public:

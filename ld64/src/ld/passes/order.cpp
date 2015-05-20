@@ -29,10 +29,11 @@
 #include <dlfcn.h>
 #include <mach/machine.h>
 
+#include <algorithm> // std::remove_if std::sort
 #include <vector>
 #include <map>
 #include <set>
-#include <unordered_map>
+#include <ext/hash_map>
 
 #include "ld.hpp"
 #include "order.h"
@@ -84,7 +85,11 @@ private:
 		const Layout&	_layout;
 	};
 				
-	typedef std::unordered_map<const char*, const ld::Atom*, CStringHash, CStringEquals> NameToAtom;
+	class CStringEquals {
+	public:
+		bool operator()(const char* left, const char* right) const { return (strcmp(left, right) == 0); }
+	};
+	typedef __gnu_cxx::hash_map<const char*, const ld::Atom*, __gnu_cxx::hash<const char*>, CStringEquals> NameToAtom;
 	
 	typedef std::map<const ld::Atom*, const ld::Atom*> AtomToAtom;
 	

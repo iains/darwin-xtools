@@ -28,8 +28,10 @@
 #include <unistd.h>
 #include <dlfcn.h>
 
+#include <algorithm>  // std::sort
 #include <vector>
 #include <map>
+#include <ext/hash_map>
 
 #include "MachOFileAbstraction.hpp"
 #include "ld.hpp"
