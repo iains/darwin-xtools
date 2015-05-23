@@ -840,7 +840,9 @@ public:
 												fileOffset(0), size(0), alignment(0),
 												indirectSymTabStartIndex(0), indirectSymTabElementSize(0),
 												relocStart(0), relocCount(0), 
-												hasLocalRelocs(false), hasExternalRelocs(false) {}
+												hasLocalRelocs(false), hasExternalRelocs(false),
+												hasBranches(false), hasCrossSectionBranches(false),
+												hasThumbBranches(false), needsIslands(false) {}
 		std::vector<const Atom*>		atoms;
 		uint64_t						address;
 		uint64_t						fileOffset;
@@ -853,6 +855,10 @@ public:
 		uint32_t						relocCount;
 		bool							hasLocalRelocs;
 		bool							hasExternalRelocs;
+		bool							hasBranches;
+		bool							hasCrossSectionBranches;
+		bool							hasThumbBranches;
+		bool							needsIslands;
 	};
 	
 	virtual uint64_t					assignFileOffsets() = 0;
