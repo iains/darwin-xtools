@@ -111,7 +111,7 @@ public:
 	
 	uint64_t								assignFileOffsets();
 	void									setSectionSizesAndAlignments();
-	void									sortSections();
+	void									sortSections(bool useQuick);
 	void									markAtomsOrdered() { _atomsOrderedInSections = true; }
 	bool									hasReferenceToWeakExternal(const ld::Atom& atom);
 
@@ -727,13 +727,19 @@ int InternalState::FinalSection::sectionComparer(const void* l, const void* r)
 	return (left->_sectionOrder - right->_sectionOrder);
 }
 
-void InternalState::sortSections()
+void InternalState::sortSections(bool useQuick)
 {
 	//fprintf(stderr, "UNSORTED final sections:\n");
 	//for (std::vector<ld::Internal::FinalSection*>::iterator it = sections.begin(); it != sections.end(); ++it) {
 	//	fprintf(stderr, "final section %p %s/%s\n", (*it), (*it)->segmentName(), (*it)->sectionName());
 	//}
-	qsort(&sections[0], sections.size(), sizeof(FinalSection*), &InternalState::FinalSection::sectionComparer);
+
+	// Once we've applied branch islands, we must ensure that sections in the __TEXT segment that compare
+	// equal are stably ordered.
+	if (useQuick)
+	  qsort(&sections[0], sections.size(), sizeof(FinalSection*), &InternalState::FinalSection::sectionComparer);
+	else
+	  mergesort(&sections[0], sections.size(), sizeof(FinalSection*), &InternalState::FinalSection::sectionComparer);
 	//fprintf(stderr, "SORTED final sections:\n");
 	//for (std::vector<ld::Internal::FinalSection*>::iterator it = sections.begin(); it != sections.end(); ++it) {
 	//	fprintf(stderr, "final section %p %s/%s\n", (*it), (*it)->segmentName(), (*it)->sectionName());
@@ -1201,7 +1207,7 @@ int main(int argc, const char* argv[])
 		inputFiles.dylibs(state);
 	
 		// do initial section sorting so passes have rough idea of the layout
-		state.sortSections();
+		state.sortSections(/* useQuick */true);
 
 		// run passes
 		statistics.startPasses = mach_absolute_time();
@@ -1213,7 +1219,11 @@ int main(int argc, const char* argv[])
 		ld::passes::dylibs::doPass(options, state);	// must be after stubs and GOT passes
 		ld::passes::order::doPass(options, state);
 		state.markAtomsOrdered();
-		ld::passes::branch_shim::doPass(options, state);	// must be after stubs 
+		ld::passes::branch_shim::doPass(options, state);	// must be after stubs
+		// We have multiple code sections and these might require intermediate branch
+		// islands, we need to ensure that the layout of the __TEXT segment is known
+		// before we do this.
+		state.sortSections(/* useQuick */true);
 		ld::passes::branch_island::doPass(options, state);	// must be after stubs and order pass
 		ld::passes::dtrace::doPass(options, state);
 		ld::passes::compact_unwind::doPass(options, state);  // must be after order pass
@@ -1221,7 +1231,9 @@ int main(int argc, const char* argv[])
 		ld::passes::bitcode_bundle::doPass(options, state);  // must be after dylib
 #endif
 		// sort final sections
-		state.sortSections();
+		// Use a stable sort so that assumptions made in branch islanding don't get
+		// broken.
+		state.sortSections(/* useQuick */false);
 
 		// write output file
 		statistics.startOutput = mach_absolute_time();
