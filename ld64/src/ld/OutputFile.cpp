@@ -1386,6 +1386,12 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 	bool is_b;
 	bool thumbTarget = false;
 	std::map<uint32_t, const Fixup*> usedByHints;
+	bool printStuff = false;
+	if (atom->contentType() == ld::Atom::typeBranchIsland) {
+		//fprintf(stderr, "applyFixUps() on %s ", atom->name());
+		//printStuff = true;
+	}
+
 	for (ld::Fixup::iterator fit = atom->fixupsBegin(), end=atom->fixupsEnd(); fit != end; ++fit) {
 		uint8_t* fixUpLocation = &buffer[fit->offsetInAtom];
 		ld::Fixup::LOH_arm64 lohExtra;
@@ -1404,6 +1410,7 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 					accumulator |= 1;
 				if ( fit->contentAddendOnly || fit->contentDetlaToAddendOnly )
 					accumulator = 0;
+if (printStuff) fprintf(stderr, ":kindSetTargetAddress accum 0x%lx %s ", accumulator, toTarget?toTarget->name():"anon");
 				break;
 			case ld::Fixup::kindSubtractTargetAddress:
 				delta = addressOf(state, fit, &fromTarget);
@@ -1423,6 +1430,7 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 					}
 					accumulator += fit->u.addend;
 				}
+if (printStuff) fprintf(stderr, ":kindAddAddend accum 0x%lx addend %u ", accumulator, fit->u.addend);
 				break;
 			case ld::Fixup::kindSubtractAddend:
 				accumulator -= fit->u.addend;
@@ -1585,6 +1593,9 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 				break;
 			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 				accumulator = addressOf(state, fit, &toTarget);
+if (printStuff) fprintf(stderr, ":kindStoreTargetAddressPPCBranch24  ");
+#if 0
+//FIXME: reinstate this optimisation - and make sure it applies to the addend cases too.
 				if ( toTarget->contentType() == ld::Atom::typeBranchIsland ) {
 					// Branching to island.  If ultimate target is in range, branch there directly.
 					for (ld::Fixup::iterator islandfit = toTarget->fixupsBegin(), end=toTarget->fixupsEnd();
@@ -1602,10 +1613,12 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 						}
 					}
 				}
+#endif
 				if ( fit->contentDetlaToAddendOnly )
 					accumulator = 0;
 				// fall into kindStorePPCBranch24 case
 			case ld::Fixup::kindStorePPCBranch24:
+if (printStuff) fprintf(stderr, ":kindStorePPCBranch24 ");
 				delta = accumulator - (atom->finalAddress() + fit->offsetInAtom);
 				rangeCheckPPCBranch24(delta, state, atom, fit);
 				instruction = get32BE(fixUpLocation);
@@ -1711,7 +1724,11 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 				}
 				break;
 			case ld::Fixup::kindLazyTarget:
+				break;
 			case ld::Fixup::kindIslandTarget:
+				if ( fit->clusterSize == ld::Fixup::k1of2 ) { // had an addend saved.
+					++fit; // skip it.
+				}
 				break;
 			case ld::Fixup::kindSetLazyOffset:
 				assert(fit->binding == ld::Fixup::bindingDirectlyBound);
@@ -2198,7 +2215,7 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 #endif
 		}
 	}
-	
+if (printStuff) fprintf(stderr, "\n");
 #if SUPPORT_ARCH_arm64
 	// after all fixups are done on atom, if there are potential optimizations, do those
 	if ( (usedByHints.size() != 0) && (_options.outputKind() != Options::kObjectFile) && !_options.ignoreOptimizationHints() ) {
