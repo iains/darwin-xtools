@@ -1,5 +1,5 @@
 
-set(CCTOOLS_VERSION_NUM 862)
+set(CCTOOLS_VERSION_NUM 877.5)
 
 # We need this on in the libraries as well as the apps.
 if(XTOOLS_LTO_SUPPORT)

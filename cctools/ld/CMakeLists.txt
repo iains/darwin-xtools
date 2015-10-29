@@ -8,6 +8,10 @@ set(LD_CLASSIC_SRCS
     debugcompunit.c debugline.c arm_reloc.c
     )
 
+if(NOT XTOOLS_HAS_MAP_FD)
+    list(APPEND LD_CLASSIC_SRCS cctools_map_fd.c)
+endif()
+
 include_directories("${CMAKE_SOURCE_DIR}/cctools/include")
 add_definitions(-D__private_extern__=__attribute__\(\(__visibility__\("hidden"\)\)\))
 
