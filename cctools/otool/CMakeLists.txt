@@ -13,6 +13,7 @@ set(OTOOL_SRCS
     print_objc.c
     print_objc2_32bit.c
     print_objc2_64bit.c
+    print_bitcode.c
     dyld_bind_info.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../libstuff/ofile.c
     )
