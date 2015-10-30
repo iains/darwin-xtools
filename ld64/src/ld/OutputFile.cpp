@@ -3321,7 +3321,7 @@ void OutputFile::addLinkEdit(ld::Internal& state)
 				localRelocationsSection = state.addAtom(*_localRelocsAtom);
 			}
 			if ( _hasSplitSegInfo ) {
-				_splitSegInfoAtom = new SplitSegInfoAtom<ppc>(_options, state, *this);
+				_splitSegInfoAtom = new SplitSegInfoV1Atom<ppc>(_options, state, *this);
 				splitSegInfoSection = state.addAtom(*_splitSegInfoAtom);
 			}
 			// FIXME: The next three are entered for compatibility, but unless dyld is
@@ -3619,7 +3619,7 @@ void OutputFile::addLinkEdit(ld::Internal& state)
 				localRelocationsSection = state.addAtom(*_localRelocsAtom);
 			}
 			if  ( _hasSplitSegInfo ) {
-				_splitSegInfoAtom = new SplitSegInfoAtom<ppc64>(_options, state, *this);
+				_splitSegInfoAtom = new SplitSegInfoV1Atom<ppc64>(_options, state, *this);
 				splitSegInfoSection = state.addAtom(*_splitSegInfoAtom);
 			}
 			// FIXME: The next three are entered for compatibility, but unless dyld is

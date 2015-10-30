@@ -27,14 +27,15 @@
 
 #include "ld.hpp"
 #include "Options.h"
+#include "Options.h"
 
 namespace textstub {
 namespace dylib {
 
 
-extern ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const char* path,
-							  time_t modTime, const Options& opts, ld::File::Ordinal ordinal,
-							  bool bundleLoader, bool indirectDylib);
+extern ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const char* path, 
+								time_t modTime, const Options& opts, ld::File::Ordinal ordinal, 
+								bool bundleLoader, bool indirectDylib);
 
 } // namespace dylib
 } // namespace textstub

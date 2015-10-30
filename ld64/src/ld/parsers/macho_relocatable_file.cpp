@@ -22,7 +22,6 @@
  * @APPLE_LICENSE_HEADER_END@
  */
  
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
@@ -43,6 +42,7 @@
 #include <map>
 #include <algorithm>
 #include <type_traits>
+#include <memory>
 
 #include "dwarf2.h"
 #include "debugline.h"
@@ -1188,7 +1188,7 @@ private:
 															bool warnUnwindConversionProblems, bool keepDwarfUnwind,
 															bool forceDwarfConversion, bool neverConvertDwarf,
 															bool verboseOptimizationHints, bool ignoreMismatchPlatform,
-															bool verboseOptimizationHints, ld::MacVersionMin OSXmin);
+															ld::MacVersionMin OSXmin);
 	ld::relocatable::File*							parse(const ParserOptions& opts);
 	static uint8_t									loadCommandSizeMask();
 	bool											parseLoadCommands(Options::Platform platform, uint32_t minOSVersion, bool simulator, bool ignoreMismatchPlatform);
@@ -1287,8 +1287,8 @@ Parser<A>::Parser(const uint8_t* fileContent, uint64_t fileLength, const char* p
 			_keepDwarfUnwind(keepDwarfUnwind), _forceDwarfConversion(forceDwarfConversion),
 			_neverConvertDwarf(neverConvertDwarf),
 			_verboseOptimizationHints(verboseOptimizationHints),
-			_ignoreMismatchPlatform(ignoreMismatchPlatform),
-			_stubsSectionNum(0), _osxMin(OSXmin)
+			_ignoreMismatchPlatform(ignoreMismatchPlatform), _numStubsSections(0),
+			_osxMin(OSXmin)
 {
   for (unsigned s=0; s<3; s++) {
     _stubsSectionNums[s] = 0;
@@ -4856,7 +4856,6 @@ void CFISection<ppc64>::addCiePersonalityFixups(class Parser<ppc64>& parser, con
 					personalityEncoding);
 	}
 }
->>>>>>> ld64 - Restore ppc (127-2 version) plus base ppc64 and libunwind (updated to current branch islands).
 
 template <typename A>
 void CFISection<A>::addCiePersonalityFixups(class Parser<A>& parser, const CFI_Atom_Info* cieInfo)

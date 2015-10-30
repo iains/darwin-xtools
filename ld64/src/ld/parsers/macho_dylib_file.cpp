@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <memory>
 
 #include "Architectures.hpp"
 #include "Bitcode.hpp"

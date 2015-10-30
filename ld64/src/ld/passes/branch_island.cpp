@@ -124,8 +124,8 @@ private:
 
 class ARM64BranchIslandAtom : public ld::Atom {
 public:
-											ARM64BranchIslandAtom(const char* nm, const ld::Atom* target, TargetAndOffset finalTarget)
-				: ld::Atom(_s_text_section, ld::Atom::definitionRegular, ld::Atom::combineNever,
+											ARM64BranchIslandAtom(const char* nm, const ld::Section& inSect, const ld::Atom* target, TargetAndOffset finalTarget)
+				: ld::Atom(inSect, ld::Atom::definitionRegular, ld::Atom::combineNever,
 							ld::Atom::scopeLinkageUnit, ld::Atom::typeBranchIsland, 
 							ld::Atom::symbolTableIn, false, false, false, ld::Atom::Alignment(2)), 
 				_name(nm),
@@ -378,7 +378,7 @@ static ld::Atom* makeBranchIsland(const Options& opts, ld::Fixup::Kind kind, int
 #if SUPPORT_ARCH_arm64
 	    case ld::Fixup::kindStoreARM64Branch26:
 		case ld::Fixup::kindStoreTargetAddressARM64Branch26:
-			return new ARM64BranchIslandAtom(name, nextTarget, finalTarget);
+			return new ARM64BranchIslandAtom(name, inSect, nextTarget, finalTarget);
 			break;
 #endif
 		default:
@@ -554,7 +554,7 @@ if (_s_log && (abs(displacement) > kBetweenRegions) ) fprintf(stderr, "from %s t
 												island, island->name(), displacement);
 						++islandCount;
 						regionsIslands[0]->push_back(island);
-						state.atomToSection[island] = textSection;
+						state.atomToSection[island] = sect;
 					}
 					else {
 						island = pos->second;
@@ -580,7 +580,7 @@ if (_s_log && (abs(displacement) > kBetweenRegions) ) fprintf(stderr, "from %s t
 								(*region)[finalTargetAndOffset] = island;
 								if (_s_log) fprintf(stderr, "  +added forward branching island %p %s to region %d (in section %s) for %s\n", island, island->name(), i, branchIslandInsertionSections[i]->sectionName(), atom->name());
 								regionsIslands[i]->push_back(island);
-								state.atomToSection[island] = textSection;
+								state.atomToSection[island] = sect;
 								++islandCount;
 								nextTarget = island;
 							}
@@ -609,7 +609,7 @@ if (_s_log && (abs(displacement) > kBetweenRegions) ) fprintf(stderr, "from %s t
 								(*region)[finalTargetAndOffset] = island;
 								if (_s_log) fprintf(stderr, "  -added back branching island %p %s to region %d (in section %s) for %s\n", island, island->name(), i, branchIslandInsertionSections[i]->sectionName(), atom->name());
 								regionsIslands[i]->push_back(island);
-								state.atomToSection[island] = textSection;
+								state.atomToSection[island] = sect;
 								++islandCount;
 								prevTarget = island;
 							}
@@ -838,7 +838,6 @@ void doPass(const Options& opts, ld::Internal& state)
 
 	// only ARM[64] and PPC need branch islands
 	switch ( opts.architecture() ) {
-		case CPU_TYPE_ARM:
 		case CPU_TYPE_POWERPC:
 		case CPU_TYPE_POWERPC64:
 		case CPU_TYPE_ARM:
