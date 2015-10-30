@@ -27,9 +27,11 @@
 #include <sys/mman.h>
 
 #include <vector>
+#include <algorithm>
+#include <memory>
 
 #include "Architectures.hpp"
-#include "bitcode.hpp"
+#include "Bitcode.hpp"
 #include "MachOFileAbstraction.hpp"
 #include "MachOTrie.hpp"
 #include "textstub_dylib_file.hpp"
@@ -1063,6 +1065,18 @@ ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const ch
 		case CPU_TYPE_ARM64:
 			if ( Parser<arm64>::validFile(fileContent, fileLength, path, opts.architectureName()) )
 				return Parser<arm64>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc
+		case CPU_TYPE_POWERPC:
+			if ( Parser<ppc>::validFile(fileContent, fileLength, path, opts.architectureName()) )
+				return Parser<ppc>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
+			break;
+#endif
+#if SUPPORT_ARCH_ppc64
+		case CPU_TYPE_POWERPC64:
+			if ( Parser<ppc64>::validFile(fileContent, fileLength, path, opts.architectureName()) )
+				return Parser<ppc64>::parse(fileContent, fileLength, path, modTime, ordinal, opts, indirectDylib);
 			break;
 #endif
 	}

@@ -16,6 +16,7 @@ set(LD64_SOURCES
   parsers/archive_file.cpp
   parsers/lto_file.cpp
   parsers/macho_dylib_file.cpp
+  parsers/textstub_dylib_file.cpp
   parsers/opaque_section_file.cpp
   passes/stubs/stubs.cpp
   passes/dtrace_dof.cpp
@@ -24,6 +25,7 @@ set(LD64_SOURCES
   passes/huge.cpp
   passes/branch_island.cpp
   passes/branch_shim.cpp
+  passes/bitcode_bundle.cpp
   passes/objc.cpp
   passes/dylibs.cpp
   passes/tlvp.cpp

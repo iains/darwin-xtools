@@ -27,19 +27,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <vector>
 #include <dlfcn.h>
 #include <math.h>
 #include <unistd.h>
 #include <time.h>
 #include <unordered_map>
 #include <sstream>
+#include <sys/syslimits.h>
+#include <vector>
+#include <algorithm>
 
 #include "llvm-c/lto.h"
 // c header
 extern "C" {
 #include <xar/xar.h>
 }
+
+#ifndef BITCODE_XAR_VERSION
+#define BITCODE_XAR_VERSION 0
+#endif
 
 #include "bitcode_bundle.h"
 

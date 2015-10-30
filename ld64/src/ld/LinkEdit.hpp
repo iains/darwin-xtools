@@ -1215,7 +1215,7 @@ void SplitSegInfoV1Atom<arm64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kin
 #endif
 
 template <>
-void SplitSegInfoAtom<ppc>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind kind, uint32_t extra) const
+void SplitSegInfoV1Atom<ppc>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind kind, uint32_t extra) const
 {
 	switch (kind) {
 		case ld::Fixup::kindStorePPCPicHigh16AddLow:
@@ -1232,7 +1232,7 @@ void SplitSegInfoAtom<ppc>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 
 
 template <>
-void SplitSegInfoAtom<ppc64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind kind, uint32_t extra) const
+void SplitSegInfoV1Atom<ppc64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind kind, uint32_t extra) const
 {
 	switch (kind) {
 		case ld::Fixup::kindStorePPCPicHigh16AddLow:

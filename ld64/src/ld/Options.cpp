@@ -617,7 +617,7 @@ void Options::setArchitecture(cpu_type_t type, cpu_subtype_t subtype, Options::P
 				case CPU_TYPE_X86_64:
 				case CPU_TYPE_POWERPC:
 				case CPU_TYPE_POWERPC64:
-					if ( fPlatform == kPlatformOSX) && (fMacVersionMin == ld::macVersionUnset)
+					if ( (fPlatform == kPlatformOSX) && (fMacVersionMin == ld::macVersionUnset)
 					     && (fIOSVersionMin == ld::iOSVersionUnset) && (fOutputKind != Options::kObjectFile) ) {
 				#ifdef DEFAULT_MACOSX_MIN_VERSION
 						warning("-macosx_version_min not specified, assuming " DEFAULT_MACOSX_MIN_VERSION);
@@ -1152,7 +1152,7 @@ std::vector<const char*> Options::exportsData() const
 std::vector<const char*> Options::SetWithWildcards::data() const
 {
 	std::vector<const char*> data;
-	for (NameSet::iterator it=regularBegin(); it != regularEnd(); ++it) {
+	for (NameSet::const_iterator it=regularBegin(); it != regularEnd(); ++it) {
 		data.push_back(*it);
 	}
 	for (std::vector<const char*>::const_iterator it=fWildCard.begin(); it != fWildCard.end(); ++it) {
