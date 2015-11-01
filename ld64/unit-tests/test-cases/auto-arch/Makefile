@@ -25,8 +25,10 @@ include ${TESTROOT}/include/common.makefile
 
 ifeq ($(FILEARCH),arm)
 	LD_VERS = -ios_version_min 4.0 -syslibroot $(IOS_SDK)
+	SYS_VERS = -mios-version-min=4.0
 else
 	LD_VERS = -macosx_version_min 10.6
+	SYS_VERS = -mmacosx-version-min=10.6
 endif
 
 
@@ -37,7 +39,7 @@ endif
 run: all
 
 all:
-	${CC} ${CCFLAGS} hello.c -c -o hello.o 
+	${CC} ${CCFLAGS} ${SYS_VERS} hello.c -c -o hello.o 
 	${FAIL_IF_BAD_OBJ} hello.o
 	${LD} ${LDFLAGS} hello.o -dylib -o hello.dylib -lSystem $(LD_VERS) 
 	file hello.dylib | grep ${FILEARCH} | ${PASS_IFF_STDIN}

@@ -27,7 +27,8 @@ include ${TESTROOT}/include/common.makefile
 # Verify that code and data references can be redirected via aliases. 
 #
 
-CC=/Volumes/my/src/puzzlebox/build/Debug+Asserts/bin/clang
+#CC=/Volumes/my/src/puzzlebox/build/Debug+Asserts/bin/clang
+CC ?= clang
 
 run: all
 

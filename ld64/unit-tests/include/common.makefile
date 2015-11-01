@@ -20,9 +20,9 @@ DYLDINFO	= dyldinfo
 ifdef BUILT_PRODUCTS_DIR
 	# if run within Xcode, add the just built tools to the command path
 	PATH := ${BUILT_PRODUCTS_DIR}:${MYDIR}:${PATH}
-	COMPILER_PATH := ${BUILT_PRODUCTS_DIR}:${COMPILER_PATH}
-	LD_PATH     = ${BUILT_PRODUCTS_DIR}
-	LD			= ${BUILT_PRODUCTS_DIR}/ld
+	COMPILER_PATH	:= ${BUILT_PRODUCTS_DIR}:${COMPILER_PATH}
+	LD_PATH		= ${BUILT_PRODUCTS_DIR}
+	LD		= ${BUILT_PRODUCTS_DIR}/ld
 	OBJECTDUMP	= ${BUILT_PRODUCTS_DIR}/ObjectDump
 	MACHOCHECK	= ${BUILT_PRODUCTS_DIR}/machocheck
 	REBASE		= ${BUILT_PRODUCTS_DIR}/rebase
@@ -55,14 +55,15 @@ ifeq ($(ARCH),ppc)
 	SDKExtra = -isysroot /Developer/SDKs/MacOSX10.6.sdk
 endif
 
-CC		 = $(shell xcrun -find clang) -arch ${ARCH} ${SDKExtra} -mmacosx-version-min=10.8
+#CC = $(shell xcrun -find clang) -arch ${ARCH} ${SDKExtra} -mmacosx-version-min=10.8
+CC=/LLVM/ml/llvm-37-s1/Release+Asserts/bin/clang -arch ${ARCH} ${SDKExtra} -mmacosx-version-min=10.8
 CCFLAGS = -Wall 
 ASMFLAGS =
 VERSION_NEW_LINKEDIT = -mmacosx-version-min=10.6
 VERSION_OLD_LINKEDIT = -mmacosx-version-min=10.4
 LD_NEW_LINKEDIT = -macosx_version_min 10.6
 
-CXX		  = $(shell xcrun -find clang++) -arch ${ARCH} ${SDKExtra}
+CXX = $(shell xcrun -find clang++) -arch ${ARCH} ${SDKExtra}
 CXXFLAGS = -Wall -stdlib=libc++ 
 
 IOS_SDK = $(shell xcodebuild -sdk iphoneos.internal -version Path  2>/dev/null)
