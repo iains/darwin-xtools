@@ -62,5 +62,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LD64_CXX_FLAGS} ")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/abstraction")
 
 add_subdirectory(ld)
+add_subdirectory(other)
 
 add_library(prunetrie other/PruneTrie.cpp)
