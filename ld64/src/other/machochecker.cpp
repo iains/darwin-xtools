@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <utility>
 #include <vector>
 #include <set>
 #include <unordered_set>
@@ -533,7 +534,7 @@ void MachOChecker<A>::checkLoadCommands()
 				else {
 					throw "overlapping segment vm addresses";
 				}
-				segmentAddressRanges.push_back(std::make_pair<pint_t, pint_t>(startAddr, endAddr));
+				segmentAddressRanges.push_back(std::make_pair<pint_t, pint_t>((pint_t)startAddr, (pint_t)endAddr));
 			}
 			// see if this overlaps another segment file offset range
 			uint64_t startOffset = segCmd->fileoff();
@@ -550,7 +551,7 @@ void MachOChecker<A>::checkLoadCommands()
 				else {
 					throw "overlapping segment file data";
 				}
-				segmentFileOffsetRanges.push_back(std::make_pair<pint_t, pint_t>(startOffset, endOffset));
+				segmentFileOffsetRanges.push_back(std::make_pair<pint_t, pint_t>((pint_t)startOffset, (pint_t)endOffset));
 				// check is within file bounds
 				if ( (startOffset > fLength) || (endOffset > fLength) )
 					throw "segment file data is past end of file";
