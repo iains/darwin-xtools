@@ -243,6 +243,11 @@ char **envp)
 	    arch_flag.cputype == CPU_TYPE_ARM)){
 	    qflag = TRUE;
 	}
+
+	/* Default to the 'old way'.  */
+	if (Qflag == FALSE && qflag == FALSE)
+	  Qflag = TRUE;
+
 	if(qflag == TRUE &&
 	   (arch_flag.cputype != CPU_TYPE_X86_64 &&
 	    arch_flag.cputype != CPU_TYPE_I386 &&
