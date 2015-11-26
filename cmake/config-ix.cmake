@@ -42,3 +42,5 @@ check_function_exists(strndup              XTOOLS_HAS_STRNDUP)
 if((NOT XTOOLS_HAS_STRNLEN) OR (NOT XTOOLS_HAS_STRNDUP))
   set(XTOOLS_NEEDS_STRLIB ON)
 endif()
+
+check_function_exists(OSAtomicAdd64 XTOOLS_HAS_64BATADD)

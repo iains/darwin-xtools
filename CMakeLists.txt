@@ -58,19 +58,17 @@ else()
   message(STATUS "*Top Level* native build")
 endif()
 
-set(LTO_PATH /compilers/clang-legacy-trunk-s1g)
-if(EXISTS ${LTO_PATH}/include/llvm-c/lto.h AND
-   EXISTS ${LTO_PATH}/lib/libLTO.dylib)
+if(XTOOLS_LTO_PATH AND
+   EXISTS ${XTOOLS_LTO_PATH}/include/llvm-c/lto.h AND
+   EXISTS ${XTOOLS_LTO_PATH}/lib/libLTO.dylib)
   configure_file(
-                ${LTO_PATH}/include/llvm-c/lto.h
-                ${CMAKE_BINARY_DIR}/lto-include/llvm-c/lto.h
+                ${XTOOLS_LTO_PATH}/include/llvm-c/lto.h
+                ${CMAKE_BINARY_DIR}/include/llvm-c/lto.h
                 COPYONLY)
   configure_file(
-                ${LTO_PATH}/lib/libLTO.dylib
+                ${XTOOLS_LTO_PATH}/lib/libLTO.dylib
                 ${CMAKE_BINARY_DIR}/lib/libLTO.dylib
                 COPYONLY)
-  include_directories("${CMAKE_BINARY_DIR}/lto-include")
-  link_directories("${CMAKE_BINARY_DIR}/lib")
   option(XTOOLS_LTO_SUPPORT "Support LTO in cctools and ld64." ON)
   message(STATUS "*Top Level* WITH LTO")
 else()
@@ -78,12 +76,10 @@ else()
   message(STATUS "*Top Level* NO LTO")
 endif()
 
-set(XTOOLS_HOST_IS_64B YES)
-
 SET(CMAKE_C_FLAGS_MINSIZEREL   "-Os")
 SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
-#SET(CMAKE_C_FLAGS "-Os -g")
-#SET(CMAKE_CXX_FLAGS "-Os -g")
+#SET(CMAKE_C_FLAGS_DEBUG "-Og")
+#SET(CMAKE_CXX_FLAGS_DEBUG "-Og")
 
 include(config-ix)
 
@@ -105,9 +101,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/archs)
 
-#include_directories("${CMAKE_SOURCE_DIR}/host-includes")
 #link_directories("${CMAKE_SOURCE_DIR}/host-libs")
 
+# *sigh* ... re-working cctools to allow regular 'bool' is possible but quite
+# a lot of fiddling.  For now it's simply easier to use two versions of the
+# dyld headers, one local to cctools and the ld64 one copied from up-to-date
+# dyld.  This include dir should NOT be used for cctools.
 if( EXISTS ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_priv.h)
   configure_file(
                 ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_priv.h
@@ -118,16 +117,28 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_priv.h)
                 ${CMAKE_BINARY_DIR}/dyld-include/mach-o/dyld.h
                 COPYONLY)
   configure_file(
-                ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_images.h
+               ${CMAKE_SOURCE_DIR}/dyld/include/mach-o/dyld_images.h
                 ${CMAKE_BINARY_DIR}/dyld-include/mach-o/dyld_images.h
                 COPYONLY)
 endif()
 
 include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/macho-target-includes")
+include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/include")
+include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/host-includes")
+link_directories("${CMAKE_BINARY_DIR}/lib")
 
 if(XTOOLS_NEEDS_STRLIB)
   add_subdirectory(strlib)
+  configure_file(
+                ${CMAKE_SOURCE_DIR}/strlib/string.h
+                ${CMAKE_BINARY_DIR}/host-includes/string.h
+                COPYONLY)
 endif()
+
+# Darwin < 10 doesn't specify the uuid_string_t, provide it here.
+configure_file(${CMAKE_SOURCE_DIR}/host-includes/uuid/uuid.h
+               ${CMAKE_BINARY_DIR}/host-includes/uuid/uuid.h
+               COPYONLY)
 
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
@@ -145,7 +156,6 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/src/other/PruneTrie.cpp)
                 ${CMAKE_BINARY_DIR}/include/mach-o/prune_trie.h
                 COPYONLY)
   set(XTOOLS_HAS_LIBPRUNETRIE YES)
-  include_directories("${CMAKE_BINARY_DIR}/include")
 endif()
 
 if( EXISTS ${CMAKE_SOURCE_DIR}/cctools/CMakeLists.txt )
