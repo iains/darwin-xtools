@@ -35,7 +35,9 @@
 
 #include "MachOFileAbstraction.hpp"
 #include "parsers/macho_relocatable_file.h"
+#if LTO_SUPPORT
 #include "parsers/lto_file.h"
+#endif
 
 static bool			sDumpContent= true;
 static bool			sDumpStabs	= false;
@@ -1297,12 +1299,12 @@ static ld::relocatable::File* createReader(const char* path)
 	ld::relocatable::File* objResult = mach_o::relocatable::parse(p, fileLen, path, stat_buf.st_mtime, ld::File::Ordinal::NullOrdinal(), objOpts);
 	if ( objResult != NULL )
 		return objResult;
-
+#if LTO_SUPPORT
 	// see if it is an llvm object file
 	objResult = lto::parse(p, fileLen, path, stat_buf.st_mtime, ld::File::Ordinal::NullOrdinal(), sPreferredArch, sPreferredSubArch, false, true);
 	if ( objResult != NULL ) 
 		return objResult;
-
+#endif
 	throwf("not a mach-o object file: %s", path);
 #else
 	// for peformance testing
