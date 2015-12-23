@@ -1097,6 +1097,7 @@ expressionS *expressionP)
 	clean_up_expression(expressionP);
 	SKIP_WHITESPACE();		/* -> 1st char after operand. */
 	know(*input_line_pointer != ' ');
+
 	return(expressionP->X_seg);
 }
 
