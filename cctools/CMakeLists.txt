@@ -1,6 +1,8 @@
 
 set(CCTOOLS_VERSION_NUM 877.5)
 
+add_definitions(-DALLOW_64BIT_LEB_ON_32B_TARGET=1)
+
 # We need this on in the libraries as well as the apps.
 if(XTOOLS_LTO_SUPPORT)
   add_definitions(-DLTO_SUPPORT)
