@@ -3781,7 +3781,11 @@ emit_leb128_expr (expressionS *exp, int sign)
     {
       /* If we've got a constant, emit the thing directly right now.  */
 
+#if ALLOW_64BIT_LEB_ON_32B_TARGET
+      int64_t value = exp->X_add_number;
+#else
       valueT value = exp->X_add_number;
+#endif
       int size;
       char *p;
 
@@ -5118,9 +5122,8 @@ sizeof_uleb128_32 (uint32_t value)
 static inline int
 sizeof_uleb128_64 (uint64_t value)
 {
-  register int size = 0;
-  register unsigned byte;
-
+  int size = 0;
+  unsigned byte;
   do
     {
       byte = (value & 0x7f);
@@ -5135,10 +5138,10 @@ sizeof_uleb128_64 (uint64_t value)
 
 #if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
 int
-sizeof_leb128 (valueT value, int sign)
+sizeof_leb128 (uint64_t value, int sign)
 {
   if (sign)
-    return sizeof_sleb128_64 ((offsetT) value);
+    return sizeof_sleb128_64 ((int64_t) value);
   else
     return sizeof_uleb128_64 (value);
 }
@@ -5155,8 +5158,13 @@ sizeof_leb128 (valueT value, int sign)
 
 /* Output a LEB128 value.  */
 
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
+static inline int
+output_sleb128 (char *p, int64_t value)
+#else
 static inline int
 output_sleb128 (char *p, offsetT value)
+#endif
 {
   register char *orig = p;
   register int more;
@@ -5178,26 +5186,39 @@ output_sleb128 (char *p, offsetT value)
   return p - orig;
 }
 
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
+static inline int
+output_uleb128 (char *p, uint64_t value)
+#else
 static inline int
 output_uleb128 (char *p, valueT value)
+#endif
 {
   char *orig = p;
-
-  unsigned_target_addr_t uval = (unsigned_target_addr_t) value;
   do {
-      unsigned byte = (uval & 0x7f);
-      uval >>= 7;
-      if (uval != 0)
+      unsigned byte = (value & 0x7f);
+      value >>= 7;
+      if (value != 0)
 	/* More bytes to follow.  */
 	byte |= 0x80;
 
       *p++ = byte;
     }
-  while (uval != 0);
+  while (value != 0);
 
   return p - orig;
 }
 
+#if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
+int
+output_leb128 (char *p, uint64_t value, int sign)
+{
+  if (sign)
+    return output_sleb128 (p, (int64_t) value);
+  else
+    return output_uleb128 (p, value);
+}
+#else
 int
 output_leb128 (char *p, valueT value, int sign)
 {
@@ -5206,3 +5227,4 @@ output_leb128 (char *p, valueT value, int sign)
   else
     return output_uleb128 (p, value);
 }
+#endif
