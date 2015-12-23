@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with GAS; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+#include <stdint.h>
 #import "expr.h"
 
 /* Define to make whitespace be allowed in many syntactically
@@ -124,6 +125,15 @@ extern void big_cons(
     uintptr_t nbytes);
 extern void pseudo_set(
     symbolS *symbolP);
+#if ALLOW_64BIT_LEB_ON_32B_TARGET
+extern int output_leb128(
+    char *p,
+    uint64_t value,
+    int sign);
+extern int sizeof_leb128(
+    uint64_t value,
+    int sign);
+#else
 extern int output_leb128(
     char *p,
     valueT value,
@@ -131,4 +141,5 @@ extern int output_leb128(
 extern int sizeof_leb128(
     valueT value,
     int sign);
+#endif
 #endif /* _READ_H_ */
