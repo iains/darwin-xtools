@@ -35,9 +35,9 @@ set(CMAKE_MODULE_PATH
 
 # Keep some kind of project identifier.
 
-set(XTOOLS_VERSION_MAJOR 0)
+set(XTOOLS_VERSION_MAJOR 1)
 set(XTOOLS_VERSION_MINOR 0)
-set(XTOOLS_VERSION_PATCH 1)
+set(XTOOLS_VERSION_PATCH 0)
 set(XTOOLS_VERSION_SUFFIX git)
 
 if (NOT PACKAGE_VERSION)
@@ -125,7 +125,12 @@ endif()
 include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/macho-target-includes")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/include")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/host-includes")
-link_directories("${CMAKE_BINARY_DIR}/lib")
+if (EXISTS ${CMAKE_BINARY_DIR}/lib)
+  link_directories("${CMAKE_BINARY_DIR}/lib")
+endif()
+if (EXISTS ${CMAKE_BINARY_DIR}/archs)
+  link_directories("${CMAKE_BINARY_DIR}/archs")
+endif()
 
 if(XTOOLS_NEEDS_STRLIB)
   add_subdirectory(strlib)
