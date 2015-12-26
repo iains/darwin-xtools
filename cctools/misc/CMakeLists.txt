@@ -95,3 +95,25 @@ install(TARGETS
         redo_prebinding seg_addr_table check_dylib seg_hack ctf_insert
         DESTINATION bin
        )
+
+if (CMAKE_HOST_UNIX)
+# symlink libtool -> ranlib in the build dir.
+add_custom_command(
+    TARGET libtool POST_BUILD
+    COMMAND ln -sf libtool ranlib
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+# symlink libtool -> ranlib in the installed dir.
+install(CODE
+        "if (\"\$ENV{DESTDIR}\" STREQUAL \"\")
+          execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink
+                          libtool
+                          ${CMAKE_INSTALL_PREFIX}/bin/ranlib)
+         else ()
+          execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink
+                          libtool
+                          \$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/bin/ranlib)
+         endif () "
+        )
+endif()
