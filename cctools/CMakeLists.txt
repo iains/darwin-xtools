@@ -15,6 +15,18 @@ if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" )
   add_definitions(-DDEBUG)
 endif()
 
+if(XTOOLS_BUGURL)
+  add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
+endif()
+
+if(PACKAGE_VERSION)
+  add_definitions(-DPACKAGE_VERSION="${PACKAGE_VERSION}")
+endif()
+
+if (XTOOLS_VERSION)
+  add_definitions(-DXTOOLS_VERSION="${XTOOLS_VERSION}")
+endif()
+
 option(CCTOOLS_EFITOOLS  "Build efitools as part of cctools" OFF)
 option(CCTOOLS_LD_CLASSIC  "Build ld_classic as part of cctools" ON)
 
