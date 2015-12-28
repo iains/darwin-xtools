@@ -9,6 +9,10 @@ if(XTOOLS_LTO_SUPPORT)
   set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
 endif()
 
+if(XTOOLS_BUGURL)
+  add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
+endif()
+
 option(CCTOOLS_EFITOOLS  "Build efitools as part of cctools" OFF)
 option(CCTOOLS_LD_CLASSIC  "Build ld_classic as part of cctools" ON)
 
