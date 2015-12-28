@@ -169,6 +169,16 @@ char **envp)
 	    if(*arg != '-')
 		continue;
 
+	    if((strcmp(arg, "--target-help") == 0) ||
+	       (strcmp(arg, "--help") == 0))
+	    {
+		fprintf(stderr, "TODO: print options.\n");
+#ifdef XTOOLS_BUGURL
+		fprintf(stderr, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+#endif
+		exit(0);
+	    }
+
 	    if(strcmp(arg, "--version") == 0){
 		/* Implement a gnu-style --version.  */
 		char *pnam = strrchr(progname, '/');
