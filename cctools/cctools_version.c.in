@@ -4,5 +4,17 @@ const char
   "cctools-@CCTOOLS_VERSION_NUM@";
 
 const char
+  xtools_version[] __attribute__ ((__used__)) =
+  "@XTOOLS_VERSION@";
+
+const char
+  package_version[] __attribute__ ((__used__)) =
+  "(@PACKAGE_VERSION@)";
+
+const char
   lto_support[] __attribute__ ((__used__)) =
   " @LTO_SUPPORT_INFO@";
+
+const char
+  support_url[] __attribute__ ((__used__)) =
+  "@XTOOLS_BUGURL@";
