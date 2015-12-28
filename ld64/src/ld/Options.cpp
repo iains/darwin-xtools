@@ -3728,6 +3728,8 @@ void Options::parse(int argc, const char* argv[])
 void Options::buildSearchPaths(int argc, const char* argv[])
 {
 	bool addStandardLibraryDirectories = true;
+	bool exitAfterOptionsParsing = false;
+	bool shouldPrintHelp = false;
 	std::vector<const char*> libraryPaths;
 	std::vector<const char*> frameworkPaths;
 	libraryPaths.reserve(10);
@@ -3788,16 +3790,21 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			extern const char ldVersionString[];
 			fprintf(stderr, "%s", ldVersionString);
 			fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
-			 // if only -v specified, exit cleanly
-			 if ( argc == 2  || strcmp(argv[i], "--version") == 0 ) {
 #ifdef LTO_SUPPORT
-				const char* ltoVers = lto::version();
+            const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
 					fprintf(stderr, "LTO support using: %s\n", ltoVers);
 #endif
-				exit(0);
+			 // if only -v specified, exit cleanly
+			 if ( argc == 2  || strcmp(argv[i], "--version") == 0 ) {
+				exitAfterOptionsParsing = true;
 			}
 		}
+		else if ( strcmp(argv[i], "--help") == 0 ||
+		          strcmp(argv[i], "--target-help") == 0 ) {
+		    shouldPrintHelp = true;
+			exitAfterOptionsParsing = true;
+        }
 		else if ( strcmp(argv[i], "-syslibroot") == 0 ) {
 			const char* path = argv[++i];
 			if ( path == NULL )
@@ -3826,6 +3833,25 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			fBundleBitcode = true;
 		}
 	}
+    if (exitAfterOptionsParsing){
+        if (shouldPrintHelp) {
+            if (! fVerbose) { // We didn't print the version info yet.
+			    extern const char ldVersionString[];
+			    fprintf(stderr, "%s", ldVersionString);
+			    fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
+#ifdef LTO_SUPPORT
+                const char* ltoVers = lto::version();
+				if ( ltoVers != NULL )
+					fprintf(stderr, "LTO support using: %s\n", ltoVers);
+#endif
+            }
+            fprintf(stderr, "TODO: implement options summary.\n");
+#ifdef XTOOLS_BUGURL
+            fprintf(stderr, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+#endif
+        }
+        exit (0);
+    }
 	int standardLibraryPathsStartIndex = libraryPaths.size();
 	int standardFrameworkPathsStartIndex = frameworkPaths.size();
 	if ( addStandardLibraryDirectories ) {
