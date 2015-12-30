@@ -56,10 +56,12 @@ if(XTOOLS_CXX_HAS_STDCXX11_FLAG)
      set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -std=c++11")
 endif()
 if(XTOOLS_CXX_HAS_STDLIB_FLAG)
-     set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -stdlib=libc++ -lxar")
+     set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -stdlib=libc++")
 elseif(XTOOLS_CXX_HAS_STATICCXX_FLAG)
-     set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -static-libstdc++ -lxar")
+     set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -static-libstdc++")
 endif()
+
+set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -lxar")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LD64_CXX_FLAGS} ")
 

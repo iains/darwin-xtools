@@ -58,5 +58,8 @@ endif()
 add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_NUM}")
 
 add_executable(ld ${LD64_SOURCES})
+if(NOT XTOOLS_HAS_MODERNXAR)
+  target_link_libraries(ld xarextralib)
+endif()
 
 install(TARGETS ld DESTINATION bin)
