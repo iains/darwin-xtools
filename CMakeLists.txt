@@ -145,6 +145,14 @@ configure_file(${CMAKE_SOURCE_DIR}/host-includes/uuid/uuid.h
                ${CMAKE_BINARY_DIR}/host-includes/uuid/uuid.h
                COPYONLY)
 
+if (NOT XTOOLS_HAS_MODERNXAR)
+  add_subdirectory(xar-additions)
+  configure_file(
+                ${CMAKE_SOURCE_DIR}/xar-additions/xar.h
+                ${CMAKE_BINARY_DIR}/host-includes/xar/xar.h
+                COPYONLY)
+endif()
+
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)

@@ -48,3 +48,6 @@ check_function_exists(OSAtomicAdd64 XTOOLS_HAS_64BATADD)
 # map_fd is only available in 32b implementations and has been removed on later
 # systems - we provide a replacement.
 check_function_exists(map_fd XTOOLS_HAS_MAP_FD)
+
+set(CMAKE_REQUIRED_LIBRARIES "xar")
+check_function_exists(xar_extract_tobuffersz XTOOLS_HAS_MODERNXAR)
