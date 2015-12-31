@@ -56,6 +56,12 @@
 #if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
 #include <servers/netname.h>
 #else
+#ifndef __has_extension
+# define __has_extension(x) 0
+#endif
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
 #include <servers/bootstrap.h>
 #endif
 
