@@ -44,3 +44,7 @@ if((NOT XTOOLS_HAS_STRNLEN) OR (NOT XTOOLS_HAS_STRNDUP))
 endif()
 
 check_function_exists(OSAtomicAdd64 XTOOLS_HAS_64BATADD)
+
+# map_fd is only available in 32b implementations and has been removed on later
+# systems - we provide a replacement.
+check_function_exists(map_fd XTOOLS_HAS_MAP_FD)
