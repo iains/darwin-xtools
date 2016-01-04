@@ -30,6 +30,34 @@ The principal changes common to all versions are:
  - XCode tools <= 3.2.6 do not support the macosx-version-min load command in "ar, ranlib" etc.
  - This means Darwin9/10 (OS X 10.5/6) need updated tools to handle LLVM.
 
+RELEASE 1.0.0
+=============
+
+This is darwin-xtools 1.0.0
+
+It has been built and tested (using gcc-5.3 and/or XCode clang, where that supports c++11) on:
+  i686-apple-darwin9, powerpc-apple-darwin9, i686-apple-darwin10
+  x86-64-apple-darwin{10,11,12,13,14}
+
+NOTE: this is not really necessary on Darwin14+, since XCode 7.2 contains more recent tools; you might want some of the GCC compatibility features, but GCC also builds with XC7.2.
+
+Changes to cctools (877.5):
+ - as; **Default to using cctools 'as' for all targets** this means that you don't need to have a clang install in order to proceed (and is somewhat more GCC-compatible on most Darwin targets).
+ - as; Fix ULEB128 handling where the MSB is set.
+ - as; Allow SLEB128 to have 64b values on 32b hosts (needed for GCC support)
+ - as; Fix .zerofill to handle up to 0xffffffff on 32b hosts and to check for out-of-range situations.
+ - as; Restore PPC relocations.
+ - general; cater for building with/without LTO support.
+ - general; add --version, --help, --target-help where it helps with GCC compatibilty.
+ - general; add a bugURL.
+ - general; Various build fixes and sim libs for different Darwin versions (see commmit logs)
+
+Changes to ld64 (253.3):
+ - Add PPC/PPC64 support
+ - Revised branch islands algorithm for PPC.
+ - general; add --version, --help, --target-help where it helps with GCC compatibilty.
+ - Various build fixes (see commit log)
+ 
 PRE-REQUISITES
 ==============
 
