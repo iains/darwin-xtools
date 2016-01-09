@@ -75,6 +75,7 @@ struct CFI_Atom_Info {
 			CFI_Reference<A>	function;
 			CFI_Reference<A>	cie;
 			CFI_Reference<A>	lsda;
+			pint_t			functionSize;
 			uint32_t		compactUnwindInfo;
 		}			fdeInfo;
 		struct {
@@ -234,6 +235,7 @@ const char* DwarfInstructions<A,R>::parseCFIs(A& addressSpace, pint_t ehSectionS
 			entry->u.fdeInfo.function.targetAddress = CFI_INVALID_ADDRESS;
 			entry->u.fdeInfo.cie.targetAddress = CFI_INVALID_ADDRESS;
 			entry->u.fdeInfo.lsda.targetAddress = CFI_INVALID_ADDRESS;
+			entry->u.fdeInfo.functionSize = 0;
 			uint32_t ciePointer = addressSpace.get32(p);
 			pint_t cieStart = p-ciePointer;
 			// validate pointer to CIE is within section
@@ -257,6 +259,7 @@ const char* DwarfInstructions<A,R>::parseCFIs(A& addressSpace, pint_t ehSectionS
 			entry->u.fdeInfo.function.targetAddress = pcStart;
 			entry->u.fdeInfo.function.offsetInCFI = offsetOfFunctionAddress;
 			entry->u.fdeInfo.function.encodingOfTargetAddress = cieInfo.pointerEncoding;
+			entry->u.fdeInfo.functionSize = pcRange;
 			// check for augmentation length
 			if ( cieInfo.fdesHaveAugmentationData ) {
 				uintptr_t augLen = addressSpace.getULEB128(p, nextCFI);

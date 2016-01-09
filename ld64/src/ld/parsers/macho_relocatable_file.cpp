@@ -1826,8 +1826,7 @@ ld::relocatable::File* Parser<A>::parse(const ParserOptions& opts)
 		if ( cuInfoArray[i].lsdaAddress != 0 )
 			++cuLsdaCount;
 	}
-	
-	
+
 	// if it exists, do special early parsing of __eh_frame section 
 	// stack allocate (if not too large) array of CFI_Atom_Info
 	uint32_t countOfCFIs = 0;
@@ -1847,6 +1846,14 @@ ld::relocatable::File* Parser<A>::parse(const ParserOptions& opts)
 		for(uint32_t i=0; i < countOfCFIs; ++i) {
 			if ( cfiArray[i].isCIE )
 				continue;
+		    // Ignore FDEs that point to zero-length functions.
+		    // An exception can't originate from a zero-sized region.
+		    if (cfiArray[i].u.fdeInfo.functionSize == 0) {
+				// Sanity check.
+				assert(cfiArray[i].u.fdeInfo.lsda.targetAddress == CFI_INVALID_ADDRESS
+						&& "zero length func with an LSDA?");
+				continue;
+			}
 			//fprintf(stderr, "cfiArray[i].func = 0x%08llX, cfiArray[i].lsda = 0x%08llX, encoding=0x%08X\n",
 			//			(uint64_t)cfiArray[i].u.fdeInfo.function.targetAddress,
 			//			(uint64_t)cfiArray[i].u.fdeInfo.lsda.targetAddress,
@@ -1866,6 +1873,9 @@ ld::relocatable::File* Parser<A>::parse(const ParserOptions& opts)
 	if ( countOfCFIs != 0 ) {
 		for(uint32_t i=0; i < countOfCFIs; ++i) {
 			if ( cfiArray[i].isCIE )
+				continue;
+		    // Ignore FDEs that point to zero-length functions.
+			if (cfiArray[i].u.fdeInfo.functionSize == 0)
 				continue;
 			if ( cfiArray[i].u.fdeInfo.function.targetAddress != CFI_INVALID_ADDRESS )
 				cfiStartsArray[cfiStartsArrayCount++] = realAddr(cfiArray[i].u.fdeInfo.function.targetAddress);
@@ -1963,6 +1973,9 @@ ld::relocatable::File* Parser<A>::parse(const ParserOptions& opts)
 	_file->_unwindInfos.reserve(countOfFDEs+countOfCUs);
 	for(uint32_t i=0; i < countOfCFIs; ++i) {
 		if ( cfiArray[i].isCIE )
+			continue;
+		// Ignore FDEs that point to zero-length functions.
+		if (cfiArray[i].u.fdeInfo.functionSize == 0)
 			continue;
 		if ( cfiArray[i].u.fdeInfo.function.targetAddress != CFI_INVALID_ADDRESS ) {
 			ld::Atom::UnwindInfo info;
