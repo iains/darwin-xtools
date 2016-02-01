@@ -17,27 +17,24 @@ The sub-projects are
 The principal changes common to all versions are:
 
 1. Build with CMAKE
- - I wanted to avoid a clash with the build stuff contained in the original sources
- - This is the same approach as used for other Darwin/OS X toolchain content (i.e. LLVM)
-
+  - I wanted to avoid a clash with the build stuff contained in the original sources
+  - This is the same approach as used for other Darwin/OS X toolchain content (i.e. LLVM)
 2. Support for PPC/PPC64.
- - This is a heavily modified merge of the XCode 3.2.6 ppc support + my own additions to re-introduce ppc64.
- - The branch islanding code has been almost completely re-written and it now supports multiple code sections (which GCC emits) and works for larger binaries (e.g. a Debug version of clang).
-
+  - This is a heavily modified merge of the XCode 3.2.6 ppc support + my own additions to re-introduce ppc64.
+  - The branch islanding code has been almost completely re-written and it now supports multiple code sections (which GCC emits) and works for larger binaries (e.g. a Debug version of clang).
 3. Bug-fixes for GCC-support.
-
 4. Support for the content that LLVM/Clang emit on earlier Darwin.
- - XCode tools <= 3.2.6 do not support the macosx-version-min load command in "ar, ranlib" etc.
- - This means Darwin9/10 (OS X 10.5/6) need updated tools to handle LLVM.
+  - XCode tools <= 3.2.6 do not support the macosx-version-min load command in "ar, ranlib" etc.
+  - This means Darwin9/10 (OS X 10.5/6) need updated tools to handle LLVM.
 
 PRE-REQUISITES
 ==============
 
-A. cmake - I've been using 3.4.1 without issue on Darwin9...Darwin14 (OS X 10.5 +)
+1. cmake - I've been using 3.4.1 without issue on Darwin9...Darwin14 (OS X 10.5 +)
 
-B. **A C++11 compiler**
- - on Darwin9, 10 and probably 11 that means building a compiler...
- - GCC-5.3 (https://github.com/iains/darwin-gcc-5) works fine and can be built using the default XCode toolchain.
+2. **A C++11 compiler**
+  - on Darwin9, 10 and probably 11 that means building a compiler...
+  - [GCC-5.3](https://github.com/iains/darwin-gcc-5) works fine and can be built using the default XCode toolchain.
 
 HOW TO BUILD
 ============
@@ -52,45 +49,56 @@ Example for 10.6 -- you will need to modify this as relevant to your case
 
 darwin-xtools-10-6.cmake:
 
-====== 8< =======::
+```
+====== 8< =======
+# Install to here.
+SET(CMAKE_INSTALL_PREFIX /where/you/want/it CACHE PATH "put it here")
+SET(CMAKE_BUILD_TYPE MinSizeRel CACHE STRING "build style")
 
-    # Install to here.
-    SET(CMAKE_INSTALL_PREFIX /where/you/want/it CACHE PATH "put it here")
-    SET(CMAKE_BUILD_TYPE MinSizeRel CACHE STRING "build style")
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" CACHE STRING "OS X Version")
 
-    SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" CACHE STRING "OS X Version")
+# Default install place, change if you put it somehwere different.
+set(SDK_BASE /Developer/SDKs)
+SET(CMAKE_OSX_SYSROOT ${SDK_BASE}/MacOSX10.6.sdk CACHE PATH "system SDK 2")
+SET(LLVM_DEFAULT_TARGET_TRIPLE x86_64-apple-darwin10 CACHE STRING "system triple")
 
-    # Default install place, change if you put it somehwere different.
-    set(SDK_BASE /Developer/SDKs)
-    SET(CMAKE_OSX_SYSROOT ${SDK_BASE}/MacOSX10.6.sdk CACHE PATH "system SDK 2")
-    SET(LLVM_DEFAULT_TARGET_TRIPLE x86_64-apple-darwin10 CACHE STRING "system triple")
+SET(compilers /path/to/c++11/compiler/bin)
+SET(CMAKE_C_COMPILER   ${compilers}/gcc CACHE PATH "C")
+SET(CMAKE_CXX_COMPILER ${compilers}/g++ CACHE PATH "C++")
 
-    SET(compilers /path/to/c++11/compiler/bin)
-    SET(CMAKE_C_COMPILER   ${compilers}/gcc CACHE PATH "C")
-    SET(CMAKE_CXX_COMPILER ${compilers}/g++ CACHE PATH "C++")
+SET(CMAKE_C_FLAGS    "-mmacosx-version-min=10.6 -pipe" CACHE STRING "c flags")
+SET(CMAKE_CXX_FLAGS  "-mmacosx-version-min=10.6 -pipe" CACHE STRING "cxx flags")
 
-    SET(CMAKE_C_FLAGS    "-mmacosx-version-min=10.6 -pipe" CACHE STRING "c flags")
-    SET(CMAKE_CXX_FLAGS  "-mmacosx-version-min=10.6 -pipe" CACHE STRING "cxx flags")
+# This leaves assertions on.
+SET(CMAKE_C_FLAGS_MINSIZEREL  "-Os" CACHE STRING "c   opt flags")
+SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os" CACHE STRING "cxx opt flags")
 
-    # This leaves assertions on.
-    SET(CMAKE_C_FLAGS_MINSIZEREL  "-Os" CACHE STRING "c   opt flags")
-    SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os" CACHE STRING "cxx opt flags")
+# If we're building with my GCC, then avoid carrying around a shared lib.
+set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ " CACHE STRING "toolchain exe ldflags")
+set(CMAKE_SHARED_LINKER_FLAGS "-static-libstdc++ " CACHE STRING "toolchain shlib ldflags")
 
-    # If we're building with my GCC, then avoid carrying around a shared lib.
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ " CACHE STRING "toolchain exe ldflags")
-    set(CMAKE_SHARED_LINKER_FLAGS "-static-libstdc++ " CACHE STRING "toolchain shlib ldflags")
+# If your host is 64b.
+set(XTOOLS_HOST_IS_64B YES CACHE BOOL "host native bitwidth")
 
-    set(XTOOLS_HOST_IS_64B YES CACHE BOOL "host native bitwidth")
-    set(XTOOLS_BUGURL "https://githb.com/iains/darwin-xtools/issues" CACHE STRING "bug url")
-
+set(XTOOLS_BUGURL "https://githb.com/iains/darwin-xtools/issues" CACHE STRING "bug url")
 ====== >8 =======
+```
 
-You can set these things on the cmake invocation line like::
+You can set these things on the cmake invocation line like
+```
+cmake -DCMAKE_C_COMPILER=/path/to/compiler ... etc.
+```
 
-    cmake -DCMAKE_C_COMPILER=/path/to/compiler ... etc.
+(but note that, unlike autoconf-based builds, I've not found a way to retrieve the command line used to configure the package, so files can be a useful record).
 
 See the cmake documentation for the version you're using.
 
 3. make, make install.
  - at present there's not a usable test-suite (although using the resulting tools to build GCC/LLVM is a fairly good test).
+
+Changes
+=======
+
+1.0.1
+ld64 has been adjusted so that FDEs which correspond to 0-sized entities are ignored rather than asserting.  If an entity is 0-sized, then it can't be a call-site or participate in unwinding (given that aliasses are handled specifically).  I guess one could say that the assert from ld64 was alerting to a problem elsewhere; however GCC was (and unpatched versions will) producing 0-sized functions for the case that the function body was elided as unreachable.  There are probably better solutions to both, but this is a reasonable one for now.
 
