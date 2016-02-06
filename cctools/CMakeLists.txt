@@ -9,6 +9,12 @@ if(XTOOLS_LTO_SUPPORT)
   set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
 endif()
 
+string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+
+if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" )
+  add_definitions(-DDEBUG)
+endif()
+
 if(XTOOLS_BUGURL)
   add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
 endif()
