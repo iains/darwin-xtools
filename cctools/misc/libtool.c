@@ -3209,12 +3209,12 @@ print_block_list(void)
 	    printf("Empty block list\n");
 	while(*p){
 	    block = *p;
-	    printf("block 0x%x\n", (unsigned int)block);
+	    printf("block 0x%x\n", (unsigned long)block);
 	    printf("    offset %llu\n", block->offset);
 	    printf("    size %llu\n", block->size);
 	    printf("    written_offset %llu\n", block->written_offset);
 	    printf("    written_size %llu\n", block->written_size);
-	    printf("    next 0x%x\n", (unsigned int)(block->next));
+	    printf("    next 0x%x\n", (unsigned long)(block->next));
 	    p = &(block->next);
 	}
 }
