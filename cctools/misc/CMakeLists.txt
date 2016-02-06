@@ -1,6 +1,7 @@
 
 include_directories("${CMAKE_SOURCE_DIR}/cctools/include")
 add_definitions(-D__private_extern__=__attribute__\(\(__visibility__\("hidden"\)\)\))
+add_definitions(-D_FORTIFY_SOURCE=1)
 
 if(XTOOLS_C_HAS_WNODEPRECATED_FLAG)
   # suppress the 'import is deprecated' blather.
