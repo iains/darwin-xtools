@@ -102,3 +102,9 @@ Changes
 1.0.1
 ld64 has been adjusted so that FDEs which correspond to 0-sized entities are ignored rather than asserting.  If an entity is 0-sized, then it can't be a call-site or participate in unwinding (given that aliasses are handled specifically).  I guess one could say that the assert from ld64 was alerting to a problem elsewhere; however GCC was (and unpatched versions will) producing 0-sized functions for the case that the function body was elided as unreachable.  There are probably better solutions to both, but this is a reasonable one for now.
 
+1.0.2
+libtool was asserting for 'libtool -static -o arc.a file1.o .. '
+This seems to be an over-aggressive check in sprintf when FORTIFY\_SOURCE=2.
+"Fixed" by setting FORTIFY\_SOURCE=1
+If \_FORTIFY\_SOURCE is set to 1, with compiler optimization level >= 1, checks that shouldn't change the behavior of conforming programs are performed.
+At the same time, enabled DEBUG for CMAKE\_BUILD\_STYLE=Debug
