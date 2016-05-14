@@ -2257,13 +2257,6 @@ void Options::parse(int argc, const char* argv[])
 					++i;
 				// previously handled by buildSearchPaths()
 			}
-			// The one gnu style option we have to keep compatibility
-			// with gcc. Might as well have the single hyphen one as well.
-			else if ( (strcmp(arg, "--help") == 0)
-					  || (strcmp(arg, "-help") == 0)) {
-				fprintf (stdout, "ld64: For information on command line options please use 'man ld'.\n");
-				exit (0);
-			}
 			else if ( strcmp(arg, "-arch") == 0 ) {
 				parseArch(argv[++i]);
 			}
@@ -3788,20 +3781,23 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 				  strcmp(argv[i], "--version") == 0 ) {
 			fVerbose = true;
 			extern const char ldVersionString[];
-			fprintf(stderr, "%s", ldVersionString);
-			fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
+			fprintf(stdout, "%s", ldVersionString);
+			fprintf(stdout, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 #ifdef LTO_SUPPORT
             const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
-					fprintf(stderr, "LTO support using: %s\n", ltoVers);
+					fprintf(stdout, "LTO support using: %s\n", ltoVers);
 #endif
 			 // if only -v specified, exit cleanly
 			 if ( argc == 2  || strcmp(argv[i], "--version") == 0 ) {
 				exitAfterOptionsParsing = true;
 			}
 		}
-		else if ( strcmp(argv[i], "--help") == 0 ||
-		          strcmp(argv[i], "--target-help") == 0 ) {
+        // The one gnu style option we have to keep compatibility
+        // with gcc. Might as well have the single hyphen one as well.
+		else if (strcmp(argv[i], "--help") == 0 ||
+				 strcmp(argv[i], "-help") == 0 ||
+		         strcmp(argv[i], "--target-help") == 0 ) {
 		    shouldPrintHelp = true;
 			exitAfterOptionsParsing = true;
         }
@@ -3837,17 +3833,17 @@ void Options::buildSearchPaths(int argc, const char* argv[])
         if (shouldPrintHelp) {
             if (! fVerbose) { // We didn't print the version info yet.
 			    extern const char ldVersionString[];
-			    fprintf(stderr, "%s", ldVersionString);
-			    fprintf(stderr, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
+			    fprintf(stdout, "%s", ldVersionString);
+			    fprintf(stdout, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 #ifdef LTO_SUPPORT
                 const char* ltoVers = lto::version();
 				if ( ltoVers != NULL )
-					fprintf(stderr, "LTO support using: %s\n", ltoVers);
+					fprintf(stdout, "LTO support using: %s\n", ltoVers);
 #endif
             }
-            fprintf(stderr, "TODO: implement options summary.\n");
+            fprintf(stdout, "TODO: implement options summary (look at man ld).\n");
 #ifdef XTOOLS_BUGURL
-            fprintf(stderr, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+            fprintf(stdout, "Please report bugs to : %s\n", XTOOLS_BUGURL);
 #endif
         }
         exit (0);

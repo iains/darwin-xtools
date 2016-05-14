@@ -1,5 +1,5 @@
 
-set(LD64_VERSION_NUM 253.3)
+set(LD64_VERSION_NUM 253.9)
 
 include_directories("${CMAKE_BINARY_DIR}/dyld-include")
 add_subdirectory(src)

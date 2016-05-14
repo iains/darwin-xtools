@@ -7,6 +7,14 @@ if(XTOOLS_BUGURL)
   add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
 endif()
 
+if(PACKAGE_VERSION)
+  add_definitions(-DPACKAGE_VERSION="${PACKAGE_VERSION}")
+endif()
+
+if(XTOOLS_VERSION)
+  add_definitions(-DXTOOLS_VERSION="${XTOOLS_VERSION}")
+endif()
+
 #include(cmake/config-ix.cmake)
 
 # We should figure these out somehow - but for now let's just set them to
