@@ -1,5 +1,5 @@
 
-set(CCTOOLS_VERSION_NUM 877.5)
+set(CCTOOLS_VERSION_NUM 877.8)
 
 add_definitions(-DALLOW_64BIT_LEB_ON_32B_TARGET=1)
 
@@ -17,6 +17,14 @@ endif()
 
 if(XTOOLS_BUGURL)
   add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
+endif()
+
+if(PACKAGE_VERSION)
+  add_definitions(-DPACKAGE_VERSION="${PACKAGE_VERSION}")
+endif()
+
+if (XTOOLS_VERSION)
+  add_definitions(-DXTOOLS_VERSION="${XTOOLS_VERSION}")
 endif()
 
 option(CCTOOLS_EFITOOLS  "Build efitools as part of cctools" OFF)

@@ -106,6 +106,11 @@ static uint32_t *arch_header_sizes = NULL;
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The install_name_tool allow the dynamic shared library install names of a
  * Mach-O binary to be changed.  For this tool to work when the install names
@@ -140,18 +145,30 @@ char **envp)
     uint32_t narchs;
     char *input;
     char *output;
+    char *pnam;
 
 	output = NULL;
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	input = NULL;
 	archs = NULL;
 	narchs = 0;
 	for(i = 1; i < argc; i++){
 	    if(strcmp(argv[i], "--version") == 0){
 		/* Implement a gnu-style --version.  */
-		char *pnam = strrchr(progname, '/');
-		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		exit(0);
+	    } else if(strcmp(argv[i], "--help") == 0){
+		fprintf(stdout, "Usage: %s [-change old new] ... [-rpath old new] ... "
+			"[-add_rpath new] ... [-delete_rpath old] ... "
+			"[-id name] input"
+#ifdef OUTPUT_OPTION
+			" [-o output]"
+#endif /* OUTPUT_OPTION */
+			"\n", pnam);
+		fprintf(stdout, "Please report bugs to %s\n", support_url);
 		exit(0);
 	    }
 #ifdef OUTPUT_OPTION

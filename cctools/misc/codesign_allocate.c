@@ -65,6 +65,10 @@ static struct linkedit_data_command *add_code_sig_load_command(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
 
 /*
  * The codesign_allocate(1) tool has the following usage:
@@ -81,22 +85,29 @@ char **argv,
 char **envp)
 {
     uint32_t i;
-    char *input, *output, *endp;
+    char *input, *output, *endp, *pnam;
     struct arch *archs;
     uint32_t narchs;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	input = NULL;
 	output = NULL;
 	archs = NULL;
 	narchs = 0;
 	for(i = 1; i < argc; i++){
 	    if(strcmp(argv[i], "--version") == 0){
-		/* Implement a gnu-style --version.  */
-		char *pnam = strrchr(progname, '/');
-		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
-		exit(0);
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+	    } else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s -i input [-a <arch> <size>]... "
+				"[-A <cputype> <cpusubtype> <size>]... -o output\n",
+			    pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
 	    }
 	    if(strcmp(argv[i], "-i") == 0){
 		if(i + 1 == argc){

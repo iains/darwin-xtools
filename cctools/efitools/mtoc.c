@@ -204,7 +204,7 @@ static void create_output(
 static void create_ms_dos_stub(
     struct ms_dos_stub *p);
 static void usage(
-    void);
+    int);
 
 static void create_32bit_symbol_table(
     struct arch *arch);
@@ -255,6 +255,11 @@ static void set_debug_addrs_and_offsets(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The mtoc(1) tool makes a PECOFF file from a fully linked Mach-O file
  * compiled with dynamic code gen and relocation entries saved (linked with -r).
@@ -290,13 +295,18 @@ char **envp)
 		/* Implement a gnu-style --version.  */
 		char *pnam = strrchr(progname, '/');
 		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		exit(0);
+	    } else if(strcmp(argv[i], "--help") == 0){
+		usage(0);
+		fprintf(stdout, "Please report bugs to %s\n", support_url);
 		exit(0);
 	    }
 	    if(strcmp(argv[i], "-subsystem") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -subsystem option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		for(j = 0; subsystem_arguments[j].name != NULL; j++){
 		    if(strcmp(argv[i+1], subsystem_arguments[j].name) == 0){
@@ -309,14 +319,14 @@ char **envp)
 			    "argument can be:", argv[i+1]);
 		    for(j = 0; subsystem_arguments[j].name != NULL; j++)
 			fprintf(stderr, "%s\n", subsystem_arguments[j].name);
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		i++;
 	    }
 	    else if(strcmp(argv[i], "-d") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -d option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		debug_filename = argv[i+1];
 		i++;
@@ -324,7 +334,7 @@ char **envp)
 	    else if(strcmp(argv[i], "-e") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -e option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		entry_point = argv[i+1];
 		i++;
@@ -332,7 +342,7 @@ char **envp)
 	    else if(strcmp(argv[i], "-u") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -u option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		if(debug_filename == NULL) {
 		    fatal("-u option requires -d option");
@@ -344,7 +354,7 @@ char **envp)
 		if(i + 1 >= argc){
 		    warning("no argument specified for -section_alignment "
 			    "option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		section_alignment = strtoul(argv[i+1], &endp, 16);
 		if(*endp != '\0')
@@ -368,7 +378,7 @@ char **envp)
 	    else if(strcmp(argv[i], "-align") == 0){
 		if(i + 1 >= argc){
 		    warning("no argument specified for -align option");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 		file_alignment = strtoul(argv[i+1], &endp, 16);
 		if(*endp != '\0')
@@ -395,15 +405,15 @@ char **envp)
 	    else if(output == NULL)
 		output = argv[i];
 	    else
-		usage();
+		usage(EXIT_FAILURE);
 	}
 	if(input == NULL){
 	    warning("no input file specified");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	if(output == NULL){
 	    warning("no output file specified");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 
 	/* breakout the file for processing */
@@ -439,15 +449,15 @@ char **envp)
 /*
  * usage() prints the current usage message and exits indicating failure.
  */
-static
-void
-usage(
-void)
+static void
+usage(int with_exit_value)
 {
-	fprintf(stderr, "Usage: %s [-subsystem type] "
+	FILE *out = with_exit_value ? stderr : stdout;
+	fprintf(out, "Usage: %s [-subsystem type] "
 		"[-section_alignment hexvalue] [-align hexvalue] [-d debug_filename] "
 		"[-u debug_guid] input_Mach-O output_pecoff\n", progname);
-	exit(EXIT_FAILURE);
+	if (with_exit_value)
+	    exit(with_exit_value);
 }
 
 /*

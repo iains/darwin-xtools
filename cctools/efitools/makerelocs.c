@@ -83,6 +83,11 @@ static void usage(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The makerelocs(1) tool makes a file of PECOFF base relocation entries from a 
  * fully linked Mach-O file compiled with dynamic code gen and relocation
@@ -116,14 +121,20 @@ char **envp)
 	output = NULL;
 
 	for(i = 1; i < argc; i++){
-	    if(strcmp(argv[i], "--version") == 0){
-		/* Implement a gnu-style --version.  */
+	  if(strcmp(argv[i], "--version") == 0){
+		/* Implement a gnu-style --version to be friendly to GCC.  */
 		char *pnam = strrchr(progname, '/');
 		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
 		exit(0);
-	    }
-	    if(strcmp(argv[i], "-v") == 0)
+	  } else if(strcmp(argv[i], "--help") == 0){
+		fprintf(stdout, "Usage: %s [-v] [--version] [--help] "
+				"input_Mach-O output_relocs\n",
+			progname);
+		fprintf(stdout, "Please report bugs to %s\n", support_url);
+		exit(0);
+	  } else if(strcmp(argv[i], "-v") == 0)
 		verbose = TRUE;
 	    else if(input == NULL)
 		input = argv[i];
@@ -396,7 +407,8 @@ void
 usage(
 void)
 {
-	fprintf(stderr, "Usage: %s [-v] input_Mach-O output_relocs\n",
+	fprintf(stderr, "Usage: %s [-v] [--version] [--help] "
+			"input_Mach-O output_relocs\n",
 		progname);
 	exit(EXIT_FAILURE);
 }

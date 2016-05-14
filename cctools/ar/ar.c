@@ -89,12 +89,17 @@ CHDR chdr;
 u_int options;
 char *archive, *envtmp, *posarg, *posname;
 static void badoptions __P((char *));
-static void usage __P((void));
+static void usage __P((int));
 char *progname;
 
 /* apple_version is in cctools_version.c which is in libstuff and created by
    the build process. */
 extern char apple_version[];
+
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
 
 /*
  * main --
@@ -119,10 +124,15 @@ main(argc, argv)
 	if (argc < 3) {
 	   if(strcmp(argv[1], "--version") == 0){
 		/* Implement a gnu-style --version to be friendly to GCC.  */
-		fprintf(stderr, "xtools ar - based on Apple Inc. %s\n", apple_version);
+		fprintf(stdout, "xtools-%s ar %s\nBased on Apple Inc. %s\n",
+		        xtools_version, package_version, apple_version);
+		exit(0);
+	   } else if(strcmp(argv[1], "--help") == 0){
+		usage(0);
+		fprintf(stdout, "Please report bugs to %s\n", support_url);
 		exit(0);
 	    } else
-		usage();
+		usage(1);
 	}
 
 	/*
@@ -212,7 +222,7 @@ main(argc, argv)
 			fcall = extract;
 			break;
 		default:
-			usage();
+			usage(1);
 		}
 	}
 
@@ -222,18 +232,18 @@ main(argc, argv)
 	/* One of -dmpqrtsx required. */
 	if (!(options & (AR_D|AR_M|AR_P|AR_Q|AR_R|AR_S|AR_T|AR_X))) {
 		warnx("one of options -dmpqrtsx is required");
-		usage();
+		usage(1);
 	}
 	/* Only one of -a and -bi allowed. */
 	if (options & AR_A && options & AR_B) {
 		warnx("only one of -a and -[bi] options allowed");
-		usage();
+		usage(1);
 	}
 	/* -ab require a position argument. */
 	if (options & (AR_A|AR_B)) {
 		if (!(posarg = *argv++)) {
 			warnx("no position operand specified");
-			usage();
+			usage(1);
 		}
 		posname = rname(posarg);
 	}
@@ -261,13 +271,13 @@ main(argc, argv)
 
 	if (!(archive = *argv++)) {
 		warnx("no archive specified");
-		usage();
+		usage(1);
 	}
 
 	/* -dmqr require a list of archive elements. */
 	if (options & (AR_D|AR_M|AR_Q|AR_R) && !*argv) {
 		warnx("no archive members specified");
-		usage();
+		usage(1);
 	}
 
 	if(fcall != 0){
@@ -307,21 +317,23 @@ badoptions(arg)
 {
 
 	warnx("illegal option combination for %s", arg);
-	usage();
+	usage(1);
 }
 
+/* print useage info; exit if with_exit_code is non-0.  */
 static void
-usage()
+usage(int with_exit_code)
 {
-
-	(void)fprintf(stderr, "usage:  ar -d [-TLsv] archive file ...\n");
-	(void)fprintf(stderr, "\tar -m [-TLsv] archive file ...\n");
-	(void)fprintf(stderr, "\tar -m [-abiTLsv] position archive file ...\n");
-	(void)fprintf(stderr, "\tar -p [-TLsv] archive [file ...]\n");
-	(void)fprintf(stderr, "\tar -q [-cTLsv] archive file ...\n");
-	(void)fprintf(stderr, "\tar -r [-cuTLsv] archive file ...\n");
-	(void)fprintf(stderr, "\tar -r [-abciuTLsv] position archive file ...\n");
-	(void)fprintf(stderr, "\tar -t [-TLsv] archive [file ...]\n");
-	(void)fprintf(stderr, "\tar -x [-ouTLsv] archive [file ...]\n");
-	exit(1);
+	FILE *out = with_exit_code ? stderr : stdout;
+	(void)fprintf(out, "usage:  ar -d [-TLsv] archive file ...\n");
+	(void)fprintf(out, "\tar -m [-TLsv] archive file ...\n");
+	(void)fprintf(out, "\tar -m [-abiTLsv] position archive file ...\n");
+	(void)fprintf(out, "\tar -p [-TLsv] archive [file ...]\n");
+	(void)fprintf(out, "\tar -q [-cTLsv] archive file ...\n");
+	(void)fprintf(out, "\tar -r [-cuTLsv] archive file ...\n");
+	(void)fprintf(out, "\tar -r [-abciuTLsv] position archive file ...\n");
+	(void)fprintf(out, "\tar -t [-TLsv] archive [file ...]\n");
+	(void)fprintf(out, "\tar -x [-ouTLsv] archive [file ...]\n");
+	if (with_exit_code)
+	  exit(with_exit_code);
 }	

@@ -83,6 +83,12 @@ static struct directory_stack *include_tail = NULL;	/* Last in chain */
 /* this is only used here, and in dwarf2dbg.c as the producer */
 char version_string[] = "GNU assembler version 1.38";
 
+/* Other version strings.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char lto_support[];
+extern char support_url[];
+
 /* this is set here, and used in dwarf2dbg.c as the apple_flags */
 char *apple_flags = NULL;
 
@@ -172,9 +178,9 @@ char **envp)
 	    if((strcmp(arg, "--target-help") == 0) ||
 	       (strcmp(arg, "--help") == 0))
 	    {
-		fprintf(stderr, "TODO: print options.\n");
+		fprintf(stdout, "TODO: print options. (see man as)\n");
 #ifdef XTOOLS_BUGURL
-		fprintf(stderr, "Please report bugs to : %s\n", XTOOLS_BUGURL);
+		fprintf(stdout, "Please report bugs to : %s\n", XTOOLS_BUGURL);
 #endif
 		exit(0);
 	    }
@@ -200,8 +206,10 @@ char **envp)
 #else
 #    define WHICH_ARCH "unknown"
 #endif
-		fprintf(stderr, "xtools %s for %s - based on Apple Inc. %s from %s\n",
-		        pnam, WHICH_ARCH, apple_version, version_string);
+		/* Implement a gnu-style --version to be friendly to GCC.  */
+		fprintf(stdout, "xtools-%s %s for %s %s\nBased on Apple Inc. %s from %s\n",
+		        xtools_version, pnam, WHICH_ARCH, package_version,
+		        apple_version, version_string);
 		exit(0);
 	    }
 	    if(strcmp(arg, "--gstabs") == 0){

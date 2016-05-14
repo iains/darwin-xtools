@@ -230,7 +230,10 @@ static int value_diff_compare(
 /* apple_version is created by the libstuff/Makefile */
 extern char apple_version[];
 char *version = apple_version;
-/* likewise lto_suport */
+/* likewise xtools_version, lto_suport and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
 extern char lto_support[];
 
 int
@@ -245,8 +248,11 @@ char **envp)
     uint32_t narch_flags;
     enum bool all_archs;
     char **files;
+    char *pnam;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 
 	arch_flags = NULL;
 	narch_flags = 0;
@@ -280,10 +286,15 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    char *pnam = strrchr(progname, '/');
-		    pnam = (pnam)?pnam+1:progname;
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s%s\n",
-		    pnam, apple_version, lto_support);
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s%s\n",
+		        xtools_version, pnam, package_version,
+		        apple_version, lto_support);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s [-agnopruUmxjlfAP[s segname sectname] [-] "
+				    "[-t format] [[-arch <arch_flag>] ...] [file ...]\n",
+				    pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
 		    exit(0);
 		}
 		if(argv[i][1] == '\0' ||

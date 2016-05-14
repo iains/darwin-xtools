@@ -195,6 +195,11 @@ static int compare64(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * pagestuff is invoked as follows:
  *
@@ -209,19 +214,29 @@ char *argv[])
 {
     int i, start;
     uint32_t j, page_number;
-    char *endp;
+    char *endp, *pnam;
     struct arch_flag a;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	if(argc < 3)
-	   if(strcmp(argv[1], "--version") == 0){
-		/* Implement a gnu-style --version.  */
-		char *pnam = strrchr(progname, '/');
-		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
-		exit(0);
+	   {
+		if(argc == 2 && strcmp(argv[1], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(argc == 2 && strcmp(argv[1], "--help") == 0){
+		    fprintf(stdout, "Usage: %s mach-o [-arch name] [-p] [-a] "
+				    "pagenumber [pagenumber ...]\n",
+			    pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
+		}
+		/* no arguments.  */
+	        usage();
 	    }
-	    usage();
 	start = 2;
 
 	if(strcmp(argv[start], "-arch") == 0){

@@ -75,6 +75,8 @@ struct toc {
 
 /* used by error routines as the name of the program */
 char *progname = NULL;
+/* .. as above but without the path, if any was used in the invocation.  */
+char *pnam = NULL;
 
 /* the bytesex of the host this program is running on */
 static enum byte_sex host_byte_sex = UNKNOWN_BYTE_SEX;
@@ -235,7 +237,7 @@ struct member {
 };
 
 static void usage(
-    void);
+    int);
 static void process(
     void);
 static char *file_name_from_l_flag(
@@ -344,7 +346,11 @@ static uint32_t trnc(
 
 /* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
-/* likewise lto_suport */
+
+/* likewise xtools_version, lto_suport and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
 extern char lto_support[];
 
 #define RSZ (sizeof("ranlib")-1)
@@ -388,16 +394,16 @@ char **envp)
 	(void)umask(oumask);
 
 	/* see if this is being run as ranlib */
-	p = strrchr(argv[0], '/');
-	if(p != NULL)
-	    p++;
+	pnam = strrchr(argv[0], '/');
+	if(pnam != NULL)
+	    pnam++;
 	else
-	    p = argv[0];
+	    pnam = argv[0];
 
-	len = strlen(p);
+	len = strlen(pnam);
 	/* If the name by which this was invoked ends in 'ranlib' then we are in
 	   ranlib mode.  */
-	if(len >= RSZ && strncmp(p+len-RSZ, "ranlib", RSZ) == 0)
+	if(len >= RSZ && strncmp(pnam+len-RSZ, "ranlib", RSZ) == 0)
             cmd_flags.ranlib = TRUE;
 
 	/* The default is to used long names */
@@ -412,8 +418,13 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s%s\n",
-		            p, apple_version, lto_support);
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s%s\n",
+		        xtools_version, pnam, package_version,
+		        apple_version, lto_support);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    usage(0);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
 		    exit(0);
 		}
 		if(argv[i][1] == '\0'){
@@ -424,15 +435,15 @@ char **envp)
 		if(strcmp(argv[i], "-o") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.output != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.output = argv[i+1];
 		    i++;
@@ -440,15 +451,15 @@ char **envp)
 		else if(strcmp(argv[i], "-arch_only") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.arch_only_flag.name != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    else{
 			if(get_arch_from_flag(argv[i+1],
@@ -456,7 +467,7 @@ char **envp)
 			    error("unknown architecture specification flag: "
 				  "%s %s", argv[i], argv[i+1]);
 			    arch_usage();
-			    usage();
+			    usage(EXIT_FAILURE);
 			}
 		    }
 		    i++;
@@ -464,25 +475,25 @@ char **envp)
 		else if(strcmp(argv[i], "-dynamic") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.dynamic = TRUE;
 		}
 		else if(strcmp(argv[i], "-static") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.dynamic = FALSE;
 		}
 		else if(strcmp(argv[i], "-filelist") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    filelist = argv[i + 1];
 		    dirname = strrchr(filelist, ',');
@@ -563,18 +574,18 @@ char **envp)
 		else if(strcmp(argv[i], "-compatibility_version") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.compatibility != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(get_version_number(argv[i], argv[i+1], &temp) == FALSE){
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.compatibility = argv[i+1];
 		    i++;
@@ -582,18 +593,18 @@ char **envp)
 		else if(strcmp(argv[i], "-current_version") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.current != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(get_version_number(argv[i], argv[i+1], &temp) == FALSE){
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.current = argv[i+1];
 		    i++;
@@ -601,15 +612,15 @@ char **envp)
 		else if(strcmp(argv[i], "-install_name") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.install_name != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.install_name = argv[i+1];
 		    i++;
@@ -618,21 +629,21 @@ char **envp)
 			strcmp(argv[i], "-image_base") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.seg1addr != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    temp = strtoul(argv[i + 1], &endp, 16);
 		    if(*endp != '\0'){
 			error("address for -seg1addr %s not a proper "
 			      "hexadecimal number", argv[i+1]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.seg1addr = argv[i+1];
 		    i++;
@@ -640,21 +651,21 @@ char **envp)
 		else if(strcmp(argv[i], "-segs_read_only_addr") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.segs_read_only_addr != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    temp = strtoul(argv[i + 1], &endp, 16);
 		    if(*endp != '\0'){
 			error("address for -segs_read_only_addr %s not a "
 			      "proper hexadecimal number", argv[i+1]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.segs_read_only_addr = argv[i+1];
 		    i++;
@@ -662,21 +673,21 @@ char **envp)
 		else if(strcmp(argv[i], "-segs_read_write_addr") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.segs_read_write_addr != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    temp = strtoul(argv[i + 1], &endp, 16);
 		    if(*endp != '\0'){
 			error("address for -segs_read_write_addr %s not a "
 			      "proper hexadecimal number", argv[i+1]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.segs_read_write_addr = argv[i+1];
 		    i++;
@@ -684,15 +695,15 @@ char **envp)
 		else if(strcmp(argv[i], "-seg_addr_table") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.seg_addr_table != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.seg_addr_table = argv[i+1];
 		    i++;
@@ -700,15 +711,15 @@ char **envp)
 		else if(strcmp(argv[i], "-seg_addr_table_filename") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.seg_addr_table_filename != NULL){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.seg_addr_table_filename = argv[i+1];
 		    i++;
@@ -716,15 +727,15 @@ char **envp)
 		else if(strcmp(argv[i], "-syslibroot") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 == argc){
 			error("missing argument to: %s option", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(next_root != NULL && strcmp(next_root, argv[i+1]) != 0){
 			error("more than one: %s option specified", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    next_root = argv[i+1];
 		    cmd_flags.ldflags = reallocate(cmd_flags.ldflags,
@@ -740,11 +751,11 @@ char **envp)
 		        strcmp(argv[i], "-segprot") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 3 >= argc){
 			error("not enough arguments follow %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.ldflags = reallocate(cmd_flags.ldflags,
 				sizeof(char *) * (cmd_flags.nldflags + 4));
@@ -780,11 +791,11 @@ char **envp)
 		        strcmp(argv[i], "-executable_path") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 >= argc){
 			error("not enough arguments follow %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.ldflags = reallocate(cmd_flags.ldflags,
 				sizeof(char *) * (cmd_flags.nldflags + 2));
@@ -823,7 +834,7 @@ char **envp)
 			strcmp(argv[i], "-no_dead_strip_inits_and_terms") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.ldflags = reallocate(cmd_flags.ldflags,
 				sizeof(char *) * (cmd_flags.nldflags + 1));
@@ -832,20 +843,20 @@ char **envp)
 		else if(strcmp(argv[i], "-no_arch_warnings") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    /* ignore this flag */
 		}
 		else if(strcmp(argv[i], "-prebind") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.prebinding_flag_specified == TRUE &&
 		       cmd_flags.prebinding == FALSE){
 			error("both -prebind and -noprebind can't be "
 			      "specified");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.prebinding_flag_specified = TRUE;
 		    cmd_flags.prebinding = TRUE;
@@ -856,13 +867,13 @@ char **envp)
 		else if(strcmp(argv[i], "-noprebind") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.prebinding_flag_specified == TRUE &&
 		       cmd_flags.prebinding == TRUE){
 			error("both -prebind and -noprebind can't be "
 			      "specified");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.prebinding_flag_specified = TRUE;
 		    cmd_flags.prebinding = FALSE;
@@ -873,13 +884,13 @@ char **envp)
 		else if(strcmp(argv[i], "-all_load") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.all_load_flag_specified == TRUE &&
 		       cmd_flags.all_load == FALSE){
 			error("both -all_load and -noall_load can't be "
 			      "specified");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.all_load_flag_specified = TRUE;
 		    cmd_flags.all_load = TRUE;
@@ -887,13 +898,13 @@ char **envp)
 		else if(strcmp(argv[i], "-noall_load") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(cmd_flags.all_load_flag_specified == TRUE &&
 		       cmd_flags.all_load == TRUE){
 			error("both -all_load and -noall_load can't be "
 			      "specified");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.all_load_flag_specified = TRUE;
 		    cmd_flags.all_load = FALSE;
@@ -902,7 +913,7 @@ char **envp)
 		        strncmp(argv[i], "-i", 2) == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(strncmp(argv[i], "-i", 2) == 0)
 			cmd_flags.no_files_ok = TRUE;
@@ -913,11 +924,11 @@ char **envp)
 		else if(argv[i][1] == 'l'){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(argv[i][2] == '\0'){
 			error("-l: name missing");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.files[cmd_flags.nfiles++] = argv[i];
 		    lflags_seen = TRUE;
@@ -925,11 +936,11 @@ char **envp)
 		else if(strncmp(argv[i], "-weak-l", 7) == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(argv[i][7] == '\0'){
 			error("-weak-l: name missing");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.files[cmd_flags.nfiles++] = argv[i];
 		    lflags_seen = TRUE;
@@ -939,11 +950,11 @@ char **envp)
 		        strcmp(argv[i], "-weak_library") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    if(i + 1 >= argc){
 			error("not enough arguments follow %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.files[cmd_flags.nfiles++] = argv[i];
 		    cmd_flags.files[cmd_flags.nfiles++] = argv[i+1];
@@ -953,7 +964,7 @@ char **envp)
 		else if(strcmp(argv[i], "-T") == 0){
 		    if(cmd_flags.L_or_T_specified == TRUE){
 			error("both -T and -L can't be specified");
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.L_or_T_specified = TRUE;
 		    cmd_flags.use_long_names = FALSE;
@@ -962,7 +973,7 @@ char **envp)
 		    if(argv[i][1] == 'L' && argv[i][2] == '\0'){
 			if(cmd_flags.L_or_T_specified == TRUE){
 			    error("both -T and -L can't be specified");
-			    usage();
+			    usage(EXIT_FAILURE);
 			}
 			cmd_flags.L_or_T_specified = TRUE;
 			cmd_flags.use_long_names = TRUE;
@@ -970,7 +981,7 @@ char **envp)
 		    else{
 			if(cmd_flags.ranlib == TRUE){
 			    error("unknown option: %s", argv[i]);
-			    usage();
+			    usage(EXIT_FAILURE);
 			}
 			cmd_flags.Ldirs = realloc(cmd_flags.Ldirs,
 				    sizeof(char *) * (cmd_flags.nLdirs + 1));
@@ -980,7 +991,7 @@ char **envp)
 		else if(argv[i][1] == 'g'){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    /* We need to ignore -g[gdb,codeview,stab][number] flags */
 			;
@@ -988,7 +999,7 @@ char **envp)
 		else if(strcmp(argv[i], "-pg") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    /* We need to ignore -pg */
 			;
@@ -996,7 +1007,7 @@ char **envp)
 		else if(strcmp(argv[i], "-search_paths_first") == 0){
 		    if(cmd_flags.ranlib == TRUE){
 			error("unknown option: %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    cmd_flags.search_paths_first = TRUE;
 		    cmd_flags.ldflags = reallocate(cmd_flags.ldflags,
@@ -1013,7 +1024,7 @@ char **envp)
 		else if(strcmp(argv[i], "-debug") == 0){
 		    if(i + 1 >= argc){
 			error("not enough arguments follow %s", argv[i]);
-			usage();
+			usage(EXIT_FAILURE);
 		    }
 		    i++;
 		    cmd_flags.debug |= 1 << strtoul(argv[i], &endp, 10);
@@ -1038,7 +1049,7 @@ char **envp)
 			    if(cmd_flags.ranlib == TRUE){
 				error("unknown option character `%c' in: %s",
 				      argv[i][j], argv[i]);
-				usage();
+				usage(EXIT_FAILURE);
 			    }
 			    cmd_flags.verbose= TRUE;
 			    break;
@@ -1057,7 +1068,7 @@ char **envp)
 			    else {
 				error("unknown option character `%c' in: %s",
 				      argv[i][j], argv[i]);
-				usage();
+				usage(EXIT_FAILURE);
 			    }
 			case 'f':
 			    if(cmd_flags.ranlib == TRUE){
@@ -1067,7 +1078,7 @@ char **envp)
 			    else {
 				error("unknown option character `%c' in: %s",
 				      argv[i][j], argv[i]);
-				usage();
+				usage(EXIT_FAILURE);
 			    }
 			case 'q':
 			    if(cmd_flags.ranlib == TRUE){
@@ -1077,12 +1088,12 @@ char **envp)
 			    else {
 				error("unknown option character `%c' in: %s",
 				      argv[i][j], argv[i]);
-				usage();
+				usage(EXIT_FAILURE);
 			    }
 			default:
 			    error("unknown option character `%c' in: %s",
 				  argv[i][j], argv[i]);
-			    usage();
+			    usage(EXIT_FAILURE);
 			}
 		    }
 		}
@@ -1158,13 +1169,13 @@ char **envp)
 	}
 	if(cmd_flags.s == TRUE && cmd_flags.a == TRUE){
 	    error("only one of -s or -a can be specified");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	if(cmd_flags.ranlib == FALSE && cmd_flags.output == NULL){
 	    if(Vflag == TRUE)
 		exit(EXIT_SUCCESS);
 	    error("no output file specified (specify with -o output)");
-	    usage();
+	    usage(EXIT_FAILURE);
 	}
 	if(cmd_flags.dynamic == FALSE){
 	    if(cmd_flags.compatibility != NULL){
@@ -1214,7 +1225,7 @@ char **envp)
 		    }
 		    if(bad_flag_seen == FALSE){
 			fprintf(stderr, "%s: -dynamic not specified the "
-				"following flags are invalid: ", progname);
+				"following flags are invalid: ", pnam);
 			bad_flag_seen = TRUE;
 		    }
 		    fprintf(stderr, "%s ", cmd_flags.ldflags[j]);
@@ -1231,7 +1242,7 @@ char **envp)
 			continue;
 		    if(bad_flag_seen == FALSE){
 			fprintf(stderr, "%s: -dynamic not specified the "
-				"following flags are invalid: ", progname);
+				"following flags are invalid: ", pnam);
 			bad_flag_seen = TRUE;
 		    }
 		    fprintf(stderr, "%s ", cmd_flags.Ldirs[j]);
@@ -1260,14 +1271,14 @@ char **envp)
 	if(cmd_flags.nfiles == 0){
 	    if(cmd_flags.ranlib == TRUE){
 		error("no archives specified");
-		usage();
+		usage(EXIT_FAILURE);
 	    }
 	    else{
 		if(cmd_flags.dynamic == TRUE && cmd_flags.no_files_ok == TRUE)
 		    warning("warning no files specified");
 		else{
 		    error("no files specified");
-		    usage();
+		    usage(EXIT_FAILURE);
 		}
 	    }
 	}
@@ -1285,21 +1296,20 @@ char **envp)
 }
 
 /*
- * usage() prints the current usage message and exits indicating failure.
+ * usage(EXIT_FAILURE) prints the current usage message and exits indicating failure.
  */
-static
-void
-usage(
-void)
+static void
+usage(int exit_with_code)
 {
+	FILE *out = exit_with_code ? stderr : stdout;
 	if(cmd_flags.ranlib)
-	    fprintf(stderr, "Usage: %s [-sactfqLT] [-] archive [...]\n",
-		    progname);
+	    fprintf(out, "Usage: %s [-sactfqLT] [-] archive [...]\n",
+		    pnam);
 	else{
-	    fprintf(stderr, "Usage: %s -static [-] file [...] "
+	    fprintf(out, "Usage: %s -static [-] file [...] "
 		    "[-filelist listfile[,dirname]] [-arch_only arch] "
-		    "[-sacLT] [-no_warning_for_no_symbols]\n", progname);
-	    fprintf(stderr, "Usage: %s -dynamic [-] file [...] "
+		    "[-sacLT] [-no_warning_for_no_symbols]\n", pnam);
+	    fprintf(out, "Usage: %s -dynamic [-] file [...] "
 		    "[-filelist listfile[,dirname]] [-arch_only arch] "
 		    "[-o output] [-install_name name] "
 		    "[-compatibility_version #] [-current_version #] "
@@ -1307,9 +1317,10 @@ void)
 		    "[-segs_read_write_addr 0x#] [-seg_addr_table <filename>] "
 		    "[-seg_addr_table_filename <file_system_path>] "
 		    "[-all_load] [-noall_load]\n",
-		    progname);
+		    pnam);
 	}
-	exit(EXIT_FAILURE);
+	if (exit_with_code)
+	    exit(exit_with_code);
 }
 
 /*
@@ -4008,7 +4019,7 @@ enum bool library_warnings)
 		    if(library_warnings == FALSE)
 			return(FALSE);
 		    fprintf(stderr, "%s: same symbol defined in more than one "
-			    "member ", progname);
+			    "member ", pnam);
 		    if(narchs > 1)
 			fprintf(stderr, "for architecture: %s ",
 				arch->arch_flag.name);
@@ -4072,7 +4083,7 @@ void)
 		if(strncmp(archs[i].members[j].member_name,
 			   archs[i].members[j+1].member_name,
 			   len) == 0){
-		    fprintf(stderr, "%s: warning ", progname);
+		    fprintf(stderr, "%s: warning ", pnam);
 		    if(narchs > 1)
 			fprintf(stderr, "for architecture: %s ",
 				archs[i].arch_flag.name);
@@ -4157,7 +4168,7 @@ const char *format, ...)
 {
     va_list ap;
 
-	fprintf(stderr, "%s: ", progname);
+	fprintf(stderr, "%s: ", pnam);
 	if(narchs > 1)
 	    fprintf(stderr, "for architecture: %s ", arch->arch_flag.name);
 

@@ -54,6 +54,11 @@ static void check_for_addresses(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The check_dylib program.  It takes a dynamic library file, an -install_name
  * argument, a -seg_addr_table argument and a -seg_addr_table_filename argument.
@@ -93,11 +98,13 @@ char **envp)
     int i;
     uint32_t table_size;
     char *install_name, *image_file_name, *seg_addr_table_name,
-         *seg_addr_table_filename;
+         *seg_addr_table_filename, *pnam;
     struct check_block block;
     struct seg_addr_table *seg_addr_table, *entry;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	install_name = NULL;
 	image_file_name = NULL;
 	seg_addr_table = NULL;
@@ -107,9 +114,14 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    char *pnam = strrchr(progname, '/');
-		    pnam = (pnam)?pnam+1:progname;
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s <file_name> -install_name <install_name> "
+				"-seg_addr_table <table_name> -seg_addr_table_filename "
+				"<path_name>\n", pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
 		    exit(0);
 		}
 		if(strcmp(argv[i], "-install_name") == 0){

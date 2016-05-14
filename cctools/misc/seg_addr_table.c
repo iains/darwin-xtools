@@ -271,6 +271,11 @@ static void get_seg1addr(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The seg_addr_table program.  It takes a file which contains the starting
  * segment address of images and can update or re-layout the table based on
@@ -298,11 +303,13 @@ char **envp)
 	      relayout_nonsplit;
     enum bool found, is_framework, next_flat, next_split, next_debug;
     enum bool operation_specified, from_dylib_table, create_dylib_table;
-    char *install_name, *has_suffix;
+    char *install_name, *has_suffix, *pnam;
     struct stat stat_buf;
     struct macosx_deployment_target macosx_deployment_target;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 
 	dylib_table_name = NULL;
 	dylib_table = NULL;
@@ -379,9 +386,20 @@ char **envp)
 	    if(argv[a][0] == '-'){
 		if(strcmp(argv[a], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    char *pnam = strrchr(progname, '/');
-		    pnam = (pnam)?pnam+1:progname;
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[a], "--help") == 0){
+		    fprintf(stdout, "Usage: %s [[[-relayout | -update " 
+				"| [-update_overlaps  [-relayout_nonsplit]] -o output_file] |  "
+				"-checkonly ] [-seg_addr_table input_file] "
+				"[-disablewarnings] [-seg1addr hex_address] "
+				"[-allocate_flat increasing | decreasing]] "
+				"[-segs_read_only_addr hex_address] "
+				"[-segs_read_write_addr hex_address] "
+				"[-release <release_name> ] [[-arch <arch_flag>] ...]\n",
+			pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
 		    exit(0);
 		}
 		if(strcmp(argv[a], "-relayout") == 0){

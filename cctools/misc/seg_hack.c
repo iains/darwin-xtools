@@ -50,6 +50,11 @@ static void hack_seg(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 /*
  * The seg_hack(1) program changes all segments names to the one specified on
  * the command line:
@@ -63,23 +68,28 @@ char **argv,
 char **envp)
 {
     int i;
-    char *input, *output;
+    char *input, *output, *pnam;
     struct arch *archs;
     uint32_t narchs;
     struct stat stat_buf;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	input = NULL;
 	output = NULL;
 	archs = NULL;
 	narchs = 0;
 	if(argc < 3){
-	   if(strcmp(argv[1], "--version") == 0){
-		/* Implement a gnu-style --version.  */
-		char *pnam = strrchr(progname, '/');
-		pnam = (pnam)?pnam+1:progname;
-		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
-		exit(0);
+	    if(argc == 2 && strcmp(argv[1], "--version") == 0){
+		    /* Implement a gnu-style --version.  */
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+	    } else if(argc == 2 && strcmp(argv[1], "--help") == 0){
+		    fprintf(stdout, "Usage: %s NEWSEGNAME input -o output\n", pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
+		    exit(0);
 	    }
 	    usage();
 	    return(EXIT_FAILURE);

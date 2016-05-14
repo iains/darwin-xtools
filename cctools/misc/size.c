@@ -88,6 +88,11 @@ static void size(
 extern char apple_version[];
 char *version = apple_version;
 
+/* likewise xtools_version and support_url.  */
+extern char xtools_version[];
+extern char package_version[];
+extern char support_url[];
+
 int
 main(
 int argc,
@@ -100,8 +105,11 @@ char **envp)
     struct arch_flag *arch_flags;
     uint32_t narch_flags;
     enum bool all_archs;
+    char *pnam;
 
 	progname = argv[0];
+	pnam = strrchr(progname, '/');
+	pnam = (pnam)?pnam+1:progname;
 	arch_flags = NULL;
 	narch_flags = 0;
 	all_archs = FALSE;
@@ -115,9 +123,14 @@ char **envp)
 	    if(argv[i][0] == '-'){
 		if(strcmp(argv[i], "--version") == 0){
 		    /* Implement a gnu-style --version.  */
-		    char *pnam = strrchr(progname, '/');
-		    pnam = (pnam)?pnam+1:progname;
-		    fprintf(stderr, "xtools %s - based on Apple Inc. %s\n", pnam, apple_version);
+		    fprintf(stdout, "xtools-%s %s %s\nBased on Apple Inc. %s\n",
+		        xtools_version, pnam, package_version, apple_version);
+		    exit(0);
+		} else if(strcmp(argv[i], "--help") == 0){
+		    fprintf(stdout, "Usage: %s [-m] [-l] [-x] [--] "
+				    "[[-arch <arch_flag>] ...] [file ...]\n",
+			    pnam);
+		    fprintf(stdout, "Please report bugs to %s\n", support_url);
 		    exit(0);
 		}
 		if(argv[i][1] == '\0'){
