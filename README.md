@@ -108,3 +108,13 @@ This seems to be an over-aggressive check in sprintf when FORTIFY\_SOURCE=2.
 "Fixed" by setting FORTIFY\_SOURCE=1
 If \_FORTIFY\_SOURCE is set to 1, with compiler optimization level >= 1, checks that shouldn't change the behavior of conforming programs are performed.
 At the same time, enabled DEBUG for CMAKE\_BUILD\_STYLE=Debug
+
+1.1.0 - May 2016.
+Updated to cctools-877.8 and ld64-253.9 (from XCode 7.2 sources).
+
+Improved the reporting for --version to include the xtools version (and any defined
+PACKAGE_VERSION, for packagers).  Improved --help to include a bug-report-url if
+one is provided.
+
+Added --version and --help to all the installed tools that wer missing them.  This
+should help with configuration tests.
