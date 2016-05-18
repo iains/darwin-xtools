@@ -1,0 +1,4 @@
+const unsigned char ldVersionString[] __attribute__ ((used)) = 
+"xtools-@XTOOLS_VERSION@ ld (@PACKAGE_VERSION@)\nBased on Apple Inc. ld64-@LD64_VERSION_NUM@ @LTO_SUPPORT_INFO@\n";
+
+const double ldVersionNumber __attribute__ ((used)) = (double)@LD64_VERSION_NUM@;
