@@ -1,7 +1,3 @@
-if(XTOOLS_LTO_SUPPORT)
-  add_definitions(-DLTO_SUPORT)
-endif()
-
 set(OTOOL_SRCS
     main.c
     ofile_print.c
@@ -49,9 +45,9 @@ if(XTOOLS_CXX_HAS_STATICCXX_FLAG)
   set_target_properties(otool PROPERTIES LINK_FLAGS -static-libstdc++)
 endif()
 
-if(XTOOLS_LTO_SUPPORT)
-  target_link_libraries(otool LTO)
-endif()
+#if(XTOOLS_LTO_SUPPORT)
+#  set_target_properties(otool PROPERTIES COMPILE_FLAGS -DLTO_SUPPORT)
+#endif()
 
 install(TARGETS otool
         DESTINATION bin
