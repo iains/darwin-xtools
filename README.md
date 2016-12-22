@@ -122,4 +122,10 @@ should help with configuration tests.
 1.2.0 - October 2016
 Updated to cctools-886 and ld64-264.3.102 (from XCode 7.3.1 sources).
 
+=======
+
+2.1.0 - December 2016
+
+Updated to cctools-895 and ld64-274.1 (from XCode 8.1 sources).
+Using libLTO, llvm-dsymutil from LLVM-3.8.1
 
