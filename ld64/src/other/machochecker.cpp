@@ -1117,6 +1117,23 @@ void MachOChecker<A>::checkInitTerms()
 }
 
 
+template <>
+ppc::P::uint_t MachOChecker<ppc>::relocBase()
+{
+	if ( fHeader->flags() & MH_SPLIT_SEGS )
+		return fFirstWritableSegment->vmaddr();
+	else
+		return fFirstSegment->vmaddr();
+}
+
+template <>
+ppc64::P::uint_t MachOChecker<ppc64>::relocBase()
+{
+	if ( fHeader->flags() & MH_SPLIT_SEGS )
+		return fFirstWritableSegment->vmaddr();
+	else
+		return fFirstSegment->vmaddr();
+}
 
 template <>
 x86::P::uint_t MachOChecker<x86>::relocBase()
