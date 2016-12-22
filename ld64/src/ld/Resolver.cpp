@@ -1957,7 +1957,7 @@ void Resolver::dumpAtoms()
 	fprintf(stderr, "Resolver all atoms:\n");
 	for (std::vector<const ld::Atom*>::const_iterator it=_atoms.begin(); it != _atoms.end(); ++it) {
 		const ld::Atom* atom = *it;
-		fprintf(stderr, "  %p name=%s, def=%d\n", atom, atom->name(), atom->definition());
+		fprintf(stderr, "  %p sect %32s name=%s, def=%d\n", atom, atom->section().sectionName(), atom->name(), atom->definition());
 	}
 }
 
@@ -1965,6 +1965,7 @@ void Resolver::resolve()
 {
 	this->initializeState();
 	this->buildAtomList();
+	//this->dumpAtoms();
 	this->addInitialUndefines();
 	this->fillInHelpersInInternalState();
 	this->resolveUndefines();
