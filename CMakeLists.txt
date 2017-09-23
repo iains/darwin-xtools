@@ -77,6 +77,20 @@ else()
   message(STATUS "*Top Level* NO LTO")
 endif()
 
+if(XTOOLS_TAPI_PATH AND
+   EXISTS ${XTOOLS_TAPI_PATH}/include/tapi AND
+   EXISTS ${XTOOLS_TAPI_PATH}/lib/libtapi.dylib)
+  configure_file(
+                ${XTOOLS_TAPI_PATH}/lib/libtapi.dylib
+                ${CMAKE_BINARY_DIR}/lib/libtapi.dylib
+                COPYONLY)
+  option(XTOOLS_TAPI_SUPPORT "Support TAPI in cctools and ld64." ON)
+  message(STATUS "*Top Level* WITH TAPI")
+else()
+  option(XTOOLS_TAPI_SUPPORT "Support TAPI in cctools and ld64." OFF)
+  message(STATUS "*Top Level* NO TAPI")
+endif()
+
 SET(CMAKE_C_FLAGS_MINSIZEREL   "-Os")
 SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
 #SET(CMAKE_C_FLAGS_DEBUG "-Og")
@@ -126,6 +140,11 @@ endif()
 include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/macho-target-includes")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/include")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/host-includes")
+if(XTOOLS_TAPI_SUPPORT)
+  include_directories(BEFORE SYSTEM "${XTOOLS_TAPI_PATH}/include")
+  message(STATUS "*Top Level* including ${XTOOLS_TAPI_PATH}/include")
+endif()
+
 if (EXISTS ${CMAKE_BINARY_DIR}/lib)
   link_directories("${CMAKE_BINARY_DIR}/lib")
 endif()
