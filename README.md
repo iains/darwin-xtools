@@ -129,3 +129,13 @@ Updated to cctools-886 and ld64-264.3.102 (from XCode 7.3.1 sources).
 Updated to cctools-895 and ld64-274.1 (from XCode 8.1 sources).
 Using libLTO, llvm-dsymutil from LLVM-3.8.1
 
+2.2.1 - September 2017
+
+Updated to ld64-274.2 (from XCode 8.2.1 sources).
+Include libtapi if it's available.
+
+
+
+
+
+
