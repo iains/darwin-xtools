@@ -92,8 +92,10 @@ static Options::Platform mapPlatform(tapi::Platform platform) {
 		return Options::kPlatformiOS;
 	case tapi::Platform::watchOS:
 		return Options::kPlatformWatchOS;
+#if SUPPORT_APPLE_TV
 	case tapi::Platform::tvOS:
 		return Options::kPlatform_tvOS;
+#endif
 	}
 
 	return Options::kPlatformUnknown;
