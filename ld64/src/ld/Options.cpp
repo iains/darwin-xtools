@@ -3433,6 +3433,10 @@ void Options::parse(int argc, const char* argv[])
 				fEncryptableForceOn = true;
 				cannotBeUsedWithBitcode(arg);
 			}
+			else if ( strcmp(arg, "-compact_unwind") == 0 ) {
+				fAddCompactUnwindEncoding = true;
+				cannotBeUsedWithBitcode(arg);
+			}
 			else if ( strcmp(arg, "-no_compact_unwind") == 0 ) {
 				fAddCompactUnwindEncoding = false;
 				cannotBeUsedWithBitcode(arg);
