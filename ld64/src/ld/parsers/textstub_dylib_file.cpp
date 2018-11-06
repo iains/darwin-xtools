@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <functional>
 #include <memory>
 
 #include "Architectures.hpp"
