@@ -5641,13 +5641,13 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 	// synthesize "debug notes" and add them to master stabs vector
 	const char* dirPath = NULL;
 	const char* filename = NULL;
+	const ld::relocatable::File* atomObjFile = NULL;
 	bool wroteStartSO = false;
 	state.stabs.reserve(atomsNeedingDebugNotes.size()*4);
 	std::unordered_set<const char*, CStringHash, CStringEquals>  seenFiles;
 	for (std::vector<const ld::Atom*>::iterator it=atomsNeedingDebugNotes.begin(); it != atomsNeedingDebugNotes.end(); it++) {
 		const ld::Atom* atom = *it;
 		const ld::File* atomFile = atom->file();
-		const ld::relocatable::File* atomObjFile = dynamic_cast<const ld::relocatable::File*>(atomFile);
 		//fprintf(stderr, "debug note for %s\n", atom->name());
 		const char* newPath = atom->translationUnitSource();
 		if ( newPath != NULL ) {
@@ -5661,8 +5661,15 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 			newDirPath = temp;
 			// gdb like directory SO's to end in '/', but dwarf DW_AT_comp_dir usually does not have trailing '/'
 			temp[lastSlash-newPath+1] = '\0';
-			// need SO's whenever the translation unit source file changes
-			if ( (filename == NULL) || (strcmp(newFilename,filename) != 0) || (strcmp(newDirPath,dirPath) != 0)) {
+			// We need SO's whenever the translation unit source file changes
+			// We also need a new OSO every time the object file changes (which can be
+			// more often than the source file change). In particular, when
+			// multiple entries in a convenience lib are built from the same
+			// source file (using some conditional compilation).
+		    const ld::relocatable::File* newAtomObjFile = dynamic_cast<const ld::relocatable::File*>(atomFile);
+			if ( (filename == NULL) || (strcmp(newFilename,filename) != 0) 
+			     || (strcmp(newDirPath,dirPath) != 0)
+			     || newAtomObjFile && newAtomObjFile != atomObjFile ) {
 				if ( filename != NULL ) {
 					// translation unit change, emit ending SO
 					ld::relocatable::File::Stab endFileStab;
@@ -5691,7 +5698,8 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 				fileStab.value		= 0;
 				fileStab.string		= newFilename;
 				state.stabs.push_back(fileStab);
-				// Synthesize OSO for start of file
+				wroteStartSO = true;
+				// Synthesize for this new object.
 				ld::relocatable::File::Stab objStab;
 				objStab.atom		= NULL;
 				objStab.type		= N_OSO;
@@ -5699,11 +5707,11 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 				objStab.other		= atomFile->cpuSubType(); 
 				objStab.desc		= 1;
 				if ( atomObjFile != NULL ) {
-					objStab.string	= assureFullPath(atomObjFile->debugInfoPath());
+					objStab.string	= assureFullPath(newAtomObjFile->debugInfoPath());
 					if ( _options.zeroModTimeInDebugMap() )
 						objStab.value	= 0;
 					else
-						objStab.value	= atomObjFile->debugInfoModificationTime();
+						objStab.value	= newAtomObjFile->debugInfoModificationTime();
 				}
 				else {
 					objStab.string	= assureFullPath(atomFile->path());
@@ -5713,7 +5721,6 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 						objStab.value	= atomFile->modificationTime();
 				}
 				state.stabs.push_back(objStab);
-				wroteStartSO = true;
 				// add the source file path to seenFiles so it does not show up in SOLs
 				seenFiles.insert(newFilename);
 				char* fullFilePath;
@@ -5722,7 +5729,7 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 				seenFiles.insert(fullFilePath);
 
 				// <rdar://problem/34121435> Add linker support for propagating N_AST debug notes from .o files to linked image
-				if ( const std::vector<relocatable::File::AstTimeAndPath>* asts = atomObjFile->astFiles() ) {
+				if ( const std::vector<relocatable::File::AstTimeAndPath>* asts = newAtomObjFile->astFiles() ) {
 					for (const relocatable::File::AstTimeAndPath& file : *asts) {
 						const char* cpath = file.path.c_str();
 						if ( seenAstPaths.count(cpath) != 0 )
@@ -5742,6 +5749,7 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 			}
 			filename = newFilename;
 			dirPath = newDirPath;
+			atomObjFile = newAtomObjFile;
 			if ( atom->section().type() == ld::Section::typeCode ) {
 				// Synthesize BNSYM and start FUN stabs
 				ld::relocatable::File::Stab beginSym;
