@@ -134,6 +134,12 @@ Using libLTO, llvm-dsymutil from LLVM-3.8.1
 Updated to ld64-274.2 (from XCode 8.2.1 sources).
 Include libtapi if it's available.
 
+2.2.3 - April 2019
+
+Fix OSO output for cases where the same source file is used to produce
+multiple objects with conditional compilation (fixes the dsymutil warning
+"object symbol file not found for symbol".
+
 
 
 
