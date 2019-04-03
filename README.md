@@ -36,6 +36,10 @@ PRE-REQUISITES
   - on Darwin9, 10 and probably 11 that means building a compiler...
   - [GCC-5.3](https://github.com/iains/darwin-gcc-5) works fine and can be built using the default XCode toolchain.
 
+3. libtapi
+  - It might be installed on your system if you have XCode (for newer systems)
+  - Or you can build it along with LTO from LLVM.
+
 HOW TO BUILD
 ============
 
