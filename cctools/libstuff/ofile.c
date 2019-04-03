@@ -3423,7 +3423,7 @@ enum bool archives_with_fat_objects)
 	    if(size - offset > sizeof(uint32_t)){
 		memcpy(&magic, addr + offset, sizeof(uint32_t));
 #ifdef __BIG_ENDIAN__
-		if(magic == FAT_MAGIC || (magic == FAT_MAGIC_64)
+		if(magic == FAT_MAGIC || (magic == FAT_MAGIC_64))
 #endif /* __BIG_ENDIAN__ */
 #ifdef __LITTLE_ENDIAN__
 		if(magic == SWAP_INT(FAT_MAGIC) ||
