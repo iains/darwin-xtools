@@ -65,8 +65,6 @@ if(XTOOLS_CXX_HAS_STDCXX11_FLAG)
 endif()
 if(XTOOLS_CXX_HAS_STDLIB_FLAG)
      set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -stdlib=libc++")
-elseif(XTOOLS_CXX_HAS_STATICCXX_FLAG)
-     set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -static-libstdc++")
 endif()
 
 set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -lxar")
