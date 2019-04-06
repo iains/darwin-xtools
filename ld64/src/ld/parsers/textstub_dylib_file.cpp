@@ -88,6 +88,8 @@ static Options::Platform mapPlatform(tapi::Platform platform) {
 		return Options::kPlatformUnknown;
 	case tapi::Platform::OSX:
 		return Options::kPlatformOSX;
+	case tapi::Platform::zippered:
+		return Options::kPlatformZippered;
 	case tapi::Platform::iOS:
 		return Options::kPlatformiOS;
 	case tapi::Platform::watchOS:
@@ -165,7 +167,8 @@ template <typename A>
 		this->_allowableClients.emplace_back(strdup(client.c_str()));
 
 	auto dylibPlatform = mapPlatform(file->getPlatform());
-	if ( (dylibPlatform != platform) && (platform != Options::kPlatformUnknown) ) {
+	if ( (dylibPlatform != platform) && (dylibPlatform != Options::kPlatformZippered)
+	      && (platform != Options::kPlatformUnknown) ) {
 		this->_wrongOS = true;
 		if ( this->_addVersionLoadCommand && !indirectDylib ) {
 			if ( buildingForSimulator ) {
@@ -173,7 +176,7 @@ template <typename A>
 					throwf("building for %s simulator, but linking against dylib built for %s (%s).",
 							Options::platformName(platform), Options::platformName(dylibPlatform), path);
 			} else {
-				throwf("building for %s, but linking against dylib built for %s (%s).",
+				throwf("building for %s, but linking against dylib made for %s (%s).",
 						Options::platformName(platform), Options::platformName(dylibPlatform), path);
 			}
 		}
