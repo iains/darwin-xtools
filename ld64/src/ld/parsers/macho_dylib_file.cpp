@@ -269,6 +269,11 @@ File<A>::File(const uint8_t* fileContent, uint64_t fileLength, const char* path,
 		(std::is_same<A, arm>::value || std::is_same<A, arm64>::value))
 		lcPlatform = Options::kPlatformiOS;
 
+	if (lcPlatform == Options::kPlatformUnknown &&
+		(std::is_same<A, ppc>::value || std::is_same<A, ppc64>::value ||
+		 std::is_same<A, x86>::value || std::is_same<A, x86_64>::value))
+		lcPlatform = Options::kPlatformOSX;
+
 	// check cross-linking
 	if ( lcPlatform != platform ) {
 		this->_wrongOS = true;
@@ -319,6 +324,10 @@ File<A>::File(const uint8_t* fileContent, uint64_t fileLength, const char* path,
 					case Options::kPlatformOSX:
 					case Options::kPlatform_bridgeOS:
 					case Options::kPlatformiOS:
+					case Options::kPlatformZippered:
+						// it's an OK combination
+						if ( lcPlatform == Options::kPlatformZippered )
+							break;
 						if ( lcPlatform == Options::kPlatformUnknown )
 							break;
 						// fall through if the Platform is not Unknown
