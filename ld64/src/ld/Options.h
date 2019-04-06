@@ -89,11 +89,7 @@ public:
 	enum BitcodeMode { kBitcodeProcess, kBitcodeAsData, kBitcodeMarker, kBitcodeStrip };
 	enum DebugInfoStripping { kDebugInfoNone, kDebugInfoMinimal, kDebugInfoFull };
 	enum UnalignedPointerTreatment { kUnalignedPointerError, kUnalignedPointerWarning, kUnalignedPointerIgnore };
-#if SUPPORT_APPLE_TV
-	enum Platform { kPlatformUnknown, kPlatformOSX=1, kPlatformiOS=2, kPlatformWatchOS=3, kPlatform_tvOS=4, kPlatform_bridgeOS=5 };
-#else
-	enum Platform { kPlatformUnknown, kPlatformOSX, kPlatformiOS, kPlatformWatchOS };
-#endif
+	enum Platform { kPlatformUnknown, kPlatformOSX=1, kPlatformiOS=2, kPlatformWatchOS=3, kPlatform_tvOS=4, kPlatform_bridgeOS=5, kPlatformZippered };
 
 	static Platform platformForLoadCommand(uint32_t lc) {
 		switch (lc) {
@@ -126,6 +122,8 @@ public:
 		#endif
 			case kPlatform_bridgeOS:
 				return "bridgeOS";
+			case kPlatformZippered:
+				return "zippered";
 			case kPlatformUnknown:
 			default:
 				return "(unknown)";
