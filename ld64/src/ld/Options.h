@@ -89,9 +89,9 @@ public:
 	enum BitcodeMode { kBitcodeProcess, kBitcodeAsData, kBitcodeMarker, kBitcodeStrip };
 	enum DebugInfoStripping { kDebugInfoNone, kDebugInfoMinimal, kDebugInfoFull };
 #if SUPPORT_APPLE_TV
-	enum Platform { kPlatformUnknown, kPlatformOSX, kPlatformiOS, kPlatformWatchOS, kPlatform_tvOS };
+	enum Platform { kPlatformUnknown, kPlatformOSX, kPlatformiOS, kPlatformWatchOS, kPlatform_tvOS, kPlatformZippered };
 #else
-	enum Platform { kPlatformUnknown, kPlatformOSX, kPlatformiOS, kPlatformWatchOS };
+	enum Platform { kPlatformUnknown, kPlatformOSX, kPlatformiOS, kPlatformWatchOS, kPlatformZippered };
 #endif
 
 	static Platform platformForLoadCommand(uint32_t lc) {
@@ -123,6 +123,8 @@ public:
 			case kPlatform_tvOS:
 				return "tvOS";
 		#endif
+			case kPlatformZippered:
+				return "zippered";
 			case kPlatformUnknown:
 			default:
 				return "(unknown)";
