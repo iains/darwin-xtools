@@ -140,6 +140,10 @@ Fix OSO output for cases where the same source file is used to produce
 multiple objects with conditional compilation (fixes the dsymutil warning
 "object symbol file not found for symbol".
 
+2.2.4 - June 2019
+
+Handle "zippered" tapi files.
+
 
 
 
