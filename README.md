@@ -122,7 +122,7 @@ should help with configuration tests.
 1.2.0 - October 2016
 Updated to cctools-886 and ld64-264.3.102 (from XCode 7.3.1 sources).
 
-=======
+======= Corresponding to the 8.x Xcode published sources.
 
 2.1.0 - December 2016
 
@@ -144,6 +144,10 @@ multiple objects with conditional compilation (fixes the dsymutil warning
 
 Handle "zippered" tapi files.
 
+2.3.3 - July 2019
+
+Updated to cctools-898 and ld64-278.4 (from XCode 8.3.3 sources).
+Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
 
 
