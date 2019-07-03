@@ -5740,7 +5740,7 @@ void Options::checkIllegalOptionCombinations()
 				fZeroPageSize = 0x1000;
 				break;
 			case CPU_TYPE_POWERPC64:
-				// first 4GB for ppc64 on 10.5
+				// first 4GB for ppc64 on 10.5 FIXME: Check about mdynamic-no-pic
 				if ( fMacVersionMin >= ld::mac10_5 )
 					fZeroPageSize = 0x100000000ULL;
 				else
@@ -5905,7 +5905,7 @@ void Options::checkIllegalOptionCombinations()
 
 void Options::checkForClassic(int argc, const char* argv[])
 {
-	// scan options
+	// scan options  FIXME: we scan them but then ignore the result?
 	bool archFound = false;
 	bool staticFound = false;
 	bool dtraceFound = false;
