@@ -149,6 +149,12 @@ Handle "zippered" tapi files.
 Updated to cctools-898 and ld64-278.4 (from XCode 8.3.3 sources).
 Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
+======= Corresponding to the 9.x Xcode published sources.
+
+3.1.0 - July 2019
+
+updated to cctools-900 and ld64-302.3.1 (Xcode 9.1 sources)
+Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
 
 
