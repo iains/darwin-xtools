@@ -49,7 +49,12 @@ set(LIBSTUFF_SOURCES
 
 include_directories("${CMAKE_SOURCE_DIR}/cctools/include")
 
-add_definitions(-D__private_extern__=__attribute__\(\(__visibility__\("hidden"\)\)\) -DIN_CCTOOLS)
+add_definitions(
+ -D__private_extern__=__attribute__\(\(__visibility__\("hidden"\)\)\)
+ -D_MACH_I386_THREAD_STATUS_FPSTATE_LEGACY_FIELD_NAMES_
+ -D_ARCHITECTURE_I386_FPU_FPSTATE_LEGACY_FIELD_NAMES_
+ -DIN_CCTOOLS
+ )
 
 if(XTOOLS_C_HAS_WNODEPRECATED_FLAG)
   # suppress the 'import is deprecated' blather.
