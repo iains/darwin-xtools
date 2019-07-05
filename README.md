@@ -122,7 +122,7 @@ should help with configuration tests.
 1.2.0 - October 2016
 Updated to cctools-886 and ld64-264.3.102 (from XCode 7.3.1 sources).
 
-======= Corresponding to the 8.x Xcode published sources.
+======= 2.x.x Corresponding to the 8.x Xcode published sources.
 
 2.1.0 - December 2016
 
@@ -149,13 +149,16 @@ Handle "zippered" tapi files.
 Updated to cctools-898 and ld64-278.4 (from XCode 8.3.3 sources).
 Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
-======= Corresponding to the 9.x Xcode published sources.
+======= 3.x.x Corresponding to the 9.x Xcode published sources.
 
 3.1.0 - July 2019
 
 updated to cctools-900 and ld64-302.3.1 (Xcode 9.1 sources)
 Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
+3.3.0 - July 2019
 
+updated to cctools-906 and ld64-351.8 (Xcode 9.3 to 9.4.1 sources)
+Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
 
