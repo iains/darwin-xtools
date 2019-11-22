@@ -5578,7 +5578,7 @@ uint32_t SymboledSection<A>::appendAtoms(class Parser<A>& parser, uint8_t* p,
 			ld::Atom::ContentType ctype = this->contentType();
 			if ( ctype == ld::Atom::typeLSDA )
 				inclusion = ld::Atom::symbolTableInWithRandomAutoStripLabel;
-			new (allocatedSpace) Atom<A>(*this, "anon", addr, size, ld::Atom::definitionRegular, ld::Atom::combineNever,
+			new (allocatedSpace) Atom<A>(*this, "__eh_related", addr, size, ld::Atom::definitionRegular, ld::Atom::combineNever,
 										ld::Atom::scopeTranslationUnit, ctype, inclusion, 
 										this->dontDeadStrip(), false, false, this->alignmentForAddress(addr));
 		}
