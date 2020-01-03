@@ -161,4 +161,19 @@ Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 updated to cctools-906 and ld64-351.8 (Xcode 9.3 to 9.4.1 sources)
 Using libLTO, llvm-dsymutil from LLVM-7.1 and libtapi-2.0.1
 
+3.3.1 - January 2020
+
+Imported a small change from ld-128 work done for powerpc64 to make
+anonymous EH atoms more obvious (give them an obvious name).
+
+Made the minimum cmake version 3.2 and fixed up some warnings emitted
+by cmake 3.16.1.
+
+This version is the minimum known to interwork with xcode command line
+tools on Darwin18 (MacOS 10.14) and 19 (10.15).  You will also need a
+version of TAPI that supports 'zippered' platform types.
+
+(Using libLTO, dsymutil libtapi 2.0.3 from wip-on-1000-10-8-for-LLVM-7.1.1
+ is thought to be working OK).
+
 

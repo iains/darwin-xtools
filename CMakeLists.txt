@@ -1,6 +1,6 @@
 # Top Level CMake file for XTOOLS.
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.2)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to MinSizeRel")
@@ -8,20 +8,7 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(XTOOLS_ENABLE_ASSERTIONS 1)
 endif()
 
-if (POLICY CMP0051)
-  # CMake 3.1 and higher include generator expressions of the form
-  # $<TARGETLIB:obj> in the SOURCES property.  These need to be
-  # stripped everywhere that access the SOURCES property, so we just
-  # defer to the OLD behavior of not including generator expressions
-  # in the output for now.
-  cmake_policy(SET CMP0051 OLD)
-endif()
-
-if(CMAKE_VERSION VERSION_LESS 3.1.20141117)
-  set(cmake_3_2_USES_TERMINAL)
-else()
-  set(cmake_3_2_USES_TERMINAL USES_TERMINAL)
-endif()
+set(cmake_3_2_USES_TERMINAL USES_TERMINAL)
 
 project(XTOOLS)
 include(CTest)
@@ -37,7 +24,7 @@ set(CMAKE_MODULE_PATH
 
 set(XTOOLS_VERSION_MAJOR 3)
 set(XTOOLS_VERSION_MINOR 3)
-set(XTOOLS_VERSION_PATCH 0)
+set(XTOOLS_VERSION_PATCH 1)
 set(XTOOLS_VERSION_SUFFIX git)
 
 set(XTOOLS_VERSION "${XTOOLS_VERSION_MAJOR}.${XTOOLS_VERSION_MINOR}.${XTOOLS_VERSION_PATCH}")
