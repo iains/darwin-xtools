@@ -3,6 +3,11 @@ if(XTOOLS_LTO_SUPPORT)
   set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
 endif()
 
+if(XTOOLS_TAPI_SUPPORT)
+  add_definitions(-DTAPI_SUPPORT)
+  set(TAPI_SUPPORT_INFO "(with TAPI support)")
+endif()
+
 if(XTOOLS_BUGURL)
   add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
 endif()

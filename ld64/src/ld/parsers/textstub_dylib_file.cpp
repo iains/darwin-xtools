@@ -23,6 +23,7 @@
  */
 
 
+#ifdef TAPI_SUPPORT
 #include <sys/param.h>
 #include <sys/mman.h>
 #include <tapi/tapi.h>
@@ -35,12 +36,14 @@
 #include "MachOFileAbstraction.hpp"
 #include "MachOTrie.hpp"
 #include "generic_dylib_file.hpp"
+#endif
 #include "textstub_dylib_file.hpp"
 
 
 namespace textstub {
 namespace dylib {
 
+#ifdef TAPI_SUPPORT
 //
 // The reader for a dylib extracts all exported symbols names from the memory-mapped
 // dylib, builds a hash table, then unmaps the file.  This is an important memory
@@ -61,8 +64,10 @@ public:
 						 bool logAllFiles, const char* installPath, bool indirectDylib);
 	virtual			~File() noexcept {}
 
+#ifdef TAPI_SUPPORT
 private:
 	void			buildExportHashTable(const tapi::LinkerInterfaceFile* file);
+#endif
 };
 
 static ld::File::ObjcConstraint mapObjCConstraint(tapi::ObjCConstraint constraint) {
@@ -252,6 +257,7 @@ public:
 						   indirectDylib);
 	}
 };
+#endif
 
 //
 // main function used by linker to instantiate ld::Files
@@ -261,6 +267,7 @@ ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const ch
 					   bool bundleLoader, bool indirectDylib)
 {
 
+#ifdef TAPI_SUPPORT
 	switch ( opts.architecture() ) {
 #if SUPPORT_ARCH_x86_64
 		case CPU_TYPE_X86_64:
@@ -293,6 +300,7 @@ ld::dylib::File* parse(const uint8_t* fileContent, uint64_t fileLength, const ch
 			return Parser<ppc64>::parse(path, fileContent, fileLength, modTime, ordinal, opts, indirectDylib);
 #endif
 	}
+#endif
 	return nullptr;
 }
 	
