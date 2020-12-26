@@ -64,10 +64,8 @@ public:
 						 bool logAllFiles, const char* installPath, bool indirectDylib);
 	virtual			~File() noexcept {}
 
-#ifdef TAPI_SUPPORT
 private:
 	void			buildExportHashTable(const tapi::LinkerInterfaceFile* file);
-#endif
 };
 
 static ld::File::ObjcConstraint mapObjCConstraint(tapi::ObjCConstraint constraint) {
