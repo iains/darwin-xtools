@@ -67,19 +67,19 @@ if(XTOOLS_LTO_SUPPORT)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lLTO")
 endif()
 
-if(XTOOLS_TAPI_SUPPORT)
-  if(XTOOLS_USE_TAPILITE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltapilite -lyaml")
-  else()
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltapi")
-  endif()
-endif()
-
 add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_NUM}")
 
 add_executable(ld ${LD64_SOURCES})
 if(NOT XTOOLS_HAS_MODERNXAR)
   target_link_libraries(ld xarextralib)
+endif()
+
+if(XTOOLS_TAPI_SUPPORT)
+  if(XTOOLS_USE_TAPILITE)
+    target_link_libraries(ld tapilite yaml)
+  else()
+    target_link_libraries(ld tapi)
+  endif()
 endif()
 
 install(TARGETS ld DESTINATION bin)
