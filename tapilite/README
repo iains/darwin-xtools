@@ -1,0 +1,6 @@
+This is a very minimal, LLVM-independent implementation of TAPI, such
+that we can compile (and bootstrap) a linker that will be usable on
+recent macOS without the need for LLVM.
+
+dependencies: libyaml
+provides: required interfaces from ld64/src/ld/parsers/textstub_dylib_file
