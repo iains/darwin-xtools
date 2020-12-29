@@ -4,7 +4,7 @@ set(TAPILITE_SOURCES
 	Version.cpp
 )
 
-add_library(tapilite ${TAPILITE_SOURCES})
+add_library(tapilite STATIC ${TAPILITE_SOURCES})
 
 include_directories("${CMAKE_SOURCE_DIR}/tapilite/include")
 include_directories("${CMAKE_SOURCE_DIR}/ld64/src/abstraction")
