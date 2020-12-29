@@ -72,7 +72,6 @@ int verbose)
 	    return(1); /* can't get here, removes a warning from the compiler */
 	}
 	else{
-            waitpid = -1;
 	    do{
 	        waitpid = wait(&waitstatus);
 	    } while (waitpid == -1 && errno == EINTR);
@@ -83,7 +82,7 @@ int verbose)
 #else
 	    termsig = waitstatus.w_termsig;
 #endif
-	    if(termsig != 0 && termsig != SIGINT)
+	    if(termsig != 0 && termsig != SIGINT && termsig != SIGPIPE)
 		fatal("fatal error in %s", name);
 	    return(
 #ifndef __OPENSTEP__

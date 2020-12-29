@@ -37,8 +37,6 @@
 #include "stuff/symbol.h"
 #include "stuff/errors.h"
 #include "stuff/allocate.h"
-#include "stuff/dylib_table.h"
-#include "stuff/seg_addr_table.h"
 #include "stuff/guess_short_name.h"
 #include "stuff/macosx_deployment_target.h"
 
@@ -81,14 +79,12 @@ static void check_dylib(
 /*
  * The dylib table.  This is specified with the -dylib_table option.
  */
-static struct dylib_table *dylib_table = NULL;
 static char *dylib_table_name = NULL;
 
 /*
  * The segment address table.  This is specified with the -seg_addr_table
  * option.
  */
-static struct seg_addr_table *seg_addr_table = NULL;
 static char *seg_addr_table_name = NULL;
 static enum bool seg_addr_table_specified = FALSE;
 /*
@@ -115,7 +111,7 @@ char **envp)
 {
     int i;
     struct cmd_flags cmd_flags;
-    uint32_t j, table_size;
+    uint32_t j;
     struct arch_flag *arch_flags;
     uint32_t narch_flags;
     enum bool all_archs;
@@ -189,8 +185,7 @@ char **envp)
 			usage();
 		    }
 		    dylib_table_name = argv[i+1];
-		    dylib_table = parse_dylib_table(argv[i+1], argv[i],
-						    argv[i+1]);
+		    printf("warning: -dylib_table is no longer used.\n");
 		    i++;
 		}
 		else if(strcmp(argv[i], "-seg_addr_table") == 0){
@@ -204,8 +199,7 @@ char **envp)
 		    }
 		    seg_addr_table_specified = TRUE;
 		    seg_addr_table_name = argv[i+1];
-		    seg_addr_table = parse_seg_addr_table(argv[i+1],
-					      argv[i], argv[i+1], &table_size);
+		    printf("warning: -seg_addr_table is no longer used.\n");
 		    i++;
 		}
 		else if(strcmp(argv[i], "-seg_addr_table_filename") == 0){
@@ -218,6 +212,8 @@ char **envp)
 			usage();
 		    }
 		    seg_addr_table_filename = argv[i+1];
+		    printf("warning: -seg_addr_table_filename is no longer "
+			   "used.\n");
 		    i++;
 		}
 		else{
@@ -313,8 +309,11 @@ void *cookie)
 	    mh_flags = ofile->mh64->flags;
 	    mh_ncmds = ofile->mh64->ncmds;
 	}
-	else
+	else {
+	    printf("internal error: no mach header\n");
+	    exit_status = EXIT_FAILURE;
 	    return;
+	}
 
 	debug = FALSE;
 	cmd_flags = (struct cmd_flags *)cookie;

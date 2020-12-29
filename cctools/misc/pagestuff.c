@@ -81,6 +81,8 @@ enum mach_o_part_type {
     MP_DATA_IN_CODE,
     MP_CODE_SIGN_DRS,
     MP_LINK_OPT_HINT,
+    MP_DYLD_CHAINED_FIXUPS,
+    MP_DYLD_EXPORTS_TRIE,
     MP_DYLD_INFO_REBASE,
     MP_DYLD_INFO_BIND,
     MP_DYLD_INFO_WEAK_BIND,
@@ -114,6 +116,8 @@ static char *mach_o_part_type_names[] = {
     "MP_DATA_IN_CODE",
     "MP_CODE_SIGN_DRS",
     "MP_LINK_OPT_HINT",
+    "MP_DYLD_CHAINED_FIXUPS",
+    "MP_DYLD_EXPORTS_TRIE",
     "MP_DYLD_INFO_REBASE",
     "MP_DYLD_INFO_BIND",
     "MP_DYLD_INFO_WEAK_BIND",
@@ -169,7 +173,7 @@ static void print_mach_o_parts(
     struct mach_o_part *mp);
 
 static void print_parts_for_page(
-    uint32_t page_number);
+    uint64_t page_number);
 static void print_arch(
     struct file_part *fp);
 static void print_file_part(
@@ -213,7 +217,7 @@ int argc,
 char *argv[])
 {
     int i, start;
-    uint32_t j, page_number;
+    uint64_t j, page_number;
     char *endp, *pnam;
     struct arch_flag a;
 
@@ -547,6 +551,7 @@ struct file_part *fp)
     struct linkedit_data_command *split_info, *code_sig, *func_starts,
 			         *data_in_code, *code_sign_drs;
     struct linkedit_data_command *link_opt_hint;
+    struct linkedit_data_command *dyld_chained_fixups, *dyld_exports_trie;
     enum bool dylib_stub;
 
 	mp = new_mach_o_part();
@@ -588,6 +593,8 @@ struct file_part *fp)
 	data_in_code = NULL;
 	code_sign_drs = NULL;
 	link_opt_hint = NULL;
+	dyld_chained_fixups = NULL;
+	dyld_exports_trie = NULL;
 
 	lc = ofile.load_commands;
 	for(i = 0; i < ncmds; i++){
@@ -621,6 +628,14 @@ struct file_part *fp)
 	    else if(link_opt_hint == NULL &&
 		    lc->cmd == LC_LINKER_OPTIMIZATION_HINT){
 		link_opt_hint = (struct linkedit_data_command *)lc;
+	    }
+	    else if (dyld_chained_fixups == NULL &&
+		     lc->cmd == LC_DYLD_CHAINED_FIXUPS) {
+		dyld_chained_fixups = (struct linkedit_data_command*)lc;
+	    }
+	    else if (dyld_exports_trie == NULL &&
+		     lc->cmd == LC_DYLD_EXPORTS_TRIE) {
+		dyld_exports_trie = (struct linkedit_data_command*)lc;
 	    }
 	    else if(lc->cmd == LC_SEGMENT && dylib_stub == FALSE){
 		sg = (struct segment_command *)lc;
@@ -1070,6 +1085,20 @@ struct file_part *fp)
 	    mp->type = MP_LINK_OPT_HINT;
 	    insert_mach_o_part(fp, mp);
 	}
+	if(dyld_chained_fixups != NULL && dyld_chained_fixups->datasize != 0){
+	    mp = new_mach_o_part();
+	    mp->offset = fp->offset + dyld_chained_fixups->dataoff;
+	    mp->size = dyld_chained_fixups->datasize;
+	    mp->type = MP_DYLD_CHAINED_FIXUPS;
+	    insert_mach_o_part(fp, mp);
+	}
+	if(dyld_exports_trie != NULL && dyld_exports_trie->datasize != 0){
+	    mp = new_mach_o_part();
+	    mp->offset = fp->offset + dyld_exports_trie->dataoff;
+	    mp->size = dyld_exports_trie->datasize;
+	    mp->type = MP_DYLD_EXPORTS_TRIE;
+	    insert_mach_o_part(fp, mp);
+	}
 }
 
 static
@@ -1161,7 +1190,7 @@ print_mach_o_parts(
 struct mach_o_part *mp)
 {
     struct mach_o_part *p, *prev;
-    uint32_t offset;
+    uint64_t offset;
     char *indent;
 
 	if(arch_flag == NULL)
@@ -1196,7 +1225,7 @@ struct mach_o_part *mp)
 static
 void
 print_parts_for_page(
-uint32_t page_number)
+uint64_t page_number)
 {
     uint64_t offset, size, low_addr, high_addr, new_low_addr, new_high_addr;
     struct file_part *fp;
@@ -1212,7 +1241,7 @@ uint32_t page_number)
 
 	if(arch_flag == NULL){
 	    if(offset > ofile.file_size){
-		printf("File has no page %u (file has only %u pages)\n",
+		printf("File has no page %llu (file has only %u pages)\n",
 		       page_number, (uint32_t)((ofile.file_size +
 					        vm_page_size -1) /
 					      vm_page_size));
@@ -1221,7 +1250,7 @@ uint32_t page_number)
 	}
 	else{
 	    if(offset > arch_size){
-		printf("File for architecture %s has no page %u (has only %u "
+		printf("File for architecture %s has no page %llu (has only %u "
 		       "pages)\n", arch_flag->name,
 		       page_number, (uint32_t)((arch_size +
 					        vm_page_size -1) /
@@ -1242,7 +1271,7 @@ uint32_t page_number)
 		continue;
 	    switch(fp->type){
 	    case FP_FAT_HEADERS:
-		printf("File Page %u contains fat file headers\n",
+		printf("File Page %llu contains fat file headers\n",
 		       page_number);
 		printed = TRUE;
 		break;
@@ -1256,13 +1285,13 @@ uint32_t page_number)
 			continue;
 		    switch(mp->type){
 		    case MP_MACH_HEADERS:
-			printf("File Page %u contains Mach-O headers",
+			printf("File Page %llu contains Mach-O headers",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_SECTION:
-			printf("File Page %u contains contents of "
+			printf("File Page %llu contains contents of "
 			       "section (%.16s,%.16s)", page_number,
 			       mp->s->segname, mp->s->sectname);
 			print_arch(fp);
@@ -1290,7 +1319,7 @@ uint32_t page_number)
 			sections = TRUE;
 			break;
 		    case MP_SECTION_64:
-			printf("File Page %u contains contents of "
+			printf("File Page %llu contains contents of "
 			       "section (%.16s,%.16s)", page_number,
 			       mp->s64->segname, mp->s64->sectname);
 			print_arch(fp);
@@ -1319,165 +1348,177 @@ uint32_t page_number)
 			sections64 = TRUE;
 			break;
 		    case MP_RELOCS:
-			printf("File Page %u contains relocation entries for "
+			printf("File Page %llu contains relocation entries for "
 			       "section (%.16s,%.16s)", page_number,
 			       mp->s->segname, mp->s->sectname);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_RELOCS_64:
-			printf("File Page %u contains relocation entries for "
+			printf("File Page %llu contains relocation entries for "
 			       "section (%.16s,%.16s)", page_number,
 			       mp->s64->segname, mp->s64->sectname);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_SPLIT_INFO:
-			printf("File Page %u contains local of info to split "
+			printf("File Page %llu contains local of info to split "
 			       "segments", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_LOCAL_SYMBOLS:
-			printf("File Page %u contains symbol table for "	
+			printf("File Page %llu contains symbol table for "
 			       "non-global symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_EXTDEF_SYMBOLS:
-			printf("File Page %u contains symbol table for "	
+			printf("File Page %llu contains symbol table for "
 			       "defined global symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_UNDEF_SYMBOLS:
-			printf("File Page %u contains symbol table for "	
+			printf("File Page %llu contains symbol table for "
 			       "undefined symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_TOC:
-			printf("File Page %u contains table of contents",
+			printf("File Page %llu contains table of contents",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_MODULE_TABLE:
-			printf("File Page %u contains module table",
+			printf("File Page %llu contains module table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_REFERENCE_TABLE:
-			printf("File Page %u contains reference table",
+			printf("File Page %llu contains reference table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_INDIRECT_SYMBOL_TABLE:
-			printf("File Page %u contains indirect symbols table",
+			printf("File Page %llu contains indirect symbols table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_EXT_RELOCS:
-			printf("File Page %u contains external relocation "
+			printf("File Page %llu contains external relocation "
 			       "entries", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_LOC_RELOCS:
-			printf("File Page %u contains local relocation "
+			printf("File Page %llu contains local relocation "
 			       "entries", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_SYMBOL_TABLE:
-			printf("File Page %u contains symbol table",
+			printf("File Page %llu contains symbol table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_HINTS_TABLE:
-			printf("File Page %u contains hints table",
+			printf("File Page %llu contains hints table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_STRING_TABLE:
-			printf("File Page %u contains string table",
+			printf("File Page %llu contains string table",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_EXT_STRING_TABLE:
-			printf("File Page %u contains string table for "
+			printf("File Page %llu contains string table for "
 			       "external symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_LOC_STRING_TABLE:
-			printf("File Page %u contains string table for "
+			printf("File Page %llu contains string table for "
 			       "local symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_CODE_SIG:
-			printf("File Page %u contains data of code signature",
+			printf("File Page %llu contains data of code signature",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_FUNCTION_STARTS:
-			printf("File Page %u contains data of function starts",
+			printf("File Page %llu contains data of function starts",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_DATA_IN_CODE:
-			printf("File Page %u contains info for data in code",
+			printf("File Page %llu contains info for data in code",
 			       page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_CODE_SIGN_DRS:
-			printf("File Page %u contains info for code signing "
+			printf("File Page %llu contains info for code signing "
 			       "DRs copied from linked dylib", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_LINK_OPT_HINT:
-			printf("File Page %u contains info for linker "
+			printf("File Page %llu contains info for linker "
 			       "optimization hints", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
+		    case MP_DYLD_CHAINED_FIXUPS:
+			printf("File Page %llu contains dyld info for chained "
+			       "fixups", page_number);
+			print_arch(fp);
+			printed = TRUE;
+			break;
+		    case MP_DYLD_EXPORTS_TRIE:
+			printf("File Page %llu contains dyld info for exported "
+			       "symbols (TRIE)", page_number);
+			print_arch(fp);
+			printed = TRUE;
+			break;
 		    case MP_DYLD_INFO_REBASE:
-			printf("File Page %u contains dyld info for sliding "
+			printf("File Page %llu contains dyld info for sliding "
 			       "an image", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_DYLD_INFO_BIND:
-			printf("File Page %u contains dyld info for binding "
+			printf("File Page %llu contains dyld info for binding "
 			       "symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_DYLD_INFO_WEAK_BIND:
-			printf("File Page %u contains dyld info for weak bound "
+			printf("File Page %llu contains dyld info for weak bound "
 			       "symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_DYLD_INFO_LAZY_BIND:
-			printf("File Page %u contains dyld info for lazy bound "
+			printf("File Page %llu contains dyld info for lazy bound "
 			       "symbols", page_number);
 			print_arch(fp);
 			printed = TRUE;
 			break;
 		    case MP_DYLD_INFO_EXPORT:
-			printf("File Page %u contains dyld info for symbols "
+			printf("File Page %llu contains dyld info for symbols "
 			       "exported by a dylib", page_number);
 			print_arch(fp);
 			printed = TRUE;
@@ -1487,7 +1528,7 @@ uint32_t page_number)
 		    }
 		}
 		if(sections == TRUE || sections64 == TRUE){
-		    printf("Symbols on file page %u virtual address 0x%llx to "
+		    printf("Symbols on file page %llu virtual address 0x%llx to "
 			   "0x%llx\n", page_number, low_addr, high_addr);
 		    if(sections == TRUE)
 			print_symbols(fp, low_addr, high_addr);
@@ -1524,7 +1565,7 @@ uint32_t page_number)
 		    else
 			arch_name = get_arch_name_from_types(fp->mh64->cputype,
 						    	fp->mh64->cpusubtype);
-		    printf("File Page %u contains empty space in the Mach-O "
+		    printf("File Page %llu contains empty space in the Mach-O "
 			   "file for %s between:\n", page_number, arch_name);
 		    if(mp->prev == NULL)
 			printf("    the start of the Mach-O file");
@@ -1544,7 +1585,7 @@ uint32_t page_number)
 		}
 		break;
 	    }
-	    printf("File Page %u contains empty space in the file between:\n",
+	    printf("File Page %llu contains empty space in the file between:\n",
 		   page_number);
 	    if(fp->prev == NULL)
 		printf("    the start of the file");
@@ -1693,6 +1734,12 @@ struct mach_o_part *mp)
 	    break;
 	case MP_LINK_OPT_HINT:
 	    printf("info for linker optimization hints");
+	    break;
+	case MP_DYLD_CHAINED_FIXUPS:
+	    printf("dyld info for chained fixups");
+	    break;
+	case MP_DYLD_EXPORTS_TRIE:
+	    printf("dyld info for exported symbols (TRIE)");
 	    break;
 	case MP_DYLD_INFO_REBASE:
 	    printf("dyld info for sliding an image");

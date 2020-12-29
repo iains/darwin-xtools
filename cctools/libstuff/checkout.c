@@ -171,6 +171,20 @@ struct object *object)
 			"LC_DYLD_INFO load command): ");
 		object->dyld_info = (struct dyld_info_command *)lc;
 	    }
+	    else if(lc->cmd == LC_DYLD_EXPORTS_TRIE){
+		if(object->dyld_exports_trie != NULL)
+		    fatal_arch(arch, member, "malformed file (more than one "
+			"LC_DYLD_EXPORTS_TRIE load command): ");
+		object->dyld_exports_trie =
+			(struct linkedit_data_command *)lc;
+	    }
+	    else if(lc->cmd == LC_DYLD_CHAINED_FIXUPS){
+		if(object->dyld_chained_fixups != NULL)
+		    fatal_arch(arch, member, "malformed file (more than one "
+			       "LC_DYLD_CHAINED_FIXUPS load command): ");
+		object->dyld_chained_fixups =
+		(struct linkedit_data_command *)lc;
+	    }
 	    else if(lc->cmd == LC_SEGMENT){
 		sg = (struct segment_command *)lc;
 		if(strcmp(sg->segname, SEG_LINKEDIT) == 0){
@@ -268,7 +282,8 @@ struct object *object)
 		 */
 		dyld_order(arch, member, object);
 	    }
-	    else if(flags & MH_DYLDLINK){
+	    else if(flags & MH_DYLDLINK ||
+		    object->mh_filetype == MH_KEXT_BUNDLE){
 		/*
 		 * This is a file for the dynamic linker (output of ld(1) with
 		 * -output_for_dyld .  That is the relocation entries are split
@@ -332,7 +347,8 @@ struct arch *arch,
 struct member *member,
 struct object *object)
 {
-    uint32_t offset, rounded_offset, isym;
+    uint64_t offset, rounded_offset;
+    uint32_t isym;
 
 	if(object->mh != NULL){
 	    if(object->seg_linkedit == NULL)
@@ -391,6 +407,7 @@ struct object *object)
 			       SEG_LINKEDIT " segment in: ");
 	    }
 	}
+
 	if(object->dyld_info != NULL){
 	    /* dyld_info starts at beginning of __LINKEDIT */
 	    if (object->dyld_info->rebase_off != 0){
@@ -426,6 +443,21 @@ struct object *object)
 	    else if (object->dyld_info->rebase_size != 0)
 		offset = object->dyld_info->rebase_off + 
 			    object->dyld_info->rebase_size;
+	}
+	if(object->dyld_chained_fixups != NULL){
+	    /* dyld_chained_fixups starts at beginning of __LINKEDIT */
+	    if (object->dyld_chained_fixups->dataoff != offset)
+		    order_error(arch, member, "dyld chained fixups "
+			"out of place");
+	    offset = object->dyld_chained_fixups->dataoff +
+	    		object->dyld_chained_fixups->datasize;
+	}
+	if(object->dyld_exports_trie != NULL){
+	    if (object->dyld_exports_trie->dataoff != offset)
+		    order_error(arch, member, "dyld exports trie "
+			"out of place");
+	    offset = object->dyld_exports_trie->dataoff +
+	    		object->dyld_exports_trie->datasize;
 	}
 	if(object->dyst->nlocrel != 0){
 	    if(object->dyst->locreloff != offset)
@@ -535,7 +567,8 @@ struct object *object)
 		rounded_offset = offset;
 	    }
 	    else if(object->dyst->tocoff == rounded_offset){
-		object->input_indirectsym_pad = rounded_offset - offset;
+		object->input_indirectsym_pad = (uint32_t)(rounded_offset -
+							   offset);
 		rounded_offset += object->dyst->ntoc *
 			          sizeof(struct dylib_table_of_contents);
 		offset = rounded_offset;
@@ -557,7 +590,8 @@ struct object *object)
 		    rounded_offset = offset;
 		}
 		else if(object->dyst->modtaboff == rounded_offset){
-		    object->input_indirectsym_pad = rounded_offset - offset;
+		    object->input_indirectsym_pad = (uint32_t)(rounded_offset -
+							       offset);
 		    rounded_offset += object->dyst->nmodtab *
 				      sizeof(struct dylib_module_64);
 		    offset = rounded_offset;
@@ -574,7 +608,8 @@ struct object *object)
 		rounded_offset = offset;
 	    }
 	    else if(object->dyst->extrefsymoff == rounded_offset){
-		object->input_indirectsym_pad = rounded_offset - offset;
+		object->input_indirectsym_pad = (uint32_t)(rounded_offset -
+							   offset);
 		rounded_offset += object->dyst->nextrefsyms *
 			          sizeof(struct dylib_reference);
 		offset = rounded_offset;
@@ -589,7 +624,8 @@ struct object *object)
 		rounded_offset = offset;
 	    }
 	    else if(object->st->stroff == rounded_offset){
-		object->input_indirectsym_pad = rounded_offset - offset;
+		object->input_indirectsym_pad = (uint32_t)(rounded_offset -
+							   offset);
 		rounded_offset += object->st->strsize;
 		offset = rounded_offset;
 	    }
@@ -645,7 +681,7 @@ struct object *object)
 		end = object->code_sig_cmd->dataoff;
 		if(object->st->strsize != 0){
 		    strend = object->st->stroff + object->st->strsize;
-		    rounded_strend = rnd(strend, 16);
+		    rounded_strend = (uint32_t)rnd(strend, 16);
 		    if(object->code_sig_cmd->dataoff == rounded_strend)
 		       end = strend;
 		}
@@ -657,7 +693,7 @@ struct object *object)
 		 * string table may not be exactly at the end of the
 		 * object_size due to rounding.
 		 */
-		rounded_strend = rnd(strend, 8);
+		rounded_strend = (uint32_t)rnd(strend, 8);
 		if(strend != end && rounded_strend != end)
 		    fatal_arch(arch, member, "string table not at the end "
 			"of the file (can't be processed) in file: ");
@@ -690,7 +726,7 @@ struct object *object)
 		 */
 		if(object->mh64 != NULL &&
 		   (object->dyst->nindirectsyms % 2) != 0){
-		    rounded_indirectend = rnd(indirectend, 8);
+		    rounded_indirectend = (uint32_t)rnd(indirectend, 8);
 		}
 		else{
 		    rounded_indirectend = indirectend;
