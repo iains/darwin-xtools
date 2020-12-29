@@ -548,8 +548,8 @@ void *cookie)
     char *short_name, *has_suffix;
     enum bool is_framework;
 #ifdef LTO_SUPPORT
-    char *llvm_bundle_pointer;
-    uint64_t llvm_bundle_size;
+    char *llvm_bundle_pointer = NULL;
+    uint64_t llvm_bundle_size = 0;
     enum bool llvm_bundle_found;
 	llvm_bundle_found = FALSE;
 #endif /* LTO_SUPPORT */
@@ -567,9 +567,6 @@ void *cookie)
 	process_flags.bss_nsect = NO_SECT;
 	process_flags.nlibs = 0;
 	process_flags.lib_names = NULL;
-
-	llvm_bundle_pointer = NULL;
-	llvm_bundle_size = 0;
 
 	if(ofile->mh == NULL && ofile->mh64 == NULL){
 #ifdef LTO_SUPPORT

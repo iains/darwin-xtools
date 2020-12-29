@@ -106,7 +106,7 @@
 #import <stuff/hppa.h>
 #import <stuff/execute.h>
 #import <stuff/guess_short_name.h>
-//#import <stuff/seg_addr_table.h>
+#import <stuff/seg_addr_table.h>
 #import <stuff/macosx_deployment_target.h>
 
 #include <mach-o/dyld.h>

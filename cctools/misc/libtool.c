@@ -1355,19 +1355,19 @@ char **envp)
 	/* remember common values used in the archive table of contents */
 	if (cmd_flags.D == FALSE && zero_ar_date == FALSE) {
 #ifndef __OPENSTEP__
-	    if (__builtin_available(macOS 10.12, *)) {
+# if XTOOLS_HAS_CLOCK_GETTIME
 		if (clock_gettime(CLOCK_REALTIME, &toc_timespec)) {
 		    system_fatal("clock_gettime failed");
 		    return(EXIT_FAILURE);
 		}
 		toc_time = toc_timespec.tv_sec;
-	    } else {
+# else
 		if (gettimeofday(&toc_timeval, NULL)) {
 		    system_fatal("gettimeofday failed");
 		    return(EXIT_FAILURE);
 		}
 		toc_time = toc_timeval.tv_sec;
-	    }
+# endif
 #else
 	    toc_time = time(NULL);
 #endif /* !defined(__OPENSTEP__) */
@@ -3055,17 +3055,16 @@ struct ofile *ofile)
 	 * when we first closed it.
 	 */
 #ifndef __OPENSTEP__
-	if (__builtin_available(macOS 10.12, *)) {
+# ifdef XTOOLS_HAS_CLOCK_GETTIME
 	    struct timespec times[2];
 	    memcpy(&times[0], &stat_buf.st_atimespec, sizeof(struct timespec));
 	    memcpy(&times[1], &stat_buf.st_mtimespec, sizeof(struct timespec));
 	    time_result = utimensat(AT_FDCWD, tempfile, times, 0);
-	}
-	else {
+# else
 	    TIMESPEC_TO_TIMEVAL(&timep[0], &stat_buf.st_atimespec);
 	    TIMESPEC_TO_TIMEVAL(&timep[1], &stat_buf.st_mtimespec);
 	    time_result = utimes(tempfile, timep);
-	}
+# endif
 #else
 	timep[0] = stat_buf.st_mtime;
 	timep[1] = stat_buf.st_mtime;

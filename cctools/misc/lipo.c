@@ -648,13 +648,12 @@ unknown_flag:
 		    if(close(fd) == -1)
 			system_fatal("can't close output file: %s",output_file);
 #ifndef __OPENSTEP__
-		    if (__builtin_available(macOS 10.12, *)) {
+# if XTOOLS_HAS_UTIMENSAT
 			time_result = utimensat(AT_FDCWD, output_file,
 						output_times, 0);
-		    }
-		    else {
+# else
 			time_result = utimes(output_file, output_timev);
-		    }
+# endif
 #else
 		    time_result = utime(output_file, output_timep);
 #endif
@@ -1182,19 +1181,19 @@ struct input_file *input)
 	/*
 	 * Select the first modify time
 	 */
-	if (__builtin_available(macOS 10.12, *)) {
+# ifdef XTOOLS_HAS_UTIMENSAT
 	    if (output_times[1].tv_sec == 0) {
 		memcpy(&output_times[0], &stat_buf.st_atimespec,
 		       sizeof(struct timespec));
 		memcpy(&output_times[1], &stat_buf.st_mtimespec,
 		       sizeof(struct timespec));
 	    }
-	} else {
+# else
 	    if (output_timev[1].tv_sec == 0) {
 		TIMESPEC_TO_TIMEVAL(&output_timev[0], &stat_buf.st_atimespec);
 		TIMESPEC_TO_TIMEVAL(&output_timev[1], &stat_buf.st_mtimespec);
 	    }
-	}
+# endif
 #else
 	/*
 	 * Select the eariliest modify time so that if the output file

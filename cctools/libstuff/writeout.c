@@ -142,17 +142,17 @@ uint32_t *throttle)
 	seen_archive = FALSE;
 
 #ifndef __OPENSTEP__
-	if (__builtin_available(macOS 10.12, *)) {
+# ifdef XTOOLS_HAS_CLOCK_GETTIME
 	    if (clock_gettime(CLOCK_REALTIME, &toc_timespec)) {
 		system_error("clock_gettime failed");
 		return;
 	    }
-	} else {
+# else
 	    if (gettimeofday(&toc_timeval, NULL)) {
 		system_error("gettimeofday failed");
 		return;
 	    }
-	}
+# endif
 #else
 	/*
 	 * The environment variable ZERO_AR_DATE is used here and other
@@ -291,18 +291,17 @@ no_throttle:
 	     * have been zeroed out when the library was created. writeout
 	     * will not zero out the modification time in the filesystem.
 	     */
-	    if (__builtin_available(macOS 10.12, *)) {
+# ifdef XTOOLS_HAS_CLOCK_GETTIME
 		struct timespec times[2] = {0};
 		memcpy(&times[0], &toc_timespec, sizeof(struct timespec));
 		memcpy(&times[1], &toc_timespec, sizeof(struct timespec));
 		time_result = utimensat(AT_FDCWD, output, times, 0);
-	    }
-	    else {
+# else
 		struct timeval times[2] = {0};
 		memcpy(&times[0], &toc_timeval, sizeof(struct timeval));
 		memcpy(&times[1], &toc_timeval, sizeof(struct timeval));
 		time_result = utimes(output, times);
-	    }
+# endif
 #else
 	    timep[0] = toc_time;
 	    timep[1] = toc_time;
