@@ -27,7 +27,11 @@ int argc,
 char **argv,
 char **envp)
 {
+#ifdef XTOOLS_AS_SUBDIR
+    const char *SUB = XTOOLS_AS_SUBDIR;
+#else
     const char *SUB = "./";
+#endif
     const char *LIB = "../libexec/as/";
     const char *LOCALLIB = "../local/libexec/as/";
     const char *AS = "/as";
@@ -245,9 +249,11 @@ char **envp)
 	    qflag = TRUE;
 	}
 
+#ifndef XTOOLS_AS_USE_CLANG
 	/* Default to the 'old way'.  */
 	if (Qflag == FALSE && qflag == FALSE)
 	  Qflag = TRUE;
+#endif
 
 	if(qflag == TRUE &&
 	   (arch_flag.cputype != CPU_TYPE_X86_64 &&
@@ -289,6 +295,13 @@ char **envp)
 	   arch_flag.cputype == CPU_TYPE_I386 ||
 	   arch_flag.cputype == CPU_TYPE_ARM)
 	    run_clang = 1;
+
+#ifdef XTOOLS_AS_CLANG_USE_HOST
+	if ((run_clang || qflag) && !Qflag) {
+		AS = "/as-host";
+		Qflag = TRUE;  /* do not trigger clang callout below */
+	}
+#endif
 
 	/*
 	 * Use the clang as the assembler if is the default or asked to with
@@ -371,6 +384,11 @@ char **envp)
 	/*
 	 * If this assembler exist try to run it else print an error message.
 	 */
+#ifdef XTOOLS_AS_SUBDIR
+	if (*SUB == '/')
+		as = makestr(SUB, arch_name, AS, NULL);
+	else
+#endif
 	as = makestr(prefix, SUB, arch_name, AS, NULL);
 	new_argv = allocate((argc + 1) * sizeof(char *));
 	new_argv[0] = as;
