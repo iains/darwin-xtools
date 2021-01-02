@@ -36,7 +36,9 @@
 #include <spawn.h>
 #include <cxxabi.h>
 #include <Availability.h>
+#ifdef TAPI_SUPPORT
 #include <tapi/tapi.h>
+#endif
 #include <ctype.h>
 
 #include <vector>
@@ -860,6 +862,7 @@ bool Options::findFile(const std::string &path, const std::vector<std::string> &
 			break;
 	}
 
+#ifdef TAPI_SUPPORT
 	// If we found a text-based stub file, check if it should be used.
 	if ( !tbdInfo.missing() ) {
 		if (tapi::LinkerInterfaceFile::shouldPreferTextBasedStubFile(tbdInfo.path)) {
@@ -867,6 +870,7 @@ bool Options::findFile(const std::string &path, const std::vector<std::string> &
 			return true;
 		}
 	}
+#endif
 	FileInfo dylibInfo;
 	{
 		bool found = dylibInfo.checkFileExists(*this, path.c_str());
@@ -884,6 +888,7 @@ bool Options::findFile(const std::string &path, const std::vector<std::string> &
 		result = dylibInfo;
 		return true;
 	}
+#ifdef TAPI_SUPPORT
 	// There are both - a text-based stub file and a dynamic library file.
 	else if ( !tbdInfo.missing() && !dylibInfo.missing() ) {
 		// If the files are still in synv we can use and should use the text-based stub file.
@@ -898,6 +903,7 @@ bool Options::findFile(const std::string &path, const std::vector<std::string> &
 		}
 		return true;
 	}
+#endif
 
 	return false;
 }
@@ -3999,8 +4005,10 @@ void Options::buildSearchPaths(int argc, const char* argv[])
             if ( ltoVers != NULL )
 					fprintf(out, "LTO support using: %s\n", ltoVers);
 #endif
+#ifdef TAPI_SUPPORT
 			 fprintf(out, "TAPI support using: %s\n",
 			         tapi::Version::getFullVersionAsString().c_str());
+#endif
 			 // if only -v specified or --version, exit cleanly
 			 if ( argc == 2  || isVersion ) {
 				exitAfterOptionsParsing = true;

@@ -408,6 +408,44 @@ enum NXByteOrder target_byte_sex)
 }
 
 void
+swap_twolevel_hint(
+struct twolevel_hint *hints,
+uint32_t nhints,
+enum NXByteOrder target_byte_sex)
+{
+    struct swapped_twolevel_hint {
+	union {
+	    struct {
+		uint32_t
+		    itoc:24,
+		    isub_image:8;
+	    } fields;
+	    uint32_t word;
+	} u;
+    } shint;
+
+    uint32_t i;
+    enum NXByteOrder host_byte_sex;
+
+	host_byte_sex = NXHostByteOrder();
+
+	for(i = 0; i < nhints; i++){
+	    if(target_byte_sex == host_byte_sex){
+		memcpy(&shint, hints + i, sizeof(struct swapped_twolevel_hint));
+		shint.u.word = OSSwapInt32(shint.u.word);
+		hints[i].itoc = shint.u.fields.itoc;
+		hints[i].isub_image = shint.u.fields.isub_image;
+	    }
+	    else{
+		shint.u.fields.isub_image = hints[i].isub_image;
+		shint.u.fields.itoc = hints[i].itoc;
+		shint.u.word = OSSwapInt32(shint.u.word);
+		memcpy(hints + i, &shint, sizeof(struct swapped_twolevel_hint));
+	    }
+	}
+}
+
+void
 swap_prebind_cksum_command(
 struct prebind_cksum_command *cksum_cmd,
 enum NXByteOrder target_byte_sex)
@@ -445,6 +483,33 @@ enum NXByteOrder target_byte_sex)
 	ver_cmd->cmd = OSSwapInt32(ver_cmd->cmd);
 	ver_cmd->cmdsize = OSSwapInt32(ver_cmd->cmdsize);
 	ver_cmd->version = OSSwapInt32(ver_cmd->version);
+}
+
+void
+swap_build_version_command(
+struct build_version_command *bv,
+enum NXByteOrder target_byte_sex)
+{
+	bv->cmd = OSSwapInt32(bv->cmd);
+	bv->cmdsize = OSSwapInt32(bv->cmdsize);
+	bv->platform = OSSwapInt32(bv->platform);
+	bv->minos = OSSwapInt32(bv->minos);
+	bv->sdk = OSSwapInt32(bv->sdk);
+	bv->ntools = OSSwapInt32(bv->ntools);
+}
+
+void
+swap_build_tool_version(
+struct build_tool_version *btv,
+uint32_t ntools,
+enum NXByteOrder target_byte_sex)
+{
+    uint32_t i;
+
+	for(i = 0; i < ntools; i++){
+	    btv[i].tool = OSSwapInt32(btv[i].tool);
+	    btv[i].version = OSSwapInt32(btv[i].version);
+	}
 }
 
 void
@@ -530,6 +595,17 @@ enum NXByteOrder target_byte_sex)
 	sv->cmd = OSSwapInt32(sv->cmd);
 	sv->cmdsize = OSSwapInt32(sv->cmdsize);
 	sv->version = OSSwapInt64(sv->version);
+}
+
+void
+swap_note_command(
+struct note_command *nc,
+enum NXByteOrder target_byte_sex)
+{
+	nc->cmd = OSSwapInt32(nc->cmd);
+	nc->cmdsize = OSSwapInt32(nc->cmdsize);
+	nc->offset = OSSwapInt64(nc->offset);
+	nc->size = OSSwapInt64(nc->size);
 }
 
 void

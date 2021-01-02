@@ -27,6 +27,7 @@ set(LIBSTUFF_SOURCES
    seg_addr_table.c
    dylib_table.c
    breakout.c
+   write64.c
    writeout.c
    checkout.c
    fatal_arch.c
@@ -42,6 +43,7 @@ set(LIBSTUFF_SOURCES
    symbol_list.c unix_standard_mode.c
    lto.c
    llvm.c
+   args.c
    ${COFF_BYTESEX}
    ${CMAKE_BINARY_DIR}/cctools/cctools_version.c
    )

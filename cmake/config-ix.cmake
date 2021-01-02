@@ -38,6 +38,8 @@ endif()
 
 check_function_exists(strnlen              XTOOLS_HAS_STRNLEN)
 check_function_exists(strndup              XTOOLS_HAS_STRNDUP)
+check_function_exists(clock_gettime        XTOOLS_HAS_CLOCK_GETTIME)
+check_function_exists(utimensat            XTOOLS_HAS_UTIMENSAT)
 
 if((NOT XTOOLS_HAS_STRNLEN) OR (NOT XTOOLS_HAS_STRNDUP))
   set(XTOOLS_NEEDS_STRLIB ON)

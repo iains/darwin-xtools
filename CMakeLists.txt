@@ -77,7 +77,10 @@ else()
   message(STATUS "*Top Level* NO LTO")
 endif()
 
-if(XTOOLS_TAPI_PATH AND
+if(XTOOLS_USE_TAPILITE)
+  option(XTOOLS_TAPI_SUPPORT "Support TAPI in ld64." ON)
+  message(STATUS "*Top Level* WITH TAPIlite")
+elseif(XTOOLS_TAPI_PATH AND
    EXISTS ${XTOOLS_TAPI_PATH}/include/tapi AND
    EXISTS ${XTOOLS_TAPI_PATH}/lib/libtapi.dylib)
   configure_file(
@@ -171,6 +174,11 @@ if (NOT XTOOLS_HAS_MODERNXAR)
                 ${CMAKE_SOURCE_DIR}/xar-additions/xar.h
                 ${CMAKE_BINARY_DIR}/host-includes/xar/xar.h
                 COPYONLY)
+endif()
+
+# build tapilite first, so ld64 can link against it
+if(XTOOLS_USE_TAPILITE)
+  add_subdirectory(tapilite)
 endif()
 
 # Evaluate first so that we find out about libprunetrie.

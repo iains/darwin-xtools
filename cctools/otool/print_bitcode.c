@@ -207,6 +207,7 @@ const char *xar_member_name)
 	    return;
 
 	xar_fd = mkstemp(xar_filename);
+        /* MDT: write(2) is OK here, sect_size is less than 2^31-1 */
 	if(write(xar_fd, sect, sect_size) != sect_size){
 	    system_error("Can't write (__LLVM,__bundle) section contents "
 		"to temporary file: %s\n", xar_filename);
@@ -446,7 +447,7 @@ xar_t xar)
 		    name = val;
 	    }
 	    if(mode != NULL){
-		mode_value = strtoul(mode, &endp, 8);
+		mode_value = (uint32_t)strtoul(mode, &endp, 8);
 		if(*endp != '\0')
 		    printf("(mode: \"%s\" contains non-octal chars) ", mode);
 		if(strcmp(type, "file") == 0)

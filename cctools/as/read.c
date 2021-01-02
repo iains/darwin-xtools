@@ -750,7 +750,7 @@ char *buffer)	/* 1st character of each buffer of lines is here. */
 			100 /* N_SO */,
 			text_nsect,
 			0,
-			obstack_next_free(&frags) - frag_now->fr_literal,
+			(int)(obstack_next_free(&frags) - frag_now->fr_literal),
 			frag_now);
 		symbolP = symbol_new(
 			"int:t1=r1;-2147483648;2147483647;",
@@ -794,7 +794,7 @@ char *buffer)	/* 1st character of each buffer of lines is here. */
 			132 /* N_SOL */,
 			text_nsect,
 			0,
-			obstack_next_free(&frags) - frag_now->fr_literal,
+			(int)(obstack_next_free(&frags) - frag_now->fr_literal),
 			frag_now);
 	    }
 	}
@@ -828,7 +828,7 @@ char *buffer)	/* 1st character of each buffer of lines is here. */
 			100 /* N_SO */,
 			text_nsect,
 			0,
-			obstack_next_free(&frags) - frag_now->fr_literal,
+			(int)(obstack_next_free(&frags) - frag_now->fr_literal),
 			frag_now);
 	    }
 	}
@@ -1429,8 +1429,8 @@ char **buffer)
 	tmp_buf = NULL;
 	if(ends == NULL){
 	    /* The matching #NO_APP\n for the #APP\n wasn't in this buffer. */
-	    int	tmp_len;
-	    int	num;
+	    long	tmp_len;
+	    long	num;
 
 	    /*
 	     * First create a temporary place (tmp_buf of size tmp_len) to
@@ -1606,7 +1606,7 @@ void
 s_align_bytes(
 uintptr_t arg)
 {
-	s_align(arg, 1);
+	s_align((int)arg, 1);
 }
 
 /*
@@ -1618,7 +1618,7 @@ void
 s_align_ptwo(
 uintptr_t arg)
 {
-	s_align(arg, 0);
+	s_align((int)arg, 0);
 }
 
 /*
@@ -1650,10 +1650,10 @@ int bytes_p)
 
 	power_of_2_alignment = 0;
 	if(bytes_p == 0){
-	    power_of_2_alignment = get_absolute_expression();
+	    power_of_2_alignment = (int)get_absolute_expression();
 	}
 	else{
-	    byte_alignment = get_absolute_expression();
+	    byte_alignment = (int)get_absolute_expression();
 	    if(byte_alignment != 0){
 		for(i = 0; (byte_alignment & 1) == 0; i++)
 		    byte_alignment >>= 1;
@@ -1676,12 +1676,12 @@ int bytes_p)
 	if(*input_line_pointer == ','){
 	    input_line_pointer ++;
 	    if(*input_line_pointer != ','){
-		temp_fill = get_absolute_expression ();
+		temp_fill = (int32_t)get_absolute_expression ();
 		fill_specified = 1;
 	    }
 	    if(*input_line_pointer == ','){
 		input_line_pointer ++;
-		max_bytes_to_fill = get_absolute_expression ();
+		max_bytes_to_fill = (int32_t)get_absolute_expression ();
 	    }
 	}
 
@@ -1814,7 +1814,7 @@ uintptr_t value)
 #define MAX_ALIGNMENT (15)
 	if(*input_line_pointer == ','){
 	    input_line_pointer++;
-	    power_of_2_alignment = get_absolute_expression();
+	    power_of_2_alignment = (int)get_absolute_expression();
 	    if(power_of_2_alignment > MAX_ALIGNMENT)
 		as_warn("Alignment too large: %d. assumed.",
 			power_of_2_alignment = MAX_ALIGNMENT);
@@ -1881,7 +1881,7 @@ uintptr_t value)
 	}
 	else{
 	    input_line_pointer++;
-	    temp = get_absolute_expression();
+	    temp = (int)get_absolute_expression();
 	    *p = 0;
 	    symbolP = symbol_find_or_make(name);
 	    *p = c;
@@ -1925,7 +1925,8 @@ uintptr_t value)
 			      132 /* N_SOL */,
 			      text_nsect,
 			      0,
-			      obstack_next_free(&frags) - frag_now->fr_literal,
+			      (int)(obstack_next_free(&frags) -
+				    frag_now->fr_literal),
 			      frag_now);
 	    }
 	}
@@ -1987,7 +1988,7 @@ uintptr_t value)
 	    as_bad(".fill repeat <= 0, .fill ignored");
 	    temp_size = 0;
 	}
-	temp_fill = get_absolute_expression();
+	temp_fill = (int32_t)get_absolute_expression();
 	/*
 	 * Note: .fill (),0 emits no frag (since we are asked to .fill 0 bytes)
 	 * but emits no error message because it seems a legal thing to do.
@@ -2122,7 +2123,8 @@ uintptr_t value)
 	c = get_symbol_end();
 	indirect_symbol_new(name,
 			    frag_now,
-			    obstack_next_free(&frags) - frag_now->fr_literal);
+			    (int)(obstack_next_free(&frags) -
+				  frag_now->fr_literal));
 	*input_line_pointer = c;
 
 	demand_empty_rest_of_line();
@@ -2169,7 +2171,7 @@ uintptr_t value)
 	align = 0;
 	if(*input_line_pointer == ','){
 	    input_line_pointer++;
-	    align = get_absolute_expression();
+	    align = (int)get_absolute_expression();
 	    if(align > MAX_ALIGNMENT){
 		as_warn("Alignment too large: %d. assumed.", MAX_ALIGNMENT);
 		align = MAX_ALIGNMENT;
@@ -2192,7 +2194,7 @@ uintptr_t value)
 	    }
 	    bss->frch_root->fr_address = rnd(bss->frch_root->fr_address,
 					     1 << align);
-	    symbolP->sy_value = bss->frch_root->fr_address;
+	    symbolP->sy_value = (uint32_t)bss->frch_root->fr_address;
 	    symbolP->sy_type  = N_SECT;
 	    symbolP->sy_other = bss->frch_nsect;
 	    symbolP->sy_frag  = bss->frch_root;
@@ -2323,7 +2325,7 @@ uintptr_t value)
 	segment = get_known_segmented_expression(&exp);
 	if(*input_line_pointer == ','){
 	    input_line_pointer ++;
-	    temp_fill = get_absolute_expression ();
+	    temp_fill = (int32_t)get_absolute_expression ();
 	}
 	else
 	    temp_fill = 0;
@@ -2336,7 +2338,7 @@ uintptr_t value)
 		     1,
 		     (relax_substateT)0,
 		     exp.X_add_symbol,
-		     exp.X_add_number,
+		     (int32_t)exp.X_add_number,
 		     (char *)0);
 	*p = temp_fill;
 	demand_empty_rest_of_line();
@@ -2390,7 +2392,7 @@ uintptr_t value)
 			   1,
 			   (relax_substateT)0,
 			   exp.X_add_symbol,
-			   exp.X_add_number,
+			   (int32_t)exp.X_add_number,
 			   (char *)0);
 	    *ptr = 0;
 	    *end_name = delim;
@@ -2464,7 +2466,7 @@ uintptr_t value)
 
 	/* Just like .fill, but temp_size = 1 */
 	if(get_absolute_expression_and_terminator(&temp_repeat) == ','){
-	    temp_fill = get_absolute_expression();
+	    temp_fill = (int32_t)get_absolute_expression();
 	}
 	else{
 	    input_line_pointer--; /* Backup over what was not a ','. */
@@ -2635,7 +2637,8 @@ uintptr_t value)
 			}while(!(is_end_of_line(g)));
 			u = input_line_pointer - 1;
 			*u = 0;
-			sizeof_stub = strtoul(sizeof_stub_name, &endp, 0);
+			sizeof_stub = (uint32_t)strtoul(sizeof_stub_name,
+							&endp, 0);
 			if(*endp != '\0'){
 			    as_bad("size of stub section: %s not a proper "
 				    "number", sizeof_stub_name);
@@ -2698,7 +2701,7 @@ uintptr_t value)
 
     if(value == S_THREAD_LOCAL_ZEROFILL){
       directive = "tbss";
-	    frcP = section_new("__DATA", "__thread_bss", value, 0, 0);
+	    frcP = section_new("__DATA", "__thread_bss", (uint32_t)value, 0, 0);
 	    if(frcP->frch_root == NULL){
 		frcP->frch_root = xmalloc(SIZEOF_STRUCT_FRAG);
 		frcP->frch_last = frcP->frch_root;
@@ -2751,7 +2754,7 @@ uintptr_t value)
 		return;
 	    }
 
-	    frcP = section_new(segname, sectname, value, 0, 0);
+	    frcP = section_new(segname, sectname, (uint32_t)value, 0, 0);
 	    if(frcP->frch_root == NULL){
 		frcP->frch_root = xmalloc(SIZEOF_STRUCT_FRAG);
 		frcP->frch_last = frcP->frch_root;
@@ -2804,7 +2807,7 @@ uintptr_t value)
 	align = 0;
 	if(*input_line_pointer == ','){
 	    input_line_pointer++;
-	    align = get_absolute_expression();
+	    align = (int)get_absolute_expression();
 	    if(align > MAX_ALIGNMENT){
 		as_warn("Alignment too large: %d. assumed.", MAX_ALIGNMENT);
 		align = MAX_ALIGNMENT;
@@ -2827,7 +2830,7 @@ uintptr_t value)
 	if((symbolP->sy_type & N_TYPE) == N_UNDF && symbolP->sy_value == 0){
 	    frcP->frch_root->fr_address = rnd(frcP->frch_root->fr_address,
 					      1 << align);
-	    symbolP->sy_value = frcP->frch_root->fr_address;
+	    symbolP->sy_value = (uint32_t)frcP->frch_root->fr_address;
 	    symbolP->sy_type  = N_SECT | (symbolP->sy_type & (N_EXT | N_PEXT));
 	    symbolP->sy_other = frcP->frch_nsect;
 	    symbolP->sy_frag  = frcP->frch_root;
@@ -3076,7 +3079,8 @@ uintptr_t value)
 			    132 /* N_SOL */,
 			    text_nsect,
 			    0,
-			    obstack_next_free(&frags) - frag_now->fr_literal,
+			    (int)(obstack_next_free(&frags) -
+				  frag_now->fr_literal),
 			    frag_now);
 	}
 }
@@ -3184,8 +3188,8 @@ uintptr_t what) /* d == .stabd, n == .stabn, and s == .stabs */
 	    switch(what){
 	    case 'd':
 		symbolP->sy_name = NULL; /* .stabd feature. */
-		symbolP->sy_value = obstack_next_free(&frags) -
-				    frag_now->fr_literal;
+		symbolP->sy_value = (int)(obstack_next_free(&frags) -
+				    frag_now->fr_literal);
 		symbolP->sy_frag = frag_now;
 		break;
 
@@ -3318,14 +3322,14 @@ symbolS *symbolP)
 		as_bad("Complex expression. Absolute segment assumed." );
 	    symbolP->sy_type = N_ABS | ext;
 	    symbolP->sy_other = 0; /* NO_SECT */
-	    symbolP->sy_value = exp.X_add_number;
+	    symbolP->sy_value = (uint32_t)exp.X_add_number;
 	    symbolP->sy_frag = &zero_address_frag;
 	    break;
 
 	case SEG_ABSOLUTE:
 	    symbolP->sy_type = N_ABS | ext;
 	    symbolP->sy_other = 0; /* NO_SECT */
-	    symbolP->sy_value = exp.X_add_number;
+	    symbolP->sy_value = (uint32_t)exp.X_add_number;
 	    symbolP->sy_frag = &zero_address_frag;
 	    symbolP->expression = NULL;
 	    break;
@@ -3333,7 +3337,7 @@ symbolS *symbolP)
 	case SEG_SECT:
 	    symbolP->sy_type  = N_SECT | ext;
 	    symbolP->sy_other = exp.X_add_symbol->sy_other;
-	    symbolP->sy_value = exp.X_add_number + exp.X_add_symbol->sy_value;
+	    symbolP->sy_value = (uint32_t)exp.X_add_number + exp.X_add_symbol->sy_value;
 	    symbolP->sy_frag  = exp.X_add_symbol->sy_frag;
 	    break;
 	  
@@ -3410,7 +3414,7 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 
 	while(c == ','){
 #ifdef TC_PARSE_CONS_EXPRESSION
-	    segment = TC_PARSE_CONS_EXPRESSION(&exp, nbytes);
+	    segment = TC_PARSE_CONS_EXPRESSION(&exp, (int)nbytes);
 #else
 	    segment = expression(&exp); /* At least scan over the expression */
 #endif
@@ -3424,7 +3428,7 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 		segment = SEG_ABSOLUTE;
 		/* Leave exp .X_add_number alone. */
 	    }
-	    p = frag_more(nbytes);
+	    p = frag_more((int)nbytes);
 	    switch(segment){
 	    case SEG_BIG:
 		/*
@@ -3441,13 +3445,13 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 		    for(i = 0; i < exp.X_add_number; ++i)
 			sum = (sum << LITTLENUM_NUMBER_OF_BITS) +
 			      generic_bignum[(exp.X_add_number - 1) - i];
-		    md_number_to_chars(p, sum, nbytes);
+		    md_number_to_chars(p, sum, (int)nbytes);
 		}
 		else
 		{
 		    as_bad("%s number illegal. Absolute 0 assumed.",
 			    exp.X_add_number > 0 ? "Bignum" : "Floating-Point");
-		    md_number_to_chars(p, (int32_t)0, nbytes);
+		    md_number_to_chars(p, (int32_t)0, (int)nbytes);
 	        }
 		break;
 
@@ -3464,9 +3468,9 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 		    /* Leading bits contain both 0s & 1s. */
 		    as_bad("Value 0x%llx truncated to 0x%llx.", get, use);
 		}
-  		dwarf2_emit_insn(nbytes);
+  		dwarf2_emit_insn((int)nbytes);
 		/* put bytes in right order. */
-		md_number_to_chars(p, use, nbytes);
+		md_number_to_chars(p, use, (int)nbytes);
 		break;
 
 	    case SEG_DIFFSECT:
@@ -3474,16 +3478,16 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 	    case SEG_SECT:
 #ifdef TC_CONS_FIX_NEW
 		TC_CONS_FIX_NEW(frag_now,
-		    p - frag_now->fr_literal,
-		    nbytes,
+		    (unsigned int)(p - frag_now->fr_literal),
+		    (unsigned int)nbytes,
 		    &exp);
 #else
 		fixP = fix_new(frag_now,
-			p - frag_now->fr_literal,
-			nbytes,
+			(int)(p - frag_now->fr_literal),
+			(int)nbytes,
 			exp.X_add_symbol,
 			exp.X_subtract_symbol,
-			exp.X_add_number,
+			(int)exp.X_add_number,
 			0,
 			0,
 			0);
@@ -3706,7 +3710,7 @@ uintptr_t float_type) /* 'f':.ffloat ... 'F':.float ... */
 	    if(input_line_pointer[0] == '0' && isalpha(input_line_pointer[1]))
 		input_line_pointer+=2;
 
-	    err = md_atof(float_type, temp, &length);
+	    err = md_atof((int)float_type, temp, &length);
 	    know(length <=  MAXIMUM_NUMBER_OF_CHARS_FOR_FLOAT);
 	    know(length > 0);
 	    if(err != NULL && *err != '\0'){
@@ -3784,7 +3788,7 @@ emit_leb128_expr (expressionS *exp, int sign)
 #if ALLOW_64BIT_LEB_ON_32B_TARGET
       int64_t value = exp->X_add_number;
 #else
-      valueT value = exp->X_add_number;
+      valueT value = (valueT)exp->X_add_number;
 #endif
       int size;
       char *p;
@@ -3823,8 +3827,8 @@ emit_leb128_expr (expressionS *exp, int sign)
       *expression = *exp;
       sym->expression = expression;
       sym->sy_frag = &zero_address_frag;
-      frag_var (rs_leb128, sizeof_leb128 ( ((valueT) (~(valueT) 0) >> 1), 0), 0, sign,
-		sym, 0, (char *) NULL);
+      frag_var (rs_leb128, sizeof_leb128 ( ((valueT) (~(valueT) 0) >> 1), 0),
+		0, sign, sym, 0, (char *) NULL);
       frchain_now->has_rs_leb128s = TRUE;
 #endif
 
@@ -3847,7 +3851,7 @@ uintptr_t sign)
   do
     {
       expression (&exp);
-      emit_leb128_expr (&exp, sign);
+      emit_leb128_expr (&exp, (int)sign);
     }
   while (*input_line_pointer++ == ',');
 
@@ -4073,7 +4077,7 @@ void)
 	    }
 	    exp.X_add_number = 0;
 	}
-	return(exp.X_add_number);
+	return (signed_target_addr_t)exp.X_add_number;
 }
 
 /*
@@ -4086,7 +4090,7 @@ char			/* return terminator */
 get_absolute_expression_and_terminator(
 int32_t *val_pointer)	/* return value of expression */
 {
-    *val_pointer = get_absolute_expression();
+    *val_pointer = (int32_t)get_absolute_expression();
     return(*input_line_pointer++);
 }
 
@@ -4211,7 +4215,7 @@ char *sym_name)
 			 1,
 			 (relax_substateT)0,
 			 exp.X_add_symbol,
-			 exp.X_add_number,
+			 (int32_t)exp.X_add_number,
 			 (char *)0);
 	    *p = 0;
 	    return;
@@ -4247,7 +4251,7 @@ uintptr_t value)
 	if(the_cond_state.ignore)
 	    totally_ignore_line();
 	else{
-	    the_cond_state.cond_met = get_absolute_expression();
+	    the_cond_state.cond_met = (int)get_absolute_expression();
 	    the_cond_state.ignore = !the_cond_state.cond_met;
 	    demand_empty_rest_of_line();
 	}
@@ -4279,7 +4283,7 @@ uintptr_t value)
 	    totally_ignore_line();
 	}
 	else{
-	    the_cond_state.cond_met = get_absolute_expression();
+	    the_cond_state.cond_met = (int)get_absolute_expression();
 	    the_cond_state.ignore = !the_cond_state.cond_met;
 	    demand_empty_rest_of_line();
 	}
@@ -4483,6 +4487,7 @@ char *macro_contents)
 
 	/* copy each argument to a object in the macro obstack */
 	nargs = 0;
+	c = '\0';
 	for(index = 0; index < 10; index ++){
 	    if(*input_line_pointer == ' ')
 		++input_line_pointer;
@@ -4894,7 +4899,7 @@ uintptr_t value)
 {
     int length;
 
-	inlineasm_checks = value;
+	inlineasm_checks = (int)value;
 	inlineasm_file_name = NULL;
 	inlineasm_line_number = 0;
 	inlineasm_column_number = 0;
@@ -4905,11 +4910,11 @@ uintptr_t value)
 		SKIP_WHITESPACE();
 		if(*input_line_pointer == ','){
 		    input_line_pointer++;
-		    inlineasm_line_number = get_absolute_expression();
+		    inlineasm_line_number = (int)get_absolute_expression();
 		    SKIP_WHITESPACE();
 		    if(*input_line_pointer == ','){
 			input_line_pointer++;
-			inlineasm_column_number = get_absolute_expression();
+			inlineasm_column_number =(int)get_absolute_expression();
 		    }
 		}
 	    }
@@ -5151,7 +5156,7 @@ int
 sizeof_leb128 (valueT value, int sign)
 {
   if (sign)
-    return sizeof_sleb128_32 ((offsetT) value);
+    return sizeof_sleb128_32 (value);
   else
     return sizeof_uleb128_32 (value);
 }
@@ -5184,7 +5189,7 @@ output_sleb128 (char *p, offsetT value)
     }
   while (more);
 
-  return p - orig;
+  return (int)(p - orig);
 }
 
 #if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
@@ -5209,7 +5214,7 @@ output_uleb128 (char *p, valueT value)
     }
   while (uval != 0);
 
-  return p - orig;
+  return (int)(p - orig);
 }
 
 #if ALLOW_64BIT_LEB_ON_32B_TARGET || defined(ARCH64)
