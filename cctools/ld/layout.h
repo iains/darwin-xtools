@@ -33,7 +33,7 @@
  */
 
 /* The output file's mach header */
-__private_extern__ struct mach_header output_mach_header;
+extern __private_extern__ struct mach_header output_mach_header;
 
 /*
  * The output file's symbol table load command and the offsets used in the
@@ -46,7 +46,7 @@ struct symtab_info {
       output_merged_strsize, /* the current merged string table size in pass2 */
       output_local_strsize;  /* the current local string table size in pass2 */
 };
-__private_extern__ struct symtab_info output_symtab_info;
+extern __private_extern__ struct symtab_info output_symtab_info;
 
 /*
  * The output file's dynamic symbol table load command.
@@ -54,7 +54,7 @@ __private_extern__ struct symtab_info output_symtab_info;
 struct dysymtab_info {
     struct dysymtab_command dysymtab_command;
 };
-__private_extern__ struct dysymtab_info output_dysymtab_info;
+extern __private_extern__ struct dysymtab_info output_dysymtab_info;
 
 /*
  * The output file's two level hints load command.
@@ -62,7 +62,7 @@ __private_extern__ struct dysymtab_info output_dysymtab_info;
 struct hints_info {
     struct twolevel_hints_command twolevel_hints_command;
 };
-__private_extern__ struct hints_info output_hints_info;
+extern __private_extern__ struct hints_info output_hints_info;
 
 /*
  * The output file's prebind_cksum load command.
@@ -70,7 +70,7 @@ __private_extern__ struct hints_info output_hints_info;
 struct cksum_info {
     struct prebind_cksum_command prebind_cksum_command;
 };
-__private_extern__ struct cksum_info output_cksum_info;
+extern __private_extern__ struct cksum_info output_cksum_info;
 
 /*
  * The output file's uuid load command.
@@ -81,7 +81,7 @@ struct uuid_info {
 			   an LC_UUID load command */
     struct uuid_command uuid_command;
 };
-__private_extern__ struct uuid_info output_uuid_info;
+extern __private_extern__ struct uuid_info output_uuid_info;
 
 /*
  * The output file's thread load command and the machine specific information
@@ -99,7 +99,8 @@ struct thread_info {
     unsigned long second_count;	/* the count (sizeof(long)) of second_state */
     void *second_state;		/* a pointer to the second thread state */
 };
-__private_extern__ struct thread_info output_thread_info;
+
+extern __private_extern__ struct thread_info output_thread_info;
 
 /*
  * The output file's routines load command and the information for it.
@@ -108,7 +109,7 @@ struct routines_info {
     struct routines_command routines_command;
     enum bool routines_in_output;/* TRUE if the output file has a routines cmd*/
 };
-__private_extern__ struct routines_info output_routines_info;
+extern __private_extern__ struct routines_info output_routines_info;
 
 __private_extern__ void layout(
     void);

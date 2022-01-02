@@ -220,25 +220,25 @@ struct common_symbol {
  * count of the merged symbols.  The count of merged symbols referenced only
  * from dylibs will not be in the output file.
  */
-__private_extern__ struct merged_symbol_root *merged_symbol_root;
-__private_extern__ unsigned long nmerged_symbols;
-__private_extern__ unsigned long nmerged_private_symbols;
-__private_extern__ unsigned long nmerged_symbols_referenced_only_from_dylibs;
+extern __private_extern__ struct merged_symbol_root *merged_symbol_root;
+extern __private_extern__ unsigned long nmerged_symbols;
+extern __private_extern__ unsigned long nmerged_private_symbols;
+extern __private_extern__ unsigned long nmerged_symbols_referenced_only_from_dylibs;
 
 /*
  * nstripped_merged_symbols is set to the number of merged symbol being stripped
  * out when the strip_level is STRIP_DYNAMIC_EXECUTABLE.
  */
-__private_extern__ unsigned long nstripped_merged_symbols;
+extern __private_extern__ unsigned long nstripped_merged_symbols;
 
 /*
  * The head of the list of the blocks that store the strings for the merged
  * symbols and the total size of all the strings.  The size of the strings for
  * the private externals is included in the the merge string size.
  */
-__private_extern__ struct string_block *merged_string_blocks;
-__private_extern__ unsigned long merged_string_size;
-__private_extern__ unsigned long merged_private_string_size;
+extern __private_extern__ struct string_block *merged_string_blocks;
+extern __private_extern__ unsigned long merged_string_size;
+extern __private_extern__ unsigned long merged_private_string_size;
 
 /*
  * The head of the undefined list itself.  This is a circular list so it can be
@@ -246,26 +246,26 @@ __private_extern__ unsigned long merged_private_string_size;
  * structure never has it's merged_symbol filled in but only serves as the
  * head and tail of the list.
  */
-__private_extern__ struct undefined_list undefined_list;
+extern __private_extern__ struct undefined_list undefined_list;
 
 /*
  * The common symbol load map.  Only allocated and filled in if load map is
  * requested.
  */
-__private_extern__ struct common_load_map common_load_map;
+extern __private_extern__ struct common_load_map common_load_map;
 
 /*
  * The object file that is created for the common symbols to be allocated in.
  */
-__private_extern__
+extern __private_extern__
 struct object_file link_edit_common_object;
 
 /*
  * The number of local symbols that will appear in the output file and the
  * size of their strings.
  */
-__private_extern__ unsigned long nlocal_symbols;
-__private_extern__ unsigned long local_string_size;
+extern __private_extern__ unsigned long nlocal_symbols;
+extern __private_extern__ unsigned long local_string_size;
 
 /*
  * For local symbols of an object file that are not to be in the output a
@@ -316,7 +316,7 @@ struct sect_object_symbols {
     char *sectname;	 /* the section name */
     struct merged_section *ms;	/* the merged section structure */
 };
-__private_extern__ struct sect_object_symbols sect_object_symbols;
+extern __private_extern__ struct sect_object_symbols sect_object_symbols;
 
 /*
  * The indr_symbol_pair structure is used when there are chains of N_INDR
@@ -332,14 +332,14 @@ struct indr_symbol_pair {
     struct merged_symbol *merged_symbol;
     struct merged_symbol *indr_symbol;
 };
-__private_extern__ struct indr_symbol_pair *indr_symbol_pairs;
-__private_extern__ unsigned long nindr_symbol_pairs;
+extern __private_extern__ struct indr_symbol_pair *indr_symbol_pairs;
+extern __private_extern__ unsigned long nindr_symbol_pairs;
 
 /*
  * merged_symbols_relocated is set when the merged symbols are relocated to
  * have addresses and section numbers as they would in the output file.
  */
-__private_extern__ enum bool merged_symbols_relocated;
+extern __private_extern__ enum bool merged_symbols_relocated;
 
 /*
  * The strings in the string table can't start at offset 0 because a symbol with

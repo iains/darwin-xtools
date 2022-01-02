@@ -33,19 +33,19 @@
 
 #ifndef RLD
 /* TRUE if -search_paths_first was specified */
-__private_extern__ enum bool search_paths_first;
+extern __private_extern__ enum bool search_paths_first;
 
 /* the user specified directories to search for -lx filenames, and the number
    of them */
-__private_extern__ char **search_dirs;
-__private_extern__ unsigned long nsearch_dirs;
+extern __private_extern__ char **search_dirs;
+extern __private_extern__ unsigned long nsearch_dirs;
 
 /*
  * The user specified directories to search via the environment variable
  * LD_LIBRARY_PATH.
  */
-__private_extern__ char **ld_library_paths;
-__private_extern__ unsigned long nld_library_paths;
+extern __private_extern__ char **ld_library_paths;
+extern __private_extern__ unsigned long nld_library_paths;
 
 /* the standard directories to search for -lx filenames */
 extern __private_extern__ char *standard_dirs[];
@@ -55,22 +55,22 @@ extern __private_extern__ char *standard_dirs[];
  * number of them.  These are specified with -F options.
  */
 extern __private_extern__ char **framework_dirs;
-__private_extern__ unsigned long nframework_dirs;
+extern __private_extern__ unsigned long nframework_dirs;
 
 /* the standard framework directories to search for "-framework Foo" names */
 extern __private_extern__ char *standard_framework_dirs[];
 
 /* the pointer to the head of the base object file's segments */
-__private_extern__ struct merged_segment *base_obj_segments;
+extern __private_extern__ struct merged_segment *base_obj_segments;
 
 /*
  * These are pointers to strings and symbols used to search of the table of
  * contents of a library.  These have to be can not be local so that routines
  * can set them and that ranlib_bsearch() and dylib_bsearch() can use them.
  */
-__private_extern__ char *bsearch_strings;
+extern __private_extern__ char *bsearch_strings;
 #ifndef RLD
-__private_extern__ struct nlist *bsearch_symbols;
+extern __private_extern__ struct nlist *bsearch_symbols;
 #endif /* !defined(RLD) */
 
 /*
@@ -127,9 +127,9 @@ struct dynamic_library {
  * can contain archive libraries when archive libraries appear after dynamic
  * libraries on the link line.
  */
-__private_extern__ struct dynamic_library *dynamic_libs;
+extern __private_extern__ struct dynamic_library *dynamic_libs;
 
-__private_extern__ unsigned int indirect_library_ratio;
+extern __private_extern__ unsigned int indirect_library_ratio;
 
 #endif /* !defined(RLD) */
 
