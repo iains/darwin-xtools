@@ -33,7 +33,9 @@
 #import <mach-o/nlist.h>
 #import <stuff/bool.h>
 #include "stuff/symbol.h"
+#if LTO_SUPPORT
 #include "llvm-c/Disassembler.h"
+#endif
 
 /* Used by otool(1) to stay or switch out of thumb mode */
 extern enum bool in_thumb;
