@@ -27,7 +27,7 @@
 /*
  * The number of indirect symbol table entries in the output file.
  */
-__private_extern__ unsigned long nindirectsyms;
+extern __private_extern__ unsigned long nindirectsyms;
 
 /*
  * If we are still attempting to prebind when indirect_section_merge() is
@@ -37,7 +37,7 @@ __private_extern__ unsigned long nindirectsyms;
  * various problems.  But the count of relocs can't change after layout so
  * we'll put them out anyway.
  */
-__private_extern__ enum bool save_lazy_symbol_pointer_relocs;
+extern __private_extern__ enum bool save_lazy_symbol_pointer_relocs;
 
 /*
  * The literal_data which is set into a merged_section's literal_data field for

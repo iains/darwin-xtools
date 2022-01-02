@@ -147,19 +147,19 @@ struct order_load_map {
 };
 
 /* the pointer to the head of the output file's section list */
-__private_extern__ struct merged_segment *merged_segments;
+extern __private_extern__ struct merged_segment *merged_segments;
 #ifdef RLD
-__private_extern__ struct merged_segment *original_merged_segments;
+extern __private_extern__ struct merged_segment *original_merged_segments;
 #endif /* RLD */
 
 /* the total number relocation entries */
-__private_extern__ unsigned long nreloc;
+extern __private_extern__ unsigned long nreloc;
 
 /*
  * This is set to TRUE if any of the input objects do not have the
  * MH_SUBSECTIONS_VIA_SYMBOLS bit set in the mach_header flags field.
  */
-__private_extern__ enum bool some_non_subsection_via_symbols_objects;
+extern __private_extern__ enum bool some_non_subsection_via_symbols_objects;
 
 __private_extern__ void merge_sections(
     void);

@@ -289,18 +289,18 @@ struct reference_map {
  * The head of the object file list and the total count of all object files
  * in the list.
  */
-__private_extern__ struct object_list *objects;
-__private_extern__ unsigned long nobjects;
+extern __private_extern__ struct object_list *objects;
+extern __private_extern__ unsigned long nobjects;
 
 /*
  * A pointer to the current object being processed in pass1 or pass2.
  */
-__private_extern__ struct object_file *cur_obj;
+extern __private_extern__ struct object_file *cur_obj;
 
 /*
  * A pointer to the base object for an incremental link if not NULL.
  */
-__private_extern__ struct object_file *base_obj;
+extern __private_extern__ struct object_file *base_obj;
 
 __private_extern__ struct object_file *new_object_file(
     void);

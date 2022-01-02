@@ -63,8 +63,8 @@ struct section_spec {
 };
 
 /* The structures to hold the information specified about segments */
-__private_extern__ struct segment_spec *segment_specs;
-__private_extern__ unsigned long nsegment_specs;
+extern __private_extern__ struct segment_spec *segment_specs;
+extern __private_extern__ unsigned long nsegment_specs;
 
 __private_extern__ struct segment_spec *create_segment_spec(
     char *segname);
