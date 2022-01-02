@@ -327,7 +327,7 @@ static const struct builtin_section builtin_sections[] = {
 #if defined(SPARC)
 		  2, 32
 #endif
-#if defined(PPC)
+#if !defined(I386) && defined(PPC)
 		  2, 20
 #endif
 		},
@@ -347,7 +347,7 @@ static const struct builtin_section builtin_sections[] = {
 #if defined(SPARC)
 		  2, 60
 #endif
-#if defined(PPC)
+#if !defined(I386) && defined(PPC)
 		  2, 36
 #endif
 		},
