@@ -26,9 +26,10 @@
 #include <sys/param.h>
 #include <sys/mman.h>
 
-#include <vector>
 #include <algorithm>
+#include <functional>
 #include <memory>
+#include <vector>
 
 #include "Architectures.hpp"
 #include "Bitcode.hpp"
