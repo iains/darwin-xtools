@@ -53,7 +53,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/parsers")
 if(XTOOLS_LTO_SUPPORT)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lLTO")
 endif()
-add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_NUM}")
+add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_DBL}")
 
 add_executable(ld ${LD64_SOURCES})
 
