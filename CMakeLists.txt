@@ -35,8 +35,8 @@ set(CMAKE_MODULE_PATH
 
 # Keep some kind of project identifier.
 
-set(XTOOLS_VERSION_MAJOR 3)
-set(XTOOLS_VERSION_MINOR 3)
+set(XTOOLS_VERSION_MAJOR 0)
+set(XTOOLS_VERSION_MINOR 7)
 set(XTOOLS_VERSION_PATCH 0)
 set(XTOOLS_VERSION_SUFFIX git)
 
@@ -64,7 +64,7 @@ if(XTOOLS_LTO_PATH AND
    EXISTS ${XTOOLS_LTO_PATH}/lib/libLTO.dylib)
   configure_file(
                 ${XTOOLS_LTO_PATH}/include/llvm-c/lto.h
-                ${CMAKE_BINARY_DIR}/include/llvm-c/lto.h
+                ${CMAKE_BINARY_DIR}/lto-include/llvm-c/lto.h
                 COPYONLY)
   configure_file(
                 ${XTOOLS_LTO_PATH}/lib/libLTO.dylib
@@ -97,6 +97,17 @@ SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
 #SET(CMAKE_CXX_FLAGS_DEBUG "-Og")
 
 include(config-ix)
+
+if(XTOOLS_CXX_HAS_STDLIB_FLAG AND NOT DEFINED XTOOLS_USES_LIBSTDCXX)
+  message(STATUS "*Top Level* -stdlib= option is available but no choice specified")
+  if(XTOOLS_CXX_HAS_STDCXX11_FLAG)
+    message(STATUS "*Top Level* .. setting to -stdlib=libc++")
+    set(XTOOLS_USES_LIBSTDCXX NO CACHE BOOL "use libc++")
+  else()
+    message(STATUS "*Top Level* .. setting to -stdlib=libstdc++")
+    set(XTOOLS_USES_LIBSTDCXX YES CACHE BOOL "use libstdc++")
+  endif()
+endif()
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 if (APPLE)
