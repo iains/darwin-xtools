@@ -779,8 +779,12 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 
 	// no thin .o files found, so default to same architecture this tool was built as
 	warning("-arch not specified");
-#if __i386__
+#if __ppc__
+	opts.setArchitecture(CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL);
+#elif __i386__
 	opts.setArchitecture(CPU_TYPE_I386, CPU_SUBTYPE_X86_ALL);
+#elif __ppc64__
+	opts.setArchitecture(CPU_TYPE_POWERPC64, CPU_SUBTYPE_POWERPC_ALL);
 #elif __x86_64__
 	opts.setArchitecture(CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_ALL);
 #elif __arm__
