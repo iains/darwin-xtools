@@ -1017,6 +1017,7 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 		case ld::Fixup::kindSetTargetTLVTemplateOffsetLittleEndian64:
 			printf("tlv template offset of %s", referenceTargetAtomName(ref));
 			break;
+#if SUPPORT_ARCH_arm64
 		case ld::Fixup::kindStoreTargetAddressARM64Branch26:
 			printf("ARM64 store 26-bit pcrel branch to %s", referenceTargetAtomName(ref));
 			break;
@@ -1026,12 +1027,14 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 		case ld::Fixup::kindStoreTargetAddressARM64PageOff12:
 			printf("ARM64 store 12-bit page offset of %s", referenceTargetAtomName(ref));
 			break;
+#if WE_DO_NOT_KNOW_WHY_THIS_IS_NOT_DEFINED
 		case ld::Fixup::kindStoreTargetAddressARM64TLVPage21:
 			printf("ARM64 store 21-bit pcrel ADRP to TLV for %s", referenceTargetAtomName(ref));
 			break;
 		case ld::Fixup::kindStoreTargetAddressARM64TLVPageOff12:
 			printf("ARM64 store 12-bit page offset of TLV of %s", referenceTargetAtomName(ref));
 			break;
+#endif
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLoadPage21:
 			printf("ARM64 store 21-bit pcrel ADRP to GOT for %s", referenceTargetAtomName(ref));
 			break;
@@ -1044,6 +1047,7 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 		case ld::Fixup::kindStoreTargetAddressARM64GOTLeaPageOff12:
 			printf("ARM64 store 12-bit page offset of lea of %s", referenceTargetAtomName(ref));
 			break;
+#endif
 		//default:
 		//	printf("unknown fixup");
 		//	break;
@@ -1328,7 +1332,7 @@ int main(int argc, const char* argv[])
 				if(strcmp(argv[i], "--version") == 0){
 					/* Implement a gnu-style --version.  */
 					fprintf(stdout, "xtools-%s ObjectDump %s\nBased on Apple Inc. ld64-%s\n",
-		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD_VERS);
 					exit(0);
 				} else if(strcmp(argv[i], "--help") == 0){
 					usage();

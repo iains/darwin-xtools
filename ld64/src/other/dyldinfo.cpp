@@ -2253,7 +2253,7 @@ int main(int argc, const char* argv[])
 				if(strcmp(arg, "--version") == 0){
 					/* Implement a gnu-style --version.  */
 					fprintf(stdout, "xtools-%s dyldinfo %s\nBased on Apple Inc. ld64-%s\n",
-		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD_VERS);
 					exit(0);
 				} else if(strcmp(arg, "--help") == 0){
 					usage();

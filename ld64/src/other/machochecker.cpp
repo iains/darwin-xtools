@@ -1684,7 +1684,7 @@ int main(int argc, const char* argv[])
 			if(strcmp(argv[i], "--version") == 0){
 					/* Implement a gnu-style --version.  */
 				fprintf(stdout, "xtools-%s machocheck %s\nBased on Apple Inc. ld64-%s\n",
-		        XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+		        XTOOLS_VERSION, PACKAGE_VERSION, LD_VERS);
 					exit(0);
 			} else if(strcmp(argv[i], "--help") == 0){
 				fprintf(stdout, "machocheck [-progress] file\n");
