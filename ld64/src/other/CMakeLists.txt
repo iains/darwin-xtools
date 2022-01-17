@@ -6,6 +6,18 @@ if(XTOOLS_LTO_SUPPORT)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lLTO")
 endif()
 
+if(XTOOLS_BUGURL)
+  add_definitions(-DXTOOLS_BUGURL="${XTOOLS_BUGURL}")
+endif()
+
+if(PACKAGE_VERSION)
+  add_definitions(-DPACKAGE_VERSION="${PACKAGE_VERSION}")
+endif()
+
+if(XTOOLS_VERSION)
+  add_definitions(-DXTOOLS_VERSION="${XTOOLS_VERSION}")
+endif()
+
 add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_NUM}")
 
 set(OBJDUMP_SOURCES
