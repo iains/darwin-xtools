@@ -604,7 +604,7 @@ static void buildAddressMap(const Options& opts, ld::Internal& state) {
 					offset += requiredModulus+alignment-currentModulus;
 			}
 			
-			if ( log ) fprintf(stderr, "    0x%08llX atom=%p, name=%s\n", sect->address+offset, atom, atom->name());
+			if ( log ) fprintf(stderr, "    0x%08"PRIx64" atom=%p, name=%s\n", sect->address+offset, atom, atom->name());
 			sAtomToAddress[atom] = sect->address + offset;
 			
 			offset += atom->size();
@@ -702,8 +702,8 @@ static bool mightNeedBranchIslands(const Options& opts, ld::Internal& state) {
 	     && seenCrossSectBr)
 		anySectNeedsIslands = true;
 if (_s_log)
-fprintf (stderr, "TEXT seg size %" PRIu64 "M lowest Addr 0x%08" PRIx64 " furthest stub 0x%08" PRIx64 " furthest code or stub 0x%08" PRIx64 " %s islands\n",
-		 sizeOfTEXTSeg/(1024*1024), lowestTextAddr, furthestStubSect, furthestCodeOrStubSect, (anySectNeedsIslands? "needs" : "no"));
+fprintf (stderr, "TEXT seg size %" PRIu64 "M lowest Addr 0x%08" PRIx64 " furthest stub 0x%08" PRIx64 " furthest code or stub 0x%08" PRIx64 " %s islands %s\n",
+		 sizeOfTEXTSeg/(1024*1024), lowestTextAddr, furthestStubSect, furthestCodeOrStubSect, (anySectNeedsIslands? "needs" : "no"), seenCrossSectBr ? "cross-section" : "");
 	kBetweenRegions = maxDistanceBetweenIslands(opts, seenThumbBr);
 	return anySectNeedsIslands;
 }
@@ -813,8 +813,10 @@ if ( _s_log ) fprintf(stderr, "ld: checking for poss branch isl.\n");
 	for (std::vector<ld::Internal::FinalSection*>::iterator sit=state.sections.begin();
 		 sit != state.sections.end(); ++sit) {
 		ld::Internal::FinalSection* sect = *sit;
-		if ( sect->type() == ld::Section::typeCode ) 
+if (_s_log) fprintf(stderr, "ld: section %s\n", sect->sectionName());
+		if ( sect->type() == ld::Section::typeCode ) {
 			makeIslandsForSection(opts, state, sect);
+		}
 	}
 
 	int regionIndex = 0;
