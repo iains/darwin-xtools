@@ -107,6 +107,8 @@ if(XTOOLS_CXX_HAS_STDLIB_FLAG AND NOT DEFINED XTOOLS_USES_LIBSTDCXX)
     message(STATUS "*Top Level* .. setting to -stdlib=libstdc++")
     set(XTOOLS_USES_LIBSTDCXX YES CACHE BOOL "use libstdc++")
   endif()
+else(DEFINED XTOOLS_USES_LIBSTDCXX)
+    message(STATUS "*Top Level* .. using -stdlib=libstdc++")
 endif()
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
