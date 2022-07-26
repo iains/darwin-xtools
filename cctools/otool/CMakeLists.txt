@@ -14,6 +14,7 @@ set(OTOOL_SRCS
     print_objc2_32bit.c
     print_objc2_64bit.c
     dyld_bind_info.c
+    ../libstuff/ofile.c
     )
 
 set(COFF_PRINT)
@@ -22,7 +23,9 @@ if(CCTOOLS_EFITOOLS)
 endif()
 
 include_directories("${CMAKE_SOURCE_DIR}/cctools/include")
+include_directories("${CMAKE_SOURCE_DIR}/cctools/otool")
 add_definitions(-D__private_extern__=__attribute__\(\(__visibility__\("hidden"\)\)\))
+add_definitions(-DOTOOL)
 
 if(XTOOLS_C_HAS_WNODEPRECATED_FLAG)
   # suppress the 'import is deprecated' blather.
