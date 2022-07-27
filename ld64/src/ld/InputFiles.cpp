@@ -140,6 +140,7 @@ public:
 	virtual ld::File*						file() const					{ return NULL; }
 	virtual const char*						name() const					{ return "page zero"; }
 	virtual uint64_t						size() const					{ return _size; }
+	virtual void							setSize(uint64_t size) const	{ _size = size; }
 	virtual uint64_t						objectAddress() const			{ return 0; }
 	virtual void							copyRawContent(uint8_t buffer[]) const 
 																			{ }
@@ -150,7 +151,7 @@ public:
 	static ld::Section						_s_section;
 	static DSOHandleAtom					_s_atomAll;
 private:
-	uint64_t								_size;
+	mutable uint64_t						_size;
 };
 ld::Section PageZeroAtom::_s_section("__PAGEZERO", "__pagezero", ld::Section::typePageZero, true);
 

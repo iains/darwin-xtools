@@ -3594,6 +3594,9 @@ void OutputFile::addLoadCommands(ld::Internal& state)
 #if SUPPORT_ARCH_ppc64
 		case CPU_TYPE_POWERPC64:
 			_headersAndLoadCommandAtom = new HeaderAndLoadCommandsAtom<ppc64>(_options, state, *this);
+			// If we detect mdynamic-no-pic code, then force the page zero size to 4kb and add a padding
+			// segment.
+			static_cast<HeaderAndLoadCommandsAtom<ppc64>*>(_headersAndLoadCommandAtom)->adjustPageZeroSize();
 			headerAndLoadCommandsSection = state.addAtom(*_headersAndLoadCommandAtom);
 			break;
 #endif

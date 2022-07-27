@@ -41,6 +41,30 @@
 namespace ld {
 namespace tool {
 
+class FourGFillAtom : public ld::Atom {
+public:
+									FourGFillAtom(uint64_t sz)
+										: ld::Atom(_s_section, ld::Atom::definitionRegular, ld::Atom::combineNever,
+											ld::Atom::scopeTranslationUnit, ld::Atom::typeZeroFill, 
+											symbolTableNotIn, true, false, false, ld::Atom::Alignment(12)),
+											_size(sz) {}
+
+	virtual ld::File*						file() const					{ return NULL; }
+	virtual const char*						name() const					{ return "4GB Fill"; }
+	virtual uint64_t						size() const					{ return _size; }
+	virtual void							setSize(uint64_t size) const	{ _size = size; }
+	virtual uint64_t						objectAddress() const			{ return 0; }
+	virtual void							copyRawContent(uint8_t buffer[]) const 
+																			{ }
+	virtual void							setScope(Scope)					{ }
+	virtual									~FourGFillAtom() {}
+	
+	static ld::Section						_s_section;
+private:
+	mutable uint64_t						_size;
+};
+ld::Section FourGFillAtom::_s_section("__4GBFILL", "__4GBfill", ld::Section::typePageZero, true);
+
 class HeaderAndLoadCommandsAbtract : public ld::Atom
 {
 public:
@@ -66,6 +90,7 @@ public:
 	virtual uint64_t							size() const;
 	virtual uint64_t							objectAddress() const { return _address; }
 	virtual void								copyRawContent(uint8_t buffer[]) const;
+	virtual void								adjustPageZeroSize();
 
 	// overrides of HeaderAndLoadCommandsAbtract
 	virtual void setUUID(const uint8_t digest[16])	{ memcpy(_uuid, digest, 16); }
@@ -116,7 +141,6 @@ private:
 
 	uint32_t					sectionFlags(ld::Internal::FinalSection* sect) const;
 	bool						sectionTakesNoDiskSpace(ld::Internal::FinalSection* sect) const;
-	
 
 	const Options&				_options;
 	ld::Internal&				_state;
@@ -538,7 +562,7 @@ uint32_t HeaderAndLoadCommandsAtom<A>::fileType() const
 		case Options::kKextBundle:
 			return MH_KEXT_BUNDLE;
 	}
-	throw "unknonwn mach-o file type";
+	throw "unknown mach-o file type";
 }
 
 template <typename A>
@@ -1614,6 +1638,75 @@ void HeaderAndLoadCommandsAtom<A>::copyRawContent(uint8_t buffer[]) const
  
 }
 
+template <typename A>
+void HeaderAndLoadCommandsAtom<A>::adjustPageZeroSize()
+{}
+
+template <>
+void HeaderAndLoadCommandsAtom<ppc64>::adjustPageZeroSize()
+{
+	const bool log = false;
+	if (log ) fprintf(stderr, "adjustPageZeroSize:");
+	if ( (_options.outputKind() != Options::kDynamicExecutable) &&
+	     (_options.outputKind() != Options::kStaticExecutable) ) {
+		if (log )fprintf(stderr, "no \n");
+		return;
+	}
+
+	ld::Internal::FinalSection* pagezerosect = NULL;
+	const ld::Atom* p0a = NULL;
+	bool done = false;
+	for (std::vector<ld::Internal::FinalSection*>::iterator sit = _state.sections.begin();
+		 !done && sit != _state.sections.end(); ++sit) {
+		ld::Internal::FinalSection* sect = *sit;
+		switch ( sect->type() ) {
+			case ld::Section::typeZeroFill:
+			case ld::Section::typeTLVZeroFill:
+			case ld::Section::typeStack:
+			case ld::Section::typeAbsoluteSymbols:
+			case ld::Section::typeTentativeDefs:
+			case ld::Section::typeMachHeader:
+				continue;
+			case ld::Section::typePageZero: {
+				pagezerosect = sect;
+				assert (sect->atoms.size() == 1 && "more than one page zero atom?");
+				p0a = sect->atoms[0];
+				if (log )fprintf(stderr, "saw page 0 size was : 0x%08llx \n", p0a->size());
+				if (p0a->size() < 0x100000000ULL)
+				  return; // The user has set some non-default.
+				continue;
+			}
+			default:
+				break;
+		}
+
+		std::vector<const ld::Atom*>& atoms = sect->atoms;
+		for (std::vector<const ld::Atom*>::iterator ait = atoms.begin();
+			 !done && ait != atoms.end(); ++ait) {
+			const ld::Atom* atom = *ait;
+			if ( atom->definition() == ld::Atom::definitionProxy )
+				continue;
+			for (ld::Fixup::iterator fit = atom->fixupsBegin();
+				 !done && fit != atom->fixupsEnd(); ++fit) {
+				switch ( fit->kind ) { 
+					case ld::Fixup::kindStorePPCAbsLow14:
+					case ld::Fixup::kindStorePPCAbsLow16:
+					case ld::Fixup::kindStorePPCAbsHigh16AddLow:
+					case ld::Fixup::kindStorePPCAbsHigh16: {
+						if (log )fprintf(stderr, "saw mdynamic-no-pic code\n");
+						p0a->setSize(0x1000ULL);
+						const ld::Atom* fourg = new FourGFillAtom(0x1000);
+						_state.addAtom(*fourg);
+						done = true;
+					}
+					break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+}
 
 
 } // namespace tool 

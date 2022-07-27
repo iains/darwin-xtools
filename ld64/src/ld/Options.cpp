@@ -323,6 +323,9 @@ uint32_t Options::initialSegProtection(const char* segName) const
 	if ( strcmp(segName, "__PAGEZERO") == 0 ) {
 		return 0;
 	}
+	if ( strcmp(segName, "__4GBFILL") == 0 ) {
+		return 0;
+	}
 	else if ( strcmp(segName, "__TEXT") == 0 ) {
 		return VM_PROT_READ | VM_PROT_EXECUTE;
 	}
@@ -347,6 +350,9 @@ uint32_t Options::maxSegProtection(const char* segName) const
 		}
 	}
 	if ( strcmp(segName, "__PAGEZERO") == 0 ) {
+		return 0;
+	}
+	if ( strcmp(segName, "__4GBFILL") == 0 ) {
 		return 0;
 	}
 	// all others default to all

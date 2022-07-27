@@ -744,6 +744,7 @@ public:
 	virtual const char*						name() const = 0;
 	virtual uint64_t						objectAddress() const = 0;
 	virtual uint64_t						size() const = 0;
+	virtual void							setSize(uint64_t) const {}
 	virtual void							copyRawContent(uint8_t buffer[]) const = 0;
 	virtual const uint8_t*					rawContentPointer() const { return NULL; }
 	virtual unsigned long					contentHash(const class IndirectBindingTable&) const { return 0; }

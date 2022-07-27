@@ -278,6 +278,8 @@ uint32_t InternalState::FinalSection::segmentOrder(const ld::Section& sect, bool
 		return 3;
 	if ( strcmp(sect.segmentName(), "__IMPORT") == 0 ) 
 		return 4;
+	if ( strcmp(sect.segmentName(), "__4GBFILL") == 0 ) 
+		return UINT_MAX;
 	
 	// layout non-standard segments in order seen (+10 to shift beyond standard segments)
 	for (uint32_t i=0; i < _s_segmentsSeen.size(); ++i) {
@@ -793,6 +795,16 @@ uint64_t InternalState::assignFileOffsets()
 															  && (_options.outputKind() != Options::kStaticExecutable) )
 				throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
 						sect->sectionName(), address, sect->size);
+		// Update the zero page fill segment now we know where it starts. 
+		// Only do this if the options have the default page 0 size.
+		if ( sect->type() == ld::Section::typePageZero &&
+			strcmp(sect->segmentName(), "__4GBFILL") == 0 &&
+			_options.pageZeroSize() == 0x100000000ULL) { 
+			uint64_t newsize = 0x100000000ULL - sect->address;
+			sect->atoms[0]->setSize(newsize);
+			sect->size = newsize;
+			//fprintf(stderr,"saw the 4g fill addr = 0x%08llx, atom addr = 0x%08llx, new size = 0x%08llx\n", sect->address, address, newsize);
+		}
 
 		// sanity check it does not overlap a fixed address segment
 		for (std::vector<ld::Internal::FinalSection*>::iterator sit = sections.begin(); sit != sections.end(); ++sit) {
