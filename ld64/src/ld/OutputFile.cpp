@@ -4078,8 +4078,7 @@ void OutputFile::noteTextReloc(const ld::Atom* atom, const ld::Atom* target)
 		if ( _options.warnAboutTextRelocs() )
 			warning("text reloc in %s to %s", atom->name(), target->name());
 	} 
-	else if ( _options.positionIndependentExecutable() && (_options.outputKind() == Options::kDynamicExecutable) 
-		&& ((_options.iOSVersionMin() >= ld::iOS_4_3) || (_options.macosxVersionMin() >= ld::mac10_7)) ) {
+	else if ( _options.positionIndependentExecutable() && (_options.outputKind() == Options::kDynamicExecutable) ) {
 		if ( ! this->pieDisabled ) {
 #if SUPPORT_ARCH_arm64
 			if ( _options.architecture() == CPU_TYPE_ARM64 ) {
@@ -4088,11 +4087,17 @@ void OutputFile::noteTextReloc(const ld::Atom* atom, const ld::Atom* target)
 			}
 			else
 #endif
-			 {
-				warning("PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic) not allowed in code signed PIE, "
-				"but used in %s from %s. " 
-				"To fix this warning, don't compile with -mdynamic-no-pic or link with -Wl,-no_pie", 
-				atom->name(), atom->file()->path());
+			{
+				if ( _options.iOSVersionMin() >= ld::iOS_4_3 || _options.macosxVersionMin() >= ld::mac10_7 )
+					warning("PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic) not allowed in code signed PIE, "
+					"but used in %s from %s. " 
+					"To fix this warning, don't compile with -mdynamic-no-pic or link with -Wl,-no_pie", 
+					atom->name(), atom->file()->path());
+				else
+					warning("PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic) is not allowed in code signed PIE, "
+					"but used in %s from %s. " 
+					"To fix this warning, don't compile with -mdynamic-no-pic or link without -pie", 
+					atom->name(), atom->file()->path());
 			}
 		}
 		this->pieDisabled = true;
