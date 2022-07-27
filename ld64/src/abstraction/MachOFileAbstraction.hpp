@@ -246,8 +246,12 @@
 
 // hack until arm64 headers are worked out
 #define CPU_TYPE_ARM64			(CPU_TYPE_ARM | CPU_ARCH_ABI64)
-#define CPU_SUBTYPE_ARM64_ALL	0
-#define CPU_SUBTYPE_ARM64_V8    1
+#ifndef CPU_SUBTYPE_ARM64_ALL
+# define CPU_SUBTYPE_ARM64_ALL	0
+#endif
+#ifndef CPU_SUBTYPE_ARM64_V8
+# define CPU_SUBTYPE_ARM64_V8    1
+#endif
 
 #define ARM64_RELOC_UNSIGNED            0 // for pointers
 #define ARM64_RELOC_SUBTRACTOR          1 // must be followed by a ARM64_RELOC_UNSIGNED

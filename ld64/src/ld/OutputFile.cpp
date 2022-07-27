@@ -1372,7 +1372,7 @@ void OutputFile::applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::
 					accumulator |= 1;
 				if ( fit->contentAddendOnly || fit->contentDetlaToAddendOnly )
 					accumulator = 0;
-if (printStuff) fprintf(stderr, ":kindSetTargetAddress accum 0x%lx %s ", accumulator, toTarget?toTarget->name():"anon");
+if (printStuff) fprintf(stderr, ":kindSetTargetAddress accum 0x%llx %s ", accumulator, toTarget?toTarget->name():"anon");
 				break;
 			case ld::Fixup::kindSubtractTargetAddress:
 				delta = addressOf(state, fit, &fromTarget);
@@ -1392,7 +1392,7 @@ if (printStuff) fprintf(stderr, ":kindSetTargetAddress accum 0x%lx %s ", accumul
 					}
 					accumulator += fit->u.addend;
 				}
-if (printStuff) fprintf(stderr, ":kindAddAddend accum 0x%lx addend %u ", accumulator, fit->u.addend);
+if (printStuff) fprintf(stderr, ":kindAddAddend accum 0x%llx addend %llu ", accumulator, fit->u.addend);
 				break;
 			case ld::Fixup::kindSubtractAddend:
 				accumulator -= fit->u.addend;
@@ -4098,7 +4098,7 @@ void OutputFile::noteTextReloc(const ld::Atom* atom, const ld::Atom* target)
 		this->pieDisabled = true;
 	}
 	else if ( (target->scope() == ld::Atom::scopeGlobal) && (target->combine() == ld::Atom::combineByName) ) {
-		throwf("illegal text-relocoation (direct reference) to (global,weak) %s in %s from %s in %s", target->name(), target->file()->path(), atom->name(), atom->file()->path());
+		throwf("illegal text-relocation (direct reference) to (global,weak) %s in %s from %s in %s", target->name(), target->file()->path(), atom->name(), atom->file()->path());
 	}
 	else {
 		if ( (target->file() != NULL) && (atom->file() != NULL) )
