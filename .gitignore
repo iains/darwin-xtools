@@ -1,5 +1,7 @@
 SVN
-ld64-*
-zPATCHES
 cctools-*
+ld64-*
+dyld-*
+zPATCHES
 libtapi*
+cmake-scripts
