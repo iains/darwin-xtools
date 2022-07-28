@@ -87,6 +87,10 @@ else()
   target_link_libraries(strip stuff)
 endif()
 
+add_custom_target (ranlib ALL
+                   DEPENDS libtool 
+                   COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -f libtool ranlib)
+
 install(TARGETS 
         lipo size strings nm libtool install_name_tool nmedit strip
         codesign_allocate checksyms indr segedit cmpdylib pagestuff
