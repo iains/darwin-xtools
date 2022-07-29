@@ -350,6 +350,7 @@ set (archtests_ppc64
      branch-islands
      branch-islands-cross-section
      branch-islands-sym-offs
+     page-zero-size-ppc64
      )
 
 foreach(arch ${archs})
