@@ -5004,18 +5004,18 @@ void OutputFile::synthesizeDebugNotes(ld::Internal& state)
 		const ld::File* atomFile = atom->file();
 		const ld::relocatable::File* atomObjFile = dynamic_cast<const ld::relocatable::File*>(atomFile);
 		//fprintf(stderr, "debug note for %s\n", atom->name());
-    const char* newPath = atom->translationUnitSource();
-    if ( newPath != NULL ) {
-      const char* newDirPath;
-      const char* newFilename;
-      const char* lastSlash = strrchr(newPath, '/');
-      if ( lastSlash == NULL ) 
-        continue;
-      newFilename = lastSlash+1;
-      char* temp = strdup(newPath);
-      newDirPath = temp;
-      // gdb like directory SO's to end in '/', but dwarf DW_AT_comp_dir usually does not have trailing '/'
-      temp[lastSlash-newPath+1] = '\0';
+		const char* newPath = atom->translationUnitSource();
+		if ( newPath != NULL ) {
+			const char* newDirPath;
+			const char* newFilename;
+			const char* lastSlash = strrchr(newPath, '/');
+			if ( lastSlash == NULL )
+				continue;
+			newFilename = lastSlash+1;
+			char* temp = strdup(newPath);
+			newDirPath = temp;
+			// gdb likes directory SO's to end in '/', but dwarf DW_AT_comp_dir usually does not have trailing '/'
+			temp[lastSlash-newPath+1] = '\0';
 			// need SO's whenever the translation unit source file changes
 			if ( (filename == NULL) || (strcmp(newFilename,filename) != 0) ) {
 				if ( filename != NULL ) {
