@@ -151,6 +151,7 @@ set (all_arch_tests
      main-stripped
      merge_zero_fill_sections
      missing-option-args
+     missing-oso
      multiple-entry-points
      no-data-bundle
      no-dynamic-common
