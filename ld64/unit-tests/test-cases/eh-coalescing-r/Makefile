@@ -23,7 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 SHELL = bash # use bash shell so we can redirect just stderr
 
 
@@ -35,12 +34,11 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CXX} ${CCXXFLAGS} foo.cxx -c -o foo.o
-	${CXX} ${CCXXFLAGS} bar.cxx -c -o bar.o
-	${CXX} ${CCXXFLAGS} baz.cxx -c -o baz.o
+	${CXX} ${CXXFLAGS} foo.cxx -c -o foo.o
+	${CXX} ${CXXFLAGS} bar.cxx -c -o bar.o
+	${CXX} ${CXXFLAGS} baz.cxx -c -o baz.o
 	${LD} -r foo.o bar.o baz.o -o foobarbaz.o 2> warnings.log
 	grep warning warnings.log | ${PASS_IFF_EMPTY}
 
-
 clean:
-	rm  foo.o bar.o baz.o foobarbaz.o warnings.log
+	rm  -f foo.o bar.o baz.o foobarbaz.o warnings.log

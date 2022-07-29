@@ -41,13 +41,13 @@ all:
 	${LD} -r foo.o bar.o -o foobar.o -arch ${ARCH}
 	${FAIL_IF_BAD_OBJ} foobar.o
 
-	${CC} ${CCFLAGS} hello.c foobar.o -o hello
+	${CC} ${LINKFLAGS} hello.c foobar.o -o hello
 	${FAIL_IF_BAD_MACHO} hello
 
 	${LD} -r foo.o bar.o -o foobar2.o -arch ${ARCH} -keep_private_externs
 	${FAIL_IF_BAD_OBJ} foobar2.o
 
-	${CC} ${CCFLAGS} hello.c foobar2.o -o hello2
+	${CC} ${LINKFLAGS} hello.c foobar2.o -o hello2
 	${PASS_IFF_GOOD_MACHO} hello2
 
 clean:

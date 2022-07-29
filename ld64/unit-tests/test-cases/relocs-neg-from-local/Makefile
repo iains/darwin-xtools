@@ -35,12 +35,20 @@ endif
 
 run: ${TARGET}
 
-run-other:
+all: all-${ARCH}
+
+all-i386:  all-func
+
+all-ppc: all-other
+all-ppc64: all-other
+all-x86_64: all-other
+
+all-other:
 	${PASS_IFF} /usr/bin/true
 	
 
-run-i386:
-	${CC} ${ASMFLAGS} test.s -c -o test.o
+all-func:
+	${CC} ${CCFLAGS} test.s -c -o test.o
 	${OBJECTDUMP} test.o | grep "direct(anon@__data+0x00000000) + 0xFFFFFFFFFFFFFFE2" | ${FAIL_IF_EMPTY}
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.o -o test-r.o

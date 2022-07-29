@@ -30,11 +30,11 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} main.c -o main -exported_symbols_list main.exp
-	nm -m main | grep _magicSymbol | grep "referenced dynamically" | ${FAIL_IF_EMPTY}
-	nm -m main | grep _hiddenSymbol | grep "referenced dynamically" | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -o main -exported_symbols_list main.exp
+	${NM} -m main | grep _magicSymbol | grep "referenced dynamically" | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep _hiddenSymbol | grep "referenced dynamically" | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
 	
 
 clean:
-	rm  main
+	rm -f main

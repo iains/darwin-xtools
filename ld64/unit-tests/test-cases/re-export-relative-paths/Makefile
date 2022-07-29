@@ -27,22 +27,20 @@ include ${TESTROOT}/include/common.makefile
 # Test that @loader_path and @executable_path can be resolved finding indirect dylibs
 #
 
-
 run: all
 
 all:
 	mkdir -p hide
-	${CC} ${CCFLAGS} -dynamiclib foo.c -install_name '@loader_path/libfoo.dylib' -o hide/libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -install_name '@loader_path/libfoo.dylib' -o hide/libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} hide/libfoo.dylib
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o hide/libbar.dylib -install_name '@executable_path/hide/libbar.dylib'
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o hide/libbar.dylib -install_name '@executable_path/hide/libbar.dylib'
 	${FAIL_IF_BAD_MACHO} hide/libbar.dylib
-	${CC} ${CCFLAGS} -dynamiclib wrap.c -o hide/libwrap.dylib -Wl,-reexport-lfoo -Wl,-reexport-lbar -Lhide
+	${CC} ${LINKFLAGS} -dynamiclib wrap.c -o hide/libwrap.dylib -Wl,-reexport-lfoo -Wl,-reexport-lbar -Lhide
 	${FAIL_IF_BAD_MACHO} hide/libwrap.dylib
-	${CC} ${CCFLAGS} main.c -o main hide/libwrap.dylib
-	${CC} ${CCFLAGS} main.c -dynamiclib -o libmain.dylib hide/libwrap.dylib -Wl,-executable_path,`pwd`/main
-	${CC} ${CCFLAGS} main.c -dynamiclib -o libmain.dylib hide/libwrap.dylib -Wl,-executable_path,`pwd`
+	${CC} ${LINKFLAGS} main.c -o main hide/libwrap.dylib
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib hide/libwrap.dylib -Wl,-executable_path,`pwd`/main
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib hide/libwrap.dylib -Wl,-executable_path,`pwd`
 	${PASS_IFF} /usr/bin/true
-
 
 clean:
 

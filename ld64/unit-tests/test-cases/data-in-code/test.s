@@ -21,7 +21,4 @@ _foo:
 	nop
 	nop
 
-	
 	.subsections_via_symbols
-	
-	

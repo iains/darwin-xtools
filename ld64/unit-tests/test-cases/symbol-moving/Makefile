@@ -37,56 +37,55 @@ run: all
 all:
 	# In this test case aaa and bbb both moved between libfoo and libar
 	# between 10.4 and 10.5.
-	${CC} ${CCFLAGS} -dynamiclib bar.c bbb.c anotb.c -o libbar.dylib  
+	${CC} ${LINKFLAGS} -dynamiclib bar.c bbb.c anotb.c -o libbar.dylib  
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} -dynamiclib foo.c aaa.c bnota.c -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c aaa.c bnota.c -o libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} main.c -o main-10.4  libfoo.dylib libbar.dylib -mmacosx-version-min=10.4
-	nm -m main-10.4 | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
-	nm -m main-10.4 | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.4a libbar.dylib libfoo.dylib -mmacosx-version-min=10.4
-	nm -m main-10.4a | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
-	nm -m main-10.4a | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.5  libfoo.dylib libbar.dylib -mmacosx-version-min=10.5
-	nm -m main-10.5 | grep _aaa | grep libfoo | ${FAIL_IF_EMPTY}
-	nm -m main-10.5 | grep _bbb | grep libbar | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.5a libbar.dylib libfoo.dylib  -mmacosx-version-min=10.5
-	nm -m main-10.5a | grep _aaa | grep libfoo | ${FAIL_IF_EMPTY}
-	nm -m main-10.5a | grep _bbb | grep libbar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.4  libfoo.dylib libbar.dylib -mmacosx-version-min=10.4
+	${NM} -m main-10.4 | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.4 | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.4a libbar.dylib libfoo.dylib -mmacosx-version-min=10.4
+	${NM} -m main-10.4a | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.4a | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.5  libfoo.dylib libbar.dylib -mmacosx-version-min=10.5
+	${NM} -m main-10.5 | grep _aaa | grep libfoo | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.5 | grep _bbb | grep libbar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.5a libbar.dylib libfoo.dylib  -mmacosx-version-min=10.5
+	${NM} -m main-10.5a | grep _aaa | grep libfoo | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.5a | grep _bbb | grep libbar | ${FAIL_IF_EMPTY}
 	# In this test case aaa and bbb both moved between subframeworks of Foo and Bar
 	# between 10.4 and 10.5.
 	mkdir -p Frameworks/Foo.framework/Frameworks/subFoo.framework
-	${CC} ${CCFLAGS} -dynamiclib foo.c aaa.c -o Frameworks/Foo.framework/Frameworks/subFoo.framework/subFoo \
+	${CC} ${LINKFLAGS} -dynamiclib foo.c aaa.c -o Frameworks/Foo.framework/Frameworks/subFoo.framework/subFoo \
 		-install_name /System/Library/Frameworks/Foo.framework/Frameworks/subFoo.framework/subFoo \
 		-umbrella Foo
-	${CC} ${CCFLAGS} -dynamiclib bnota.c -o Frameworks/Foo.framework/Foo \
+	${CC} ${LINKFLAGS} -dynamiclib bnota.c -o Frameworks/Foo.framework/Foo \
 		-install_name /System/Library/Frameworks/Frameworks/Foo.framework/Foo \
 		Frameworks/Foo.framework/Frameworks/subFoo.framework/subFoo
 	mkdir -p Frameworks/Bar.framework/Frameworks/subBar.framework
-	${CC} ${CCFLAGS} -dynamiclib bar.c bbb.c -o Frameworks/Bar.framework/Frameworks/subBar.framework/subBar \
+	${CC} ${LINKFLAGS} -dynamiclib bar.c bbb.c -o Frameworks/Bar.framework/Frameworks/subBar.framework/subBar \
 		-install_name /System/Library/Frameworks/Bar.framework/Frameworks/subBar.framework/subBar \
 		-umbrella Bar
-	${CC} ${CCFLAGS} -dynamiclib anotb.c -o Frameworks/Bar.framework/Bar \
+	${CC} ${LINKFLAGS} -dynamiclib anotb.c -o Frameworks/Bar.framework/Bar \
 		-install_name /System/Library/Frameworks/Frameworks/Bar.framework/Bar \
 		Frameworks/Bar.framework/Frameworks/subBar.framework/subBar
-	${CC} ${CCFLAGS} main.c -o main-10.4  -framework Foo -framework Bar  -mmacosx-version-min=10.4 \
+	${CC} ${LINKFLAGS} main.c -o main-10.4  -framework Foo -framework Bar  -mmacosx-version-min=10.4 \
 		-F./Frameworks -F./Frameworks/Bar.framework/Frameworks -F./Frameworks/Foo.framework/Frameworks 
-	nm -m main-10.4 | grep _aaa | grep " Bar" | ${FAIL_IF_EMPTY}
-	nm -m main-10.4 | grep _bbb | grep " Foo" | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.4a -framework Bar  -framework Foo  -mmacosx-version-min=10.4 \
+	${NM} -m main-10.4 | grep _aaa | grep " Bar" | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.4 | grep _bbb | grep " Foo" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.4a -framework Bar  -framework Foo  -mmacosx-version-min=10.4 \
 		-F./Frameworks -F./Frameworks/Bar.framework/Frameworks -F./Frameworks/Foo.framework/Frameworks 
-	nm -m main-10.4a | grep _aaa | grep " Bar" | ${FAIL_IF_EMPTY}
-	nm -m main-10.4a | grep _bbb | grep " Foo" | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.5  -framework Foo -framework Bar  -mmacosx-version-min=10.5 \
+	${NM} -m main-10.4a | grep _aaa | grep " Bar" | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.4a | grep _bbb | grep " Foo" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.5  -framework Foo -framework Bar  -mmacosx-version-min=10.5 \
 		-F./Frameworks -F./Frameworks/Bar.framework/Frameworks -F./Frameworks/Foo.framework/Frameworks 
-	nm -m main-10.5 | grep _aaa | grep " Foo" | ${FAIL_IF_EMPTY}
-	nm -m main-10.5 | grep _bbb | grep " Bar" | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main-10.5a -framework Bar  -framework Foo  -mmacosx-version-min=10.5 \
+	${NM} -m main-10.5 | grep _aaa | grep " Foo" | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.5 | grep _bbb | grep " Bar" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main-10.5a -framework Bar  -framework Foo  -mmacosx-version-min=10.5 \
 		-F./Frameworks -F./Frameworks/Bar.framework/Frameworks -F./Frameworks/Foo.framework/Frameworks 
-	nm -m main-10.5a | grep _aaa | grep " Foo" | ${FAIL_IF_EMPTY}
-	nm -m main-10.5a | grep _bbb | grep " Bar" | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.5a | grep _aaa | grep " Foo" | ${FAIL_IF_EMPTY}
+	${NM} -m main-10.5a | grep _bbb | grep " Bar" | ${FAIL_IF_EMPTY}
 	${PASS_IFF} /usr/bin/true
-
 
 clean:
 

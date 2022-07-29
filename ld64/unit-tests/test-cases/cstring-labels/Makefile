@@ -39,21 +39,19 @@ ifeq (${ARCH},i386)
 	STRING_LABEL_COUNT = 1
 endif
 
-
-
 run: all
 
 all:
 	${CC} ${CCFLAGS} -c foo.c -o foo.o
 	${CC} ${CCFLAGS} -c bar.c -o bar.o
 	${LD} -arch ${ARCH} -r foo.o bar.o -o foobar.o
-	nm -nm foobar.o | grep __cstring | grep "weak private external" | ${FAIL_IF_STDIN}
+	${NM} -nm foobar.o | grep __cstring | grep "weak private external" | ${FAIL_IF_STDIN}
 	${LD} -arch ${ARCH} -r foo.o bar.o -o foobar.o -keep_private_externs
-	nm -nm foobar.o | grep __cstring | grep "weak private external" | ${FAIL_IF_STDIN}
-	nm -m foobar.o | grep __cstring | wc -l | grep ${STRING_LABEL_COUNT}  | ${FAIL_IF_EMPTY}
+	${NM} -nm foobar.o | grep __cstring | grep "weak private external" | ${FAIL_IF_STDIN}
+	${NM} -m foobar.o | grep __cstring | wc -l | grep ${STRING_LABEL_COUNT}  | ${FAIL_IF_EMPTY}
 	${CC} ${CCFLAGS} foo.o bar.o -dynamiclib -o libfoobar.dylib
-	nm -m libfoobar.dylib | grep __cstring | wc -l |  egrep '[01]'  | ${FAIL_IF_EMPTY}
+	${NM} -m libfoobar.dylib | grep __cstring | wc -l |  egrep '[01]'  | ${FAIL_IF_EMPTY}
 	${PASS_IFF} /usr/bin/true
 
 clean:
-	rm  foo.o bar.o foobar.o libfoobar.dylib
+	rm -f foo.o bar.o foobar.o libfoobar.dylib

@@ -22,8 +22,10 @@
 ##
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
+VALID_ARCHS = ppc ppc64 i386 x86_64
 
-ALL_ARCH_OPTIONS = $(patsubst %,-arch %,$(subst ppc,,$(VALID_ARCHS)) )
+#ARCH_OPTIONS = $(subst ppc,,$(VALID_ARCHS)) 
+ALL_ARCH_OPTIONS = $(patsubst %,-arch %, $(VALID_ARCHS))
 
 #
 # Test that blank stubs are handled properly
@@ -34,7 +36,7 @@ run: all
 all:
 # build example fully fat dylib
 
-	gcc `echo ${ALL_ARCH_OPTIONS}` -dynamiclib foo.c -o libfoo.dylib -install_name libfoo.dylib 
+	${CC} `echo ${ALL_ARCH_OPTIONS}` -isysroot ${SDK_10_5} -dynamiclib foo.c -o libfoo.dylib -install_name libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
 
 	# handle the case of a native ppc compile--this sets the subtype, which must be passed to lipo
@@ -42,17 +44,17 @@ all:
 	then \
 		SUB_ARCH=${ARCH}; \
 	else \
-		SUB_ARCH=`lipo -info libfoo.dylib | sed 's/.*://;s/ppc64 //;s/.* \(ppc[^ ]*\).*/\1/'`; \
+		SUB_ARCH=`${LIPO} -info libfoo.dylib | sed 's/.*://;s/ppc64 //;s/.* \(ppc[^ ]*\).*/\1/'`; \
 		echo SUB_ARCH $$SUB_ARCH; \
 		if [ x$$SUB_ARCH = xALL ]; \
 		then \
 			SUB_ARCH=ppc; \
 		fi \
 	fi; \
-	lipo libfoo.dylib -remove $$SUB_ARCH -output libfoo.dylib
+	${LIPO} libfoo.dylib -remove $$SUB_ARCH -output libfoo.dylib
 
-	lipo -create libfoo.dylib -arch_blank ${ARCH} -output libfoo.dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
+	${LIPO} -create libfoo.dylib -arch_blank ${ARCH} -output libfoo.dylib
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
 	${OTOOL} -L main | grep libfoo | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
 	

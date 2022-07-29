@@ -28,19 +28,18 @@ include ${TESTROOT}/include/common.makefile
 # get LC_SEGMENT_SPLIT_INFO
 #
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/lib/libfoo.dylib
-	otool -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /System/Library/Frameworks/Foo.framework/Foo
-	otool -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/local/lib/libfoo.dylib
-	otool -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib 
-	otool -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/lib/libfoo.dylib
+	${OTOOL} -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /System/Library/Frameworks/Foo.framework/Foo
+	${OTOOL} -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/local/lib/libfoo.dylib
+	${OTOOL} -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib 
+	${OTOOL} -lv libfoo.dylib | grep LC_SEGMENT_SPLIT_INFO | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib 
 
 clean:
-	rm libfoo.dylib
+	rm -f libfoo.dylib

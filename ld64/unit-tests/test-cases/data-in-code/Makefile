@@ -28,12 +28,12 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all: 
-	${CC} ${CCFLAGS} -c test.s -o test.o
-	${CC} ${CCFLAGS} test.o -dynamiclib -o libtest.dylib
-	dyldinfo -arch ${ARCH} -data_in_code libtest.dylib| ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} -c test.s -o test.o
+	${CC} ${LINKFLAGS} test.o -dynamiclib -o libtest.dylib
+	${DYLDINFO} -arch ${ARCH} -data_in_code libtest.dylib| ${FAIL_IF_EMPTY}
 	${LD} -r -arch ${ARCH} test.o -o test2.o
-	${CC} ${CCFLAGS} test2.o -dynamiclib -o libtest2.dylib
-	dyldinfo -arch ${ARCH} -data_in_code libtest2.dylib| ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} test2.o -dynamiclib -o libtest2.dylib
+	${DYLDINFO} -arch ${ARCH} -data_in_code libtest2.dylib| ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
 	
 clean:

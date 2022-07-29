@@ -27,13 +27,30 @@ include ${TESTROOT}/include/common.makefile
 # Check that ld resolves the magic segment start/end symbols.
 #
 
-run: all
+all: all-${ARCH}
 
-all:
-	${CC} ${CCFLAGS} main.c -dynamiclib -o libmain.dylib 
-	${CC} ${CCFLAGS} main.c -o main 
-	${CC} ${CCFLAGS} test.c -o test.preload -Wl,-preload -nostartfiles -nodefaultlibs -e _start
-	${CC} ${CCFLAGS} test.c -o test.preload-pie -Wl,-preload -Wl,-pie -nostartfiles -nodefaultlibs -e _start
+# -preload is not implemented for ppc/ppc64 
+all-ppc: all-power
+all-ppc64: all-power
+
+all-i386: all-x86
+all-x86_64: all-x86
+
+all-arm: all-true
+
+all-true:
+	${PASS_IFF} true
+
+all-x86:
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib 
+	${CC} ${LINKFLAGS} main.c -o main 
+	${CC} ${LINKFLAGS} test.c -o test.preload -Wl,-preload -nostartfiles -nodefaultlibs -e _start
+	${CC} ${LINKFLAGS} test.c -o test.preload-pie -Wl,-preload -Wl,-pie -nostartfiles -nodefaultlibs -e _start
+	${PASS_IFF_GOOD_MACHO} main
+
+all-power:
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib 
+	${CC} ${LINKFLAGS} main.c -o main 
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

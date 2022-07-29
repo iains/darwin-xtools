@@ -1,5 +1,5 @@
 
-#if __ppc__ 
+#if __ppc__ || __ppc64__
 
     .text
 
@@ -10,7 +10,7 @@ _prejunk:
 
 
 _space1:
-    .space 15*1024*1024 + 2
+    .space 30*1024*1024 + 2
     
     .align 5
 _junk:

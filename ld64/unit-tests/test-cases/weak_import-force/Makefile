@@ -31,13 +31,13 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:	
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib 
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} main.c -o main -weak_library libfoo.dylib libbar.dylib
-	nm -m main | grep _foo1 | grep  weak | ${FAIL_IF_EMPTY}
-	nm -m main | grep _bar | grep  weak | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -o main -weak_library libfoo.dylib libbar.dylib
+	${NM} -m main | grep _foo1 | grep  weak | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep _bar | grep  weak | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

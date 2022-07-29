@@ -31,21 +31,24 @@ include ${TESTROOT}/include/common.makefile
 # that can be diffed against a checked in know good set of stabs
 #
 
+# This needs a c++ compiler supporting stabs, so no use with clang
+# or modern GCC.
+
 run: all
 
 all: hello.o other.o 
-	g++-4.2 ${CCXXFLAGS} -gstabs+ -gused hello.o other.o -o stabs-hello-${ARCH}
+	${CXX} ${CXXFLAGS} -gstabs+ -gused hello.o other.o -o stabs-hello-${ARCH}
 	${FAIL_IF_BAD_MACHO} stabs-hello-${ARCH}
-	nm -ap stabs-hello-${ARCH} | grep FUN | grep _Z3fooi | wc -l > stabs-hello-foo-count
+	${NM} -ap stabs-hello-${ARCH} | grep FUN | grep _Z3fooi | wc -l > stabs-hello-foo-count
 	echo "       1" > one
 	${PASS_IFF} diff stabs-hello-foo-count one
 
 hello.o : hello.cxx
-	g++-4.2 ${CCXXFLAGS} -gstabs+ -gused hello.cxx -c -o $@
+	${CXX} ${CXXFLAGS} -gstabs+ -gused hello.cxx -c -o $@
 	${FAIL_IF_BAD_OBJ} $@
 
 other.o : other.cxx
-	g++-4.2 ${CCXXFLAGS} -gstabs+ -gused other.cxx -c -o $@
+	${CXX} ${CXXFLAGS} -gstabs+ -gused other.cxx -c -o $@
 	${FAIL_IF_BAD_OBJ} $@
 
 clean:

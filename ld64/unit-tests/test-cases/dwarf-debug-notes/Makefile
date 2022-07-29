@@ -33,11 +33,11 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CXX} ${CCXXFLAGS} -gdwarf-2 hello.cxx -c -o hello.o 
-	${CXX} ${CCXXFLAGS} -gdwarf-2 other.cxx -c -o other.o 
-	${CXX} ${CCXXFLAGS} -gdwarf-2 hello.o other.o -o hello -Wl,-order_file,hello.order
+	${CXX} ${CXXFLAGS} -gdwarf-2 hello.cxx -c -o hello.o 
+	${CXX} ${CXXFLAGS} -gdwarf-2 other.cxx -c -o other.o 
+	${CXX} ${CXXLINKFLAGS} -gdwarf-2 hello.o other.o -o hello -Wl,-order_file,hello.order
 	${FAIL_IF_BAD_MACHO} hello
-	nm -ap hello | ./stabs-filter.pl > hello.stabs
+	${NM} -ap hello | ./stabs-filter.pl > hello.stabs
 	${PASS_IFF} diff hello.stabs expected-stabs
 
 clean:

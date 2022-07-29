@@ -25,7 +25,7 @@ include ${TESTROOT}/include/common.makefile
 
 # Test the ld option -stack_size adds a custom stack segment
 
-ifeq (${FILEARCH},arm)
+ifeq (${ARCH},arm)
 	STACK_ADDR = 0x30000000
 	STACK_SIZE = 0x05000000
 	STACK_TOP  = 0x2a000000
@@ -45,9 +45,9 @@ endif
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -o main -Wl,-stack_size,${STACK_SIZE}
+	${CC} ${LINKFLAGS} main.c -o main -Wl,-stack_size,${STACK_SIZE}
 	# Check for __UNIXSTACK section in object, check that it has the correct value
-	otool -l main | grep -A6 __UNIXSTACK > main.otool
+	${OTOOL} -l main | grep -A6 __UNIXSTACK > main.otool
 	grep " vmsize[ ]*${STACK_SIZE}" main.otool | ${FAIL_IF_EMPTY}
 	grep " vmaddr[ ]*${STACK_TOP}" main.otool | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main

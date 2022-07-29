@@ -34,17 +34,17 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c deadwood.c -dead_strip -o main-${ARCH}
-	size -l main-${ARCH} | grep __PAGEZERO | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c deadwood.c -dead_strip -o main-${ARCH}
+	${SIZE} -l main-${ARCH} | grep __PAGEZERO | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
-	nm -j main-${ARCH} | egrep 'dead_wood|dead_door' | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} -dynamiclib main.c deadwood.c -dead_strip -exported_symbols_list main.exp -o dylib-${ARCH}
+	${NM} -j main-${ARCH} | egrep 'dead_wood|dead_door' | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} -dynamiclib main.c deadwood.c -dead_strip -exported_symbols_list main.exp -o dylib-${ARCH}
 	${FAIL_IF_BAD_MACHO} dylib-${ARCH}
-	nm -j dylib-${ARCH} | grep dead | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} -dynamiclib main.c deadwood.c -dead_strip -o dylib2-${ARCH}
+	${NM} -j dylib-${ARCH} | grep dead | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} -dynamiclib main.c deadwood.c -dead_strip -o dylib2-${ARCH}
 	${FAIL_IF_BAD_MACHO} dylib2-${ARCH}
-	nm -j dylib2-${ARCH} | grep dead_door_knob | ${FAIL_IF_EMPTY}
-	nm -j dylib2-${ARCH} | grep deadwood | ${PASS_IFF_EMPTY}
+	${NM} -j dylib2-${ARCH} | grep dead_door_knob | ${FAIL_IF_EMPTY}
+	${NM} -j dylib2-${ARCH} | grep deadwood | ${PASS_IFF_EMPTY}
 
 clean:
 	rm -rf main-* dylib-* dylib2-*

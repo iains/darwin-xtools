@@ -31,14 +31,14 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all: libfoo.dylib libbar.dylib libbaz.dylib
-	${CC} ${CCFLAGS} main.c -o main -lfoo -lbar -lbaz -L. -Wl,-w
+	${CC} ${LINKFLAGS} main.c -o main -lfoo -lbar -lbaz -L. -Wl,-w
 	${PASS_IFF_GOOD_MACHO} main
 
 libfoo.dylib : foo.c
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 
 libbar.dylib : bar.c
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name libfoo.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name libfoo.dylib
 
 libbaz.dylib : libfoo.dylib
 	ln -s libfoo.dylib libbaz.dylib

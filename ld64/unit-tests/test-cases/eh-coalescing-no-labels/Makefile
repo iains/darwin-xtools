@@ -33,9 +33,9 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCXXFLAGS} foo.c -c -o foo.o -fexceptions
-	${CC} ${CCXXFLAGS} bar.c -c -o bar.o -fexceptions
-	${CC} ${CCXXFLAGS} baz.c -c -o baz.o -fexceptions
+	${CC} ${CXXFLAGS} foo.c -c -o foo.o -fexceptions
+	${CC} ${CXXFLAGS} bar.c -c -o bar.o -fexceptions
+	${CC} ${CXXFLAGS} baz.c -c -o baz.o -fexceptions
 	${LD} -r foo.o -no_eh_labels -o foo.no.o
 	${LD} -r bar.o -no_eh_labels -o bar.no.o
 	${LD} -r baz.o -no_eh_labels -o baz.no.o	
@@ -45,7 +45,6 @@ all:
 	${OBJECTDUMP} -no_content -no_sort foobarbaz.no.o > foobarbaz.no.dump
 	${FAIL_IF_ERROR} dwarfdump --eh-frame --verify foobarbaz.no.o >/dev/null
 	${PASS_IFF_SUCCESS} diff foobarbaz.dump foobarbaz.no.dump 
- 
 
 clean:
 	rm -f foo.o bar.o baz.o foo.no.o bar.no.o baz.no.o foobarbaz.*

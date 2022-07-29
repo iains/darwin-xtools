@@ -37,4 +37,4 @@ all:
 	${PASS_IFF_GOOD_MACHO} libmain.dylib 
 
 clean:
-	rm *.dylib 
+	rm -f *.dylib 

@@ -31,7 +31,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:	
-	${CC} ${CCFLAGS} -o weak weak.c -undefined dynamic_lookup
+	${CC} ${LINKFLAGS} -o weak weak.c -undefined dynamic_lookup
 	${DYLDINFO} -bind weak | grep _myweakfunc | grep "weak import" | ${FAIL_IF_EMPTY} 
 	${DYLDINFO} -lazy_bind weak | grep _myweakfunc | grep "weak import" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO}  weak

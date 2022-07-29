@@ -38,7 +38,6 @@ all:
 	${OBJECTDUMP} -no_content -no_definition -no_section -no_combine test-r-d.${ARCH}.o > test-r-d.${ARCH}.o.dump
 	
 	${PASS_IFF} diff test.${ARCH}.o.dump  test-r-d.${ARCH}.o.dump
-	
 
 clean:
 	rm -rf *.o *.dump

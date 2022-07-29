@@ -27,25 +27,23 @@ include ${TESTROOT}/include/common.makefile
 # Test -dead_strip_dylibs
 #
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib 
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib 
-	${CC} ${CCFLAGS} -dynamiclib baz.c -o libbaz.dylib 
-	${CC} ${CCFLAGS} main.c libfoo.dylib libbar.dylib libbaz.dylib -o main
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib baz.c -o libbaz.dylib 
+	${CC} ${LINKFLAGS} main.c libfoo.dylib libbar.dylib libbaz.dylib -o main
 	${FAIL_IF_BAD_MACHO} main
-	otool -L main | grep libfoo.dylib | ${FAIL_IF_EMPTY}
-	otool -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
-	otool -L main | grep libbaz.dylib | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -DCALL_BAR libfoo.dylib libbar.dylib libbaz.dylib -o main -Wl,-dead_strip_dylibs
+	${OTOOL} -L main | grep libfoo.dylib | ${FAIL_IF_EMPTY}
+	${OTOOL} -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
+	${OTOOL} -L main | grep libbaz.dylib | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -DCALL_BAR libfoo.dylib libbar.dylib libbaz.dylib -o main -Wl,-dead_strip_dylibs
 	${FAIL_IF_BAD_MACHO} main
-	otool -L main | grep libfoo.dylib | ${FAIL_IF_STDIN}
-	otool -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
-	otool -L main | grep libbaz.dylib | ${FAIL_IF_STDIN}
+	${OTOOL} -L main | grep libfoo.dylib | ${FAIL_IF_STDIN}
+	${OTOOL} -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
+	${OTOOL} -L main | grep libbaz.dylib | ${FAIL_IF_STDIN}
 	${PASS_IFF} /usr/bin/true
-
 
 clean:
 

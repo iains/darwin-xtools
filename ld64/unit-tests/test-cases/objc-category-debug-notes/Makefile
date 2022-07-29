@@ -23,17 +23,16 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # Verify no GSYM for .objc_category_*
 # <rdar://problem/5774231> Linker should not make GSYM debug note for .objc_category_* symbols#
 #
 
 run: all
-
+#-Wno-objc-protocol-method-implementation
 all:
-	${CC} ${CCFLAGS} test.m -g -o test -framework Foundation -Wno-objc-protocol-method-implementation
-	nm -ap test | grep GSYM | grep category | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} test.m -g -o test -framework Foundation 
+	${NM} -ap test | grep GSYM | grep category | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} test
 	
 clean:

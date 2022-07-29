@@ -33,35 +33,37 @@ all: all-${ARCH}
 
 all-i386: all-new all-old
 all-x86_64: all-new all-old
+all-ppc: all-new all-old
+all-ppc64: all-new all-old
 all-armv6: all-new 
 all-armv7: all-new 
 	
 all-old:
 	# -sub_library for 10.4
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib  -install_name /usr/lib/libbar.dylib -mmacosx-version-min=10.4
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib  -install_name /usr/lib/libbar.dylib -mmacosx-version-min=10.4
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} -dynamiclib middle.c -o libmiddle.dylib -lbar -L. -sub_library libbar -install_name /mid/libmiddle.dylib -mmacosx-version-min=10.4
+	${CC} ${LINKFLAGS} -dynamiclib middle.c -o libmiddle.dylib -lbar -L. -sub_library libbar -install_name /mid/libmiddle.dylib -mmacosx-version-min=10.4
 	${FAIL_IF_BAD_MACHO} libmiddle.dylib
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib -lmiddle -L. -sub_library libmiddle -install_name /usr/lib/libfoo.dylib -mmacosx-version-min=10.4
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib -lmiddle -L. -sub_library libmiddle -install_name /usr/lib/libfoo.dylib -mmacosx-version-min=10.4
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} -dynamiclib other.c -o libother.dylib -lbar -L. -sub_library libbar -install_name /usr/lib/libother.dylib -mmacosx-version-min=10.4
+	${CC} ${LINKFLAGS} -dynamiclib other.c -o libother.dylib -lbar -L. -sub_library libbar -install_name /usr/lib/libother.dylib -mmacosx-version-min=10.4
 	${FAIL_IF_BAD_MACHO} libother.dylib
-	${CC} ${CCFLAGS} main.c -DCALL_BAR libfoo.dylib libother.dylib -o main -L. -mmacosx-version-min=10.4
-	nm -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -DCALL_BAR libfoo.dylib libother.dylib -o main -L. -mmacosx-version-min=10.4
+	${NM} -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 
 all-new:		
 	# -sub_library for 10.5
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib  -install_name /usr/lib/libbar.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib  -install_name /usr/lib/libbar.dylib 
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} -dynamiclib middle.c -o libmiddle.dylib -lbar -L. -sub_library libbar -install_name /mid/libmiddle.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib middle.c -o libmiddle.dylib -lbar -L. -sub_library libbar -install_name /mid/libmiddle.dylib 
 	${FAIL_IF_BAD_MACHO} libmiddle.dylib
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib -lmiddle -L. -sub_library libmiddle -install_name /usr/lib/libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib -lmiddle -L. -sub_library libmiddle -install_name /usr/lib/libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} -dynamiclib other.c -o libother.dylib -lbar -L. -sub_library libbar -install_name /usr/lib/libother.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib other.c -o libother.dylib -lbar -L. -sub_library libbar -install_name /usr/lib/libother.dylib 
 	${FAIL_IF_BAD_MACHO} libother.dylib
-	${CC} ${CCFLAGS} main.c -DCALL_BAR libfoo.dylib libother.dylib -o main -L. 
-	nm -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -DCALL_BAR libfoo.dylib libother.dylib -o main -L. 
+	${NM} -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 	
 

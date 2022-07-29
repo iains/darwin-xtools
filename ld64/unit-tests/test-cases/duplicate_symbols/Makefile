@@ -28,25 +28,25 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all:
-	${CC} -arch ${ARCH} -c main_extern.c
-	${CC} -arch ${ARCH} -c main_no_extern.c
-	${CC} -arch ${ARCH} -c duplicates.c
-	${CC} -arch ${ARCH} -dynamiclib -o duplicates.dylib duplicates.o 
-	libtool -static -o duplicates.a duplicates.o
+	${CC} ${CCFLAGS} -c main_extern.c
+	${CC} ${CCFLAGS} -c main_no_extern.c
+	${CC} ${CCFLAGS} -c duplicates.c
+	${CC} ${LINKFLAGS} -dynamiclib -o duplicates.dylib duplicates.o 
+	${LIBTOOL} -static -o duplicates.a duplicates.o
 
 	# simple case of directly linking duplicates should fail
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main_extern.o duplicates.o 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_EMPTY}
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main_extern.o duplicates.o 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_EMPTY}
 
 
 	# duplicates in a dylib succeed
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} main_extern.o duplicates.dylib 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_STDIN}
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS} main_extern.o duplicates.dylib 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_STDIN}
 
 	# static lib - only fail if module containing duplicate symbols is actually referenced
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main_extern.o duplicates.a 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_EMPTY}
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} main_no_extern.o duplicates.a 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_STDIN}
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main_extern.o duplicates.a 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_EMPTY}
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS} main_no_extern.o duplicates.a 2>&1 | grep "2 duplicate symbols" | ${FAIL_IF_STDIN}
 
 	# simple case should succeed if we dead strip because none of the duplicates are referenced
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -dead_strip main_extern.o duplicates.o 
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS} -dead_strip main_extern.o duplicates.o 
 
 	rm -f a.out *.o *.a *.dylib
 	${PASS_IFF} true

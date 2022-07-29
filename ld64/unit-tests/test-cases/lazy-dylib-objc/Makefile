@@ -34,12 +34,10 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.m -dynamiclib -o libfoo.dylib -framework Foundation
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.m -Wl,-lazy_library,libfoo.dylib -o main -framework Foundation 2> fail.log
-	${CC} ${CCFLAGS} main.m libfoo.dylib -o main -framework Foundation
+	${CC} ${LINKFLAGS} foo.m -dynamiclib -o libfoo.dylib -framework Foundation
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.m -Wl,-lazy_library,libfoo.dylib -o main -framework Foundation 2> fail.log
+	${CC} ${LINKFLAGS} main.m libfoo.dylib -o main -framework Foundation
 	${PASS_IFF_GOOD_MACHO} main
-	
-	
 	
 clean:
 	rm  -f libfoo.dylib main rm fail.log

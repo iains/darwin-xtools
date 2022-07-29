@@ -21,8 +21,10 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
-include ${TESTROOT}/include/common.makefile
+MINOS = 10.7
+SDK = $(SDK_FOR_10_7)
 
+include ${TESTROOT}/include/common.makefile
 
 SHELL = bash # use bash shell so we can redirect just stderr
 
@@ -33,13 +35,13 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 	# check trying to access TLV _foo as regular variable is an error
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.c -DUSE_FOO_WRONG libfoo.dylib -o main 2>/dev/null
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.c -DUSE_FOO_WRONG libfoo.dylib -o main 2>/dev/null
 	# check trying to access regular variable _bar as TLV is an error
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.c -DUSE_BAR_WRONG libfoo.dylib -o main 2>/dev/null
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.c -DUSE_BAR_WRONG libfoo.dylib -o main 2>/dev/null
 	# check can link with TLV _foo in dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

@@ -27,14 +27,16 @@ include ${TESTROOT}/include/common.makefile
 # Test the if all symbols from a dylib are weak_import, that the whole dylib is weakly loaded
 #
 
-run: all-${FILEARCH}
+run: all
 
-
-all-ppc:
-	${PASS_IFF} true
+all: all-${ARCH}
 
 all-arm:
 	${PASS_IFF} true
+
+all-ppc: all-real
+
+all-ppc64: all-real
 	
 all-i386: all-real
 
@@ -49,7 +51,6 @@ all-real:
 	${DYLDINFO} -bind main | grep wfoo | ${FAIL_IF_EMPTY}
 	
 	${PASS_IFF_GOOD_MACHO} main
-
 		
 clean:
 	rm -rf libfoo.dylib main

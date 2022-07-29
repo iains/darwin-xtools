@@ -30,11 +30,10 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CXX} ${CXXFLAGS} main.cxx -o main -Wl,-order_file -Wl,main.order 
+	${CXX} ${CXXLINKFLAGS} main.cxx -o main -Wl,-order_file -Wl,main.order 
 	${FAIL_IF_BAD_MACHO} main
-	nm -n -j main | grep "_GLOBAL__N" > main.actual
+	${NM} -n -j main | grep "_GLOBAL__N" > main.actual
 	${PASS_IFF} diff main.actual main.expected
-
 
 clean:
 	rm -rf main main.actual

@@ -31,13 +31,13 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} main.c -c -o main.o
-	nm -m main.o | grep _bar | grep "no dead strip" | ${FAIL_IF_EMPTY}
-	nm -m main.o | grep _foo | grep "no dead strip" | ${FAIL_IF_EMPTY}
+	${NM} -m main.o | grep _bar | grep "no dead strip" | ${FAIL_IF_EMPTY}
+	${NM} -m main.o | grep _foo | grep "no dead strip" | ${FAIL_IF_EMPTY}
 	${LD} -r main.o -o main2.o
-	nm -m main2.o | grep _bar | grep "no dead strip" | ${FAIL_IF_EMPTY}
-	nm -m main2.o | grep _foo | grep "no dead strip" | ${FAIL_IF_EMPTY}
-	${CC} main2.o -o main 
-	nm -m main | grep _bar | grep "no dead strip" | ${PASS_IFF_EMPTY}
+	${NM} -m main2.o | grep _bar | grep "no dead strip" | ${FAIL_IF_EMPTY}
+	${NM} -m main2.o | grep _foo | grep "no dead strip" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main2.o -o main 
+	${NM} -m main | grep _bar | grep "no dead strip" | ${PASS_IFF_EMPTY}
 
 clean:
 	rm -rf main.o main2.o main

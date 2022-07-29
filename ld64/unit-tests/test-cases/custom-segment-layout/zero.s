@@ -7,7 +7,3 @@ _min:	.long 0
 #else	
 	.zerofill __MYZEROPAGE,__zerofill,_padding,2147483644
 #endif	
-	
-
-
-

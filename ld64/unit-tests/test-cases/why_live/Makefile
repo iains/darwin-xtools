@@ -33,7 +33,7 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c foo.c bar.c -o main -dead_strip -Wl,-why_live,_bar 2>call_chains
+	${CC} ${LINKFLAGS} main.c foo.c bar.c -o main -dead_strip -Wl,-why_live,_bar 2>call_chains
 	grep _bar call_chains | ${FAIL_IF_EMPTY}
 	grep _foo call_chains | ${FAIL_IF_EMPTY}
 	grep _main call_chains | ${FAIL_IF_EMPTY}
@@ -41,4 +41,4 @@ all:
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:
-	rm  main call_chains
+	rm -f main call_chains

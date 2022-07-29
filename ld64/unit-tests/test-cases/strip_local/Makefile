@@ -45,8 +45,8 @@ all:
 	${LD} -r hello.o foo.o -o hellofoo.o
 	${FAIL_IF_BAD_OBJ} hellofoo.o
 
-	strip -x hellofoo.o -o hellofoostripped.o
-	${CC} ${CCFLAGS} hellofoostripped.o -o main
+	${STRIP} -x hellofoo.o -o hellofoostripped.o
+	${CC} ${LINKFLAGS} hellofoostripped.o -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

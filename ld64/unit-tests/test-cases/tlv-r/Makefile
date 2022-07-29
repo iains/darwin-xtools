@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.7
 include ${TESTROOT}/include/common.makefile
 
 #

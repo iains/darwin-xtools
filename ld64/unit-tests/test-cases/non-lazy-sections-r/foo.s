@@ -14,8 +14,6 @@ _test:
 	.long	L_other$non_lazy_ptr
 #endif
 
-
-
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
 L_foo$non_lazy_ptr:
 .indirect_symbol _foo

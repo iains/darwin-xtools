@@ -38,10 +38,10 @@ all:
 	${LD} -arch ${ARCH} -r test.${ARCH}.o -o test-r.${ARCH}.o
 	${FAIL_IF_BAD_OBJ} test-r.${ARCH}.o
 
-	nm test-r.${ARCH}.o | grep -i 'objc_class_.*_NSObject' | ${FAIL_IF_EMPTY} 
-	nm test-r.${ARCH}.o | grep -i 'objc_class_.*_NSData'   | ${FAIL_IF_EMPTY} 
-	nm test-r.${ARCH}.o | grep -i 'objc_class_.*_NSArray'  | ${FAIL_IF_EMPTY} 
-	nm test-r.${ARCH}.o | grep -i 'objc_class_.*_NSString' | ${PASS_IFF_STDIN} 
+	${NM} test-r.${ARCH}.o | grep -i 'objc_class_.*_NSObject' | ${FAIL_IF_EMPTY} 
+	${NM} test-r.${ARCH}.o | grep -i 'objc_class_.*_NSData'   | ${FAIL_IF_EMPTY} 
+	${NM} test-r.${ARCH}.o | grep -i 'objc_class_.*_NSArray'  | ${FAIL_IF_EMPTY} 
+	${NM} test-r.${ARCH}.o | grep -i 'objc_class_.*_NSString' | ${PASS_IFF_STDIN} 
 
 clean:
 	rm -rf *.o *.dump

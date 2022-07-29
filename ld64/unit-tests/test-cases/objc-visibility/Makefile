@@ -33,9 +33,9 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.m -c -o foo.o
 	${CC} ${CCFLAGS} bar.m -c -o bar.o
-	${CC} ${CCFLAGS} foo.o bar.o -dynamiclib -o libtfoobar.dylib -framework Foundation
+	${CC} ${LINKFLAGS} foo.o bar.o -dynamiclib -o libtfoobar.dylib -framework Foundation
 	${LD} -r -arch ${ARCH} foo.o bar.o -o bar2.o
-	${CC} ${CCFLAGS} bar2.o -dynamiclib -o liball.dylib -framework Foundation
+	${CC} ${LINKFLAGS} bar2.o -dynamiclib -o liball.dylib -framework Foundation
 	${PASS_IFF_GOOD_MACHO} liball.dylib
 
 clean:

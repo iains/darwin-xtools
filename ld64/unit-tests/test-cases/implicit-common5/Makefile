@@ -24,8 +24,8 @@ TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
 #
-# The point of this test is to determine if
-#  common symbols are not allowed with MH_DYLIB output format with the -multi_module option
+# The point of this test is a sanity check that ld
+# can link a program with a large zero-fill section
 #
 
 run: all
@@ -33,7 +33,9 @@ run: all
 all:
 	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c test.c -o test-${ARCH}.o
 	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c a.c -o a-${ARCH}.o
-	${PASS_IFF_ERROR} libtool -dynamic -o libtest-${ARCH}.a test-${ARCH}.o 2>/dev/null
+	${FAIL_IF_ERROR} ${LIBTOOL} -o libtest-${ARCH}.a test-${ARCH}.o
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS} a-${ARCH}.o -L. -ltest-${ARCH} -o a-${ARCH}
+	${PASS_IFF_GOOD_MACHO} a-${ARCH}
 
 clean:
-	rm -rf *.o *.a
+	rm -rf *.o *a

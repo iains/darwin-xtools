@@ -23,7 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # The point of this test is to verify that -r -d
 # will transform a tentative definition into a real one.

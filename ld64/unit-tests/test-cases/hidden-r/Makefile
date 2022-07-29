@@ -34,7 +34,7 @@ all:
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${CC} ${CCFLAGS} foo.c  -c -o foo.o
 	${LD} -r main.o foo.o -o all.o
-	${CC} ${CCFLAGS} all.o -o main
+	${CC} ${LINKFLAGS} all.o -o main
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

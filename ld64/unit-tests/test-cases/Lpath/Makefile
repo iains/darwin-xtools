@@ -33,7 +33,7 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	mkdir -p hide
-	libtool foo.o -static -o hide/libfoo.a
+	${LIBTOOL} foo.o -static -o hide/libfoo.a
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${LD} main.o -lfoo -Lhide -r -o mainfoo.o
 	${LD} main.o -lfoo -L hide -r -o mainfoo.o

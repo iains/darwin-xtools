@@ -28,8 +28,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC}  ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -init __init
-	otool -lv libfoo.dylib | grep  LC_ROUTINES | ${FAIL_IF_EMPTY}
+	${CC}  ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -init __init
+	${OTOOL} -lv libfoo.dylib | grep  LC_ROUTINES | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:

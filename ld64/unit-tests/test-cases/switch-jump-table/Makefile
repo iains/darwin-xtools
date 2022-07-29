@@ -30,30 +30,31 @@ include ${TESTROOT}/include/common.makefile
 # <rdar://problem/5847206> SPEC2000/eon built with -mdynamic-no-pic won't run
 #
 
-all: test-${FILEARCH}
-
+all: test-${ARCH}
 
 test-ppc:  test-good
+test-ppc64:  test-good
 test-x86_64: test-good
+
 test-i386: test
 test-arm: test
 
 test:
 	# check jump table in a weak function
-	${CC} ${CCFLAGS} main.c switch.s -o main -Wl,-no_pie
-	otool -rv main | grep _foo | ${FAIL_IF_STDIN}
-	otool -rv main | grep _bar | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c switch.s -o main -Wl,-no_pie
+	${OTOOL} -rv main | grep _foo | ${FAIL_IF_STDIN}
+	${OTOOL} -rv main | grep _bar | ${FAIL_IF_STDIN}
 	# check jump table in a regular function with -flat_namespace
-	${CC} ${CCFLAGS} main.c switch.s -o main  -flat_namespace -Wl,-no_pie
-	otool -rv main | grep _foo | ${FAIL_IF_STDIN}
-	otool -rv main | grep _bar | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c switch.s -o main  -flat_namespace -Wl,-no_pie
+	${OTOOL} -rv main | grep _foo | ${FAIL_IF_STDIN}
+	${OTOOL} -rv main | grep _bar | ${FAIL_IF_STDIN}
 	# check jump table in a regular function that is interposable
-	${CC} ${CCFLAGS} main.c switch.s -o main  -Wl,-interposable_list,interpose.exp -Wl,-no_pie
-	otool -rv main | grep _foo | ${FAIL_IF_STDIN}
-	otool -rv main | grep _bar | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c switch.s -o main  -Wl,-interposable_list,interpose.exp -Wl,-no_pie
+	${OTOOL} -rv main | grep _foo | ${FAIL_IF_STDIN}
+	${OTOOL} -rv main | grep _bar | ${FAIL_IF_STDIN}
 	# check jump table with -pie, should have no external and some local relocations
-	${CC} ${CCFLAGS} main.c switch.s -o main  -Wl,-pie -read_only_relocs suppress
-	otool -rv main | grep "External relocation" | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c switch.s -o main  -Wl,-pie -read_only_relocs suppress
+	${OTOOL} -rv main | grep "External relocation" | ${FAIL_IF_STDIN}
 #	otool -rv main | grep "Local relocation" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 

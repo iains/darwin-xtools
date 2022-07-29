@@ -34,14 +34,14 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all: 
-	${CC} ${CCFLAGS} main.c -o main
-	otool -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c -o main -Wl,-exported_symbol,_main
-	otool -hv main | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} main.c -o main -Wl,-exported_symbol,_my_weak
-	otool -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main-strip-weak.c -o main-strip-weak
-	otool -hv main-strip-weak | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -o main
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main -Wl,-exported_symbol,_main
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -o main -Wl,-exported_symbol,_my_weak
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main-strip-weak.c -o main-strip-weak
+	${OTOOL} -hv main-strip-weak | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

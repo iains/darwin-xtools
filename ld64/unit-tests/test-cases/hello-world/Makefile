@@ -31,8 +31,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} hello.c -o hello-${ARCH}
+	${CC} ${LINKFLAGS} hello.c -o hello-${ARCH}
 	${PASS_IFF_GOOD_MACHO} hello-${ARCH}
 
 clean:
-	rm  hello-*
+	rm -f hello-*

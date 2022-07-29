@@ -31,7 +31,6 @@ extern void* text_end    __asm("segment$end$__TEXT");
 extern void* other_start __asm("segment$start$__OTHER");
 extern void* other_end   __asm("segment$end$__OTHER");
 
-
 int other[100] __attribute__ ((section ("__OTHER,__my"))) = { 1, 2 };
 
 int mytent[1000];

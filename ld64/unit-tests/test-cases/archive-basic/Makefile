@@ -35,11 +35,11 @@ all:
 	${FAIL_IF_BAD_OBJ} foo-${ARCH}.o
 	${CC} ${CCFLAGS} bar.c -c -o bar-${ARCH}.o 
 	${FAIL_IF_BAD_OBJ} bar-${ARCH}.o
-	libtool -static foo-${ARCH}.o  bar-${ARCH}.o -o libfoobar-${ARCH}.a
-	${CC} ${CCFLAGS} main.c -lfoobar-${ARCH} -L. -o main-${ARCH} 
+	${LIBTOOL} -static foo-${ARCH}.o  bar-${ARCH}.o -o libfoobar-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c -lfoobar-${ARCH} -L. -o main-${ARCH} 
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
-	nm main-${ARCH} | grep "_bar" | ${PASS_IFF_EMPTY}
-	${CC} ${CCFLAGS} main.c -Wl,-force_load,libfoobar-${ARCH}.a -o main-${ARCH} 
+	${NM} main-${ARCH} | grep "_bar" | ${PASS_IFF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -Wl,-force_load,libfoobar-${ARCH}.a -o main-${ARCH} 
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
 
 clean:

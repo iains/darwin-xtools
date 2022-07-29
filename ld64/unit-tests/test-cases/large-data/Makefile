@@ -43,7 +43,7 @@ all:
 	${CC} ${CCFLAGS} test2.c -c -o test2.o
 	${CC} ${CCFLAGS} test3.c -c -o test3.o
 	${CC} ${CCFLAGS} test4.c -c -o test4.o
-	${32BIT_SHOULD_FAIL} ${CC} ${CCFLAGS} test1.o test2.o test3.o test4.o -dynamiclib -o libtest.dylib 2> fail.log
+	${32BIT_SHOULD_FAIL} ${CC} ${LINKFLAGS} test1.o test2.o test3.o test4.o -dynamiclib -o libtest.dylib 2> fail.log
 	${PASS_IFF} true
 
 clean:

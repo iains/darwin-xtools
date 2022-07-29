@@ -33,14 +33,13 @@ ifeq (${ARCH},ppc)
 	CODESIGN_ARCH = ppc7400
 endif
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} -dynamiclib justdata.c -o libjustdata.dylib -Wl,-no_compact_unwind
+	${CC} ${LINKFLAGS} -dynamiclib justdata.c -o libjustdata.dylib -Wl,-no_compact_unwind
 	${PASS_IFF_GOOD_MACHO} libjustdata.dylib
-	${CC} ${CCFLAGS} -dynamiclib empty.c -o libempty.dylib -Wl,-no_compact_unwind
-	codesign_allocate -i libempty.dylib -a ${CODESIGN_ARCH} 1024 -o libsigned.dylib
+	${CC} ${LINKFLAGS} -dynamiclib empty.c -o libempty.dylib -Wl,-no_compact_unwind
+	${CODESIGN_ALLOCATE} -i libempty.dylib -a ${CODESIGN_ARCH} 1024 -o libsigned.dylib
 	${PASS_IFF_GOOD_MACHO} libsigned.dylib
 
 clean:

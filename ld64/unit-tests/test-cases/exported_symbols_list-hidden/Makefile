@@ -32,7 +32,7 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -dynamiclib -exported_symbols_list test.exp -o libtest.dylib 2>warning.log
+	${CC} ${LINKFLAGS} test.c -dynamiclib -exported_symbols_list test.exp -o libtest.dylib 2>warning.log
 	grep _func_hidden1 warning.log | ${FAIL_IF_EMPTY}
 	grep _common_hidden1 warning.log | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib

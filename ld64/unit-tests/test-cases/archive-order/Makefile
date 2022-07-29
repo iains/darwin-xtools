@@ -30,18 +30,18 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -c -o foo.o 
-	${CC} ${CCFLAGS} foo2.c -c -o foo2.o 
-	${CC} ${CCFLAGS} foo3.c -c -o foo3.o 
-	${CC} ${CCFLAGS} bar.c -c -o bar.o 
-	${CC} ${CCFLAGS} bar2.c -c -o bar2.o 
-	${CC} ${CCFLAGS} bar3.c -c -o bar3.o 
-	libtool -static foo.o foo2.o foo3.o -o libfoo.a
-	libtool -static bar3.o bar2.o bar.o -o libbar.a
-	${CC} ${CCFLAGS} main.c -lbar -lfoo -L. -o main 
-	nm -njg main | egrep 'foo|bar' > found.order
-	diff found.order expected.order
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${CCFLAGS} foo.c -c -o foo-${ARCH}.o 
+	${CC} ${CCFLAGS} foo2.c -c -o foo2-${ARCH}.o 
+	${CC} ${CCFLAGS} foo3.c -c -o foo3-${ARCH}.o 
+	${CC} ${CCFLAGS} bar.c -c -o bar-${ARCH}.o 
+	${CC} ${CCFLAGS} bar2.c -c -o bar2-${ARCH}.o 
+	${CC} ${CCFLAGS} bar3.c -c -o bar3-${ARCH}.o 
+	${LIBTOOL} -static foo-${ARCH}.o foo2-${ARCH}.o foo3-${ARCH}.o -o libfoo-${ARCH}.a
+	${LIBTOOL} -static bar3-${ARCH}.o bar2-${ARCH}.o bar-${ARCH}.o -o libbar-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c -lbar-${ARCH} -lfoo-${ARCH} -L. -o main-${ARCH} 
+	${NM} -njg main-${ARCH} | egrep 'foo|bar' > found-${ARCH}.order
+	diff found-${ARCH}.order expected.order
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf main *.o *.a found.order
+	rm -rf main-* *.o *.a found-*.order

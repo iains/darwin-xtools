@@ -30,8 +30,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -o main
+	${CC} ${LINKFLAGS} main.c -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:
-	rm  main
+	rm -f main

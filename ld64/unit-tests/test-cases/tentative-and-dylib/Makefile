@@ -34,23 +34,22 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-reexport_library,libbar.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-reexport_library,libbar.dylib
 	# verify -warn_commons works
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -Wl,-warn_commons 2> warnings.log
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -Wl,-warn_commons 2> warnings.log
 	grep "using common symbol" warnings.log | ${FAIL_IF_EMPTY}
 	# verify -commons use_dylibs works
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -Wl,-commons,use_dylibs 
-	nm -m main | grep _var | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -Wl,-commons,use_dylibs 
+	${NM} -m main | grep _var | grep libfoo | ${FAIL_IF_EMPTY}
 	# verify -commons ignore_dylibs works
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -Wl,-commons,ignore_dylibs 
-	nm -m main | grep _var | grep __DATA | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -Wl,-commons,ignore_dylibs 
+	${NM} -m main | grep _var | grep __DATA | ${FAIL_IF_EMPTY}
 	# verify -commons error works
-	 ${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.c libfoo.dylib -o main -Wl,-commons,error  2> warnings.log
+	 ${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -Wl,-commons,error  2> warnings.log
 	# verify -commons use_dylibs works with indirect dylibs
-	${CC} ${CCFLAGS} main.c  -Dvar=bar libfoo.dylib -o main -Wl,-commons,use_dylibs 
-	nm -m main | grep _bar | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c  -Dvar=bar libfoo.dylib -o main -Wl,-commons,use_dylibs 
+	${NM} -m main | grep _bar | grep libfoo | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
-		
 
 clean:
 	rm -rf main libfoo.dylib libbar.dylib warnings.log

@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.4
 include ${TESTROOT}/include/common.makefile
 
 #
@@ -28,15 +29,22 @@ include ${TESTROOT}/include/common.makefile
 #
 
 run: all
+all: all-${ARCH}
 
+all-x86_64: all-true
+all-ppc: all-true
+all-ppc64: all-true
+all-arm: all-true
 
+all-true:
+	${PASS_IFF} true
 
-all:
-	${CC} ${CCFLAGS} hello.c -o hello
-	size -l hello | grep __IMPORT | ${FAIL_IF_STDIN} 
-	${CC} ${CCFLAGS} hello.c -dynamiclib -o libhello.dylib 
-	size -l libhello.dylib | grep __IMPORT | ${FAIL_IF_STDIN}
+all-i386:
+	${CC} ${LINKFLAGS} hello.c -o hello
+	${SIZE} -l hello | grep __IMPORT | ${FAIL_IF_STDIN} 
+	${CC} ${LINKFLAGS} hello.c -dynamiclib -o libhello.dylib 
+	${SIZE} -l libhello.dylib | grep __IMPORT | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} hello
 
 clean:
-	rm  hello libhello.dylib
+	rm -f hello libhello.dylib
