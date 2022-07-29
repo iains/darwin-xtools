@@ -27,6 +27,11 @@ include ${TESTROOT}/include/common.makefile
 # <rdar://problem/6583757> i386 relocation error with negative offsets from local labels
 #
 
+# but it cannot work as things stand, since -r reorders the sections so that
+# all the ones from the same segment are together .. but the compiler emits
+# __eh_frames and __compact_unwind out of order.  We suppress EH...
+
+
 ifeq (${ARCH},i386)
 	TARGET =  run-i386
 else 
@@ -48,7 +53,7 @@ all-other:
 	
 
 all-func:
-	${CC} ${CCFLAGS} test.s -c -o test.o
+	${CC} ${CCFLAGS} test.s -c -o test.o -fno-unwind-tables -fno-asynchronous-unwind-tables
 	${OBJECTDUMP} test.o | grep "direct(anon@__data+0x00000000) + 0xFFFFFFFFFFFFFFE2" | ${FAIL_IF_EMPTY}
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.o -o test-r.o

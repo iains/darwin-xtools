@@ -31,6 +31,11 @@ include ${TESTROOT}/include/common.makefile
 # The before and after .o files are then diff'ed.
 # No differences means this test passes
 #
+
+# but it cannot work as things stand, since -r reorders the sections so that
+# all the ones from the same segment are together .. but the compiler emits
+# __eh_frames and __compact_unwind out of order.  We suppress EH...
+
 ifneq (${ARCH},x86_64)
 	PIC=-mdynamic-no-pic
 endif
@@ -38,7 +43,7 @@ endif
 run: all
 # -Wno-array-bounds
 all:
-	${CC} ${CCFLAGS} -Os $(PIC) test.c -c -o test.${ARCH}.o
+	${CC} ${CCFLAGS} -Os $(PIC) test.c -c -o test.${ARCH}.o -fno-unwind-tables -fno-asynchronous-unwind-tables
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_content test.${ARCH}.o > test.${ARCH}.o.dump
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.${ARCH}.o -o test-r.${ARCH}.o

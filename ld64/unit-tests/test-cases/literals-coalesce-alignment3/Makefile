@@ -23,8 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-#LD=ld64
-
 #
 # The point of this test is to verify that when two cstrings
 # are coalesced that the one with greater alignment is used.
