@@ -31,13 +31,12 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
-	libtool -static foo.o -o libfoo.a 
+	${LIBTOOL} -static foo.o -o libfoo.a 
 	${CC} ${CCFLAGS} main.c -c -o main.o
-	${CC} ${CCFLAGS} main.o libfoo.a -Wl,-order_file,main.order -o main
+	${CC} ${LINKFLAGS} main.o libfoo.a -Wl,-order_file,main.order -o main
 	${FAIL_IF_BAD_MACHO} main
-	nm -n -j main | egrep "_main|_foo" > main.actual
+	${NM} -n -j main | egrep "_main|_foo" > main.actual
 	${PASS_IFF} diff main.actual main.expected
-
 
 clean:
 	rm -rf *.o libfoo.a main main.actual

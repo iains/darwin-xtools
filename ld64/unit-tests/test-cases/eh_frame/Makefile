@@ -32,17 +32,17 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CXX} ${CCXXFLAGS} foo.cxx -dynamiclib -o libfoo.dylib
+	${CXX} ${CXXLINKFLAGS} foo.cxx -dynamiclib -o libfoo.dylib
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	nm libfoo.dylib | grep '.eh' | ${FAIL_IF_STDIN}
-	${CXX} ${CCXXFLAGS} foo.cxx -c -o foo.o
+	${NM} libfoo.dylib | grep '.eh' | ${FAIL_IF_STDIN}
+	${CXX} ${CXXFLAGS} foo.cxx -c -o foo.o
 	${FAIL_IF_BAD_OBJ} foo.o
 	${LD} -r foo.o -o foo2.o
 	${FAIL_IF_BAD_OBJ} foo2.o
-	${CXX} ${CCXXFLAGS} foo2.o bar.cxx -dynamiclib -o libfoobar.dylib
+	${CXX} ${CXXLINKFLAGS} foo2.o bar.cxx -dynamiclib -o libfoobar.dylib
 	${FAIL_IF_BAD_MACHO} libfoobar.dylib
 	dwarfdump --eh-frame --verify libfoobar.dylib > /dev/null
-	nm libfoobar.dylib | grep '.eh' | ${PASS_IFF_EMPTY}
+	${NM} libfoobar.dylib | grep '.eh' | ${PASS_IFF_EMPTY}
 
 clean:
-	rm  *.dylib *.o
+	rm  -f *.dylib *.o

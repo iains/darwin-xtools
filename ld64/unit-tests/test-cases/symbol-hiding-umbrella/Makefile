@@ -34,12 +34,12 @@ run: all
 all:
 	# In this test case aaa and bbb both moved between libfoo and libar
 	# between 10.4 and 10.5.
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib -install_name /usr/lib/libbar.dylib
-	${CC} ${CCFLAGS} -dynamiclib foo.c -Wl,-reexport_library,libbar.dylib -o libfoo.dylib 
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib -install_name /usr/lib/libbar_alt.dylib
-	${CC} ${CCFLAGS} main.c -o main-10.5  libfoo.dylib -L. -mmacosx-version-min=10.5
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.c -o main-10.6  libfoo.dylib -L. -mmacosx-version-min=10.6  2>/dev/null
-	${CC} ${CCFLAGS} main.c -o main-10.7  libfoo.dylib -L. -mmacosx-version-min=10.7
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib -install_name /usr/lib/libbar.dylib
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -Wl,-reexport_library,libbar.dylib -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib -install_name /usr/lib/libbar_alt.dylib
+	${CC} ${LINKFLAGS} main.c -o main-10.5  libfoo.dylib -L. -mmacosx-version-min=10.5
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.c -o main-10.6  libfoo.dylib -L. -mmacosx-version-min=10.6  2>/dev/null
+	${CC} ${LINKFLAGS} main.c -o main-10.7  libfoo.dylib -L. -mmacosx-version-min=10.7
 	${PASS_IFF_GOOD_MACHO} main-10.7
 
 

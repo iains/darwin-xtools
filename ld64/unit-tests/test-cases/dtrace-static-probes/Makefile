@@ -35,20 +35,20 @@ run: main main-dead_strip libmain.dylib main-r
 	${PASS_IFF_GOOD_MACHO} main-r
 
 main: main.c foo.h bar.h
-	${CC} ${CCFLAGS} main.c -o main 
+	${CC} ${LINKFLAGS} main.c -o main 
 
 main-dead_strip: main.c foo.h bar.h
-	${CC} ${CCFLAGS} main.c -o main-dead_strip -dead_strip 
+	${CC} ${LINKFLAGS} main.c -o main-dead_strip -dead_strip 
 
 main-r: main.c foo.h bar.h
 	${CC} ${CCFLAGS} main.c -c -o main.o 
 	#${FAIL_IF_BAD_OBJ} main.o
 	${LD} -r main.o -o main-r.o 
 	#${FAIL_IF_BAD_OBJ} main-r.o
-	${CC} ${CCFLAGS} main-r.o -o main-r
+	${CC} ${LINKFLAGS} main-r.o -o main-r
 
 libmain.dylib: main.c foo.h bar.h
-	${CC} ${CCFLAGS} main.c -dynamiclib -o libmain.dylib 
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib 
 
 foo.h:	foo.d
 	dtrace -h -s foo.d

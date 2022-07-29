@@ -29,11 +29,11 @@ include ${TESTROOT}/include/common.makefile
 
 all:
 	${CC} ${CCFLAGS} foo.s -c -o foo.o
-	nm -m foo.o | grep _mycomm64aligned  | grep '(alignment 2^6)'  | ${FAIL_IF_EMPTY}
-	nm -m foo.o | grep _mycomm16kaligned | grep '(alignment 2^14)'  | ${FAIL_IF_EMPTY}
+	${NM} -m foo.o | grep _mycomm64aligned  | grep '(alignment 2^6)'  | ${FAIL_IF_EMPTY}
+	${NM} -m foo.o | grep _mycomm16kaligned | grep '(alignment 2^14)'  | ${FAIL_IF_EMPTY}
 	${LD} foo.o -r -o foo2.o
-	nm -m foo2.o | grep _mycomm64aligned  | grep '(alignment 2^6)'  | ${FAIL_IF_EMPTY}
-	nm -m foo2.o | grep _mycomm16kaligned | grep '(alignment 2^14)'  | ${FAIL_IF_EMPTY}
+	${NM} -m foo2.o | grep _mycomm64aligned  | grep '(alignment 2^6)'  | ${FAIL_IF_EMPTY}
+	${NM} -m foo2.o | grep _mycomm16kaligned | grep '(alignment 2^14)'  | ${FAIL_IF_EMPTY}
 	${PASS_IFF} true
 	
 clean:

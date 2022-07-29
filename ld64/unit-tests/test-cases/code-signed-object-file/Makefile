@@ -13,13 +13,12 @@ ifeq (${ARCH},ppc)
 	CODE_SIGN_ARCH = ppc7400
 endif
 
-
 run: all
 
 all:
 	${CC} foo.c -c -o foo.o
 	${LD} -r foo.o -o foo2.o
-	codesign_allocate -i foo2.o -a ${CODE_SIGN_ARCH} 256 -o foo3.o
+	${CODESIGN_ALLOCATE} -i foo2.o -a ${CODE_SIGN_ARCH} 256 -o foo3.o
 	${PASS_IFF} true 
 	
 clean:

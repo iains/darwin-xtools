@@ -31,18 +31,18 @@ run: all
 
 all:
 # build base library
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o `pwd`/libbar.dylib
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o `pwd`/libbar.dylib
 	${FAIL_IF_BAD_MACHO} libbar.dylib
 
 # build library the re-exports base library
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib libbar.dylib -sub_library libbar
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib libbar.dylib -sub_library libbar
 # test that foo does not have MH_NO_REEXPORTED_DYLIBS bit
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
 
 # build libray that links with base but does not re-export it
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo2.dylib libbar.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo2.dylib libbar.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	otool -hv libfoo2.dylib | grep NO_REEXPORTED_DYLIBS | ${PASS_IFF_STDIN}
+	${OTOOL} -hv libfoo2.dylib | grep NO_REEXPORTED_DYLIBS | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf *.dylib

@@ -36,10 +36,10 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} myglobal.c myhidden.s -dynamiclib -o libmy.dylib 2>warnings.txt
+	${CC} ${LINKFLAGS} myglobal.c myhidden.s -dynamiclib -o libmy.dylib 2>warnings.txt
 	grep "global weak"  warnings.txt | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} libmy.dylib
-	${CC} ${CCFLAGS} myglobal.c myhidden.s -dynamiclib -Wl,-exported_symbol,_test -o libmy2.dylib 
+	${CC} ${LINKFLAGS} myglobal.c myhidden.s -dynamiclib -Wl,-exported_symbol,_test -o libmy2.dylib 
 	${PASS_IFF_GOOD_MACHO} libmy2.dylib
 
 clean:

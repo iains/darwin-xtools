@@ -29,10 +29,15 @@ include ${TESTROOT}/include/common.makefile
 
 all: all-${ARCH}
 
+all-ppc: skip
+all-ppc64: skip
 all-i386: skip
 all-x86_64: skip
 all-armv6: skip 
 all-armv7: skip
+
+skip:
+	${PASS_IFF} true
 
 all-arm64: AdrpAdd AdrpAddLdr AdrpLdr AdrpLdrGotLdr AdrpAddStr AdrpLdrGotStr AdrpLdrGot
 
@@ -1411,8 +1416,6 @@ AdrpLdrGot:  main.o
 	${CC} ${CCFLAGS} AdrpLdrGot-localfar.o main.o -o AdrpLdrGot-localfar.exe
 	${OTOOL} -tV AdrpLdrGot-localfar.exe | grep 'adrp\tx1' | ${FAIL_IF_EMPTY}
 	${OTOOL} -tV AdrpLdrGot-localfar.exe | grep 'add\tx1' | ${FAIL_IF_EMPTY}
-	
-
 
 clean:
 	rm -f *.o   *.exe   *.dylib

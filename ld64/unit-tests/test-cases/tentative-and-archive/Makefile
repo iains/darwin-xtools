@@ -40,20 +40,19 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
-	libtool -static foo.o -o libfoo.a 
-	${CC} ${CCFLAGS} main.c libfoo.a libbar.dylib -o main
+	${LIBTOOL} -static foo.o -o libfoo.a 
+	${CC} ${LINKFLAGS} main.c libfoo.a libbar.dylib -o main
 	# verify _foo got pulled in because _var was a tentative in main.o
-	nm main | grep "_foo" | ${FAIL_IF_EMPTY}
+	${NM} main | grep "_foo" | ${FAIL_IF_EMPTY}
 	# verify -dead_strip pulls in non-tentative _var from libfoo.a
-	${CC} ${CCFLAGS} main.c libfoo.a libbar.dylib -o main -dead_strip
-	nm -m main | grep "_var" | grep __data | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.a libbar.dylib -o main -dead_strip
+	${NM} -m main | grep "_var" | grep __data | ${FAIL_IF_EMPTY}
 	# verify dynamic_lookup works and has no duplicate symbols
-	${CC} ${CCFLAGS} main.c libfoo.a -o main -undefined dynamic_lookup
-	nm -m main | grep "looked up" | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
-		
+	${CC} ${LINKFLAGS} main.c libfoo.a -o main -undefined dynamic_lookup
+	${NM} -m main | grep "looked up" | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main	
 
 clean:
 	rm -rf main libfoo.a foo.o libbar.dylib

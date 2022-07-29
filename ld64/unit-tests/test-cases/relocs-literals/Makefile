@@ -33,9 +33,9 @@ include ${TESTROOT}/include/common.makefile
 #
 
 run: all
-
+# -Wno-array-bounds
 all:
-	${CC} ${CCFLAGS} -Os $(MDYNAMIC_NO_PIC) test.c -c -o test.${ARCH}.o -Wno-array-bounds
+	${CC} ${CCFLAGS} -Os $(MDYNAMIC_NO_PIC) test.c -c -o test.${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_content test.${ARCH}.o > test.${ARCH}.o.dump
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.${ARCH}.o -o test-r.${ARCH}.o

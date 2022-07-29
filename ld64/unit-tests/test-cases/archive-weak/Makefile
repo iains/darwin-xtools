@@ -32,6 +32,7 @@ include ${TESTROOT}/include/common.makefile
 # 2) main.o has a weak symbol and the archive has a non-weak symbol (_baz)
 # In both cases the linker should ignore the archive. 
 #
+#
 
 run: all
 
@@ -42,10 +43,10 @@ all:
 	${FAIL_IF_BAD_OBJ} bar-${ARCH}.o
 	${CC} ${CCFLAGS} baz.c -c -o baz-${ARCH}.o 
 	${FAIL_IF_BAD_OBJ} baz-${ARCH}.o
-	libtool -static foo-${ARCH}.o  bar-${ARCH}.o  baz-${ARCH}.o -o libfoobar-${ARCH}.a
-	${CC} ${CCFLAGS} main.c foo.c -lfoobar-${ARCH} -L. -o main-${ARCH} 
+	${LIBTOOL} -static foo-${ARCH}.o  bar-${ARCH}.o  baz-${ARCH}.o -o libfoobar-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c foo.c -lfoobar-${ARCH} -L. -o main-${ARCH} 
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
-	nm -m main-${ARCH} | grep _baz | grep weak | ${PASS_IFF_STDIN}
+	${NM} -m main-${ARCH} | grep _baz | grep weak | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf main-* *.o *.a

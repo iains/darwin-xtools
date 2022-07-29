@@ -32,10 +32,10 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${FAIL_IF_BAD_OBJ} foo.o
-	libtool -static foo.o -o libfoo.a
-	${CC} ${CCFLAGS}  main.c -dynamiclib -Os libfoo.a -dead_strip -o libmain.dylib
-	nm libmain.dylib | grep _bar | ${FAIL_IF_EMPTY}
-	nm libmain.dylib | grep _baz | ${FAIL_IF_STDIN}
+	${LIBTOOL} -static foo.o -o libfoo.a
+	${CC} ${LINKFLAGS}  main.c -dynamiclib -Os libfoo.a -dead_strip -o libmain.dylib
+	${NM} libmain.dylib | grep _bar | ${FAIL_IF_EMPTY}
+	${NM} libmain.dylib | grep _baz | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} libmain.dylib
 	
 

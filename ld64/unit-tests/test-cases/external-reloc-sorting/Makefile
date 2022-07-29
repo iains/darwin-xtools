@@ -32,8 +32,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

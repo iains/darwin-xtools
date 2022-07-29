@@ -34,10 +34,10 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${CC} ${CCFLAGS} bar.c -c -o bar.o
-	libtool -static foo.o bar.o -o libfoobar.a
-	${CC} ${CCFLAGS}  main.c libfoobar.a -dead_strip -o  main -Wl,-w
-	${PASS_IFF_GOOD_MACHO} main
+	${LIBTOOL} -static foo.o bar.o -o libfoobar.a
+	${CC} ${LINKFLAGS} main.c libfoobar.a -dead_strip -o  main-${ARCH} -Wl,-w
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 	
 
 clean:
-	rm -rf main libfoobar.a foo.o bar.o
+	rm -rf main-${ARCH} libfoobar.a foo.o bar.o

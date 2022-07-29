@@ -33,7 +33,7 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${PASS_IFF_ERROR} ${CC} ${CCFLAGS} main.c -o main -pagezero_size 123 -Wl,-fatal_warnings  2>msgs.txt
+	${PASS_IFF_ERROR} ${CC} ${LINKFLAGS} main.c -o main -pagezero_size 123 -Wl,-fatal_warnings  2>msgs.txt
 
 
 clean:

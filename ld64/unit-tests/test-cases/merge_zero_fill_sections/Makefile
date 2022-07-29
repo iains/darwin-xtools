@@ -30,11 +30,11 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -o main -Wl,-merge_zero_fill_sections 
-	size -l main | grep __bss  | ${FAIL_IF_STDIN}
-	size -l main | grep __common | ${FAIL_IF_STDIN}
-	size -l main | grep __zerofill | grep "offset 0" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main -Wl,-merge_zero_fill_sections 
+	${SIZE} -l main | grep __bss  | ${FAIL_IF_STDIN}
+	${SIZE} -l main | grep __common | ${FAIL_IF_STDIN}
+	${SIZE} -l main | grep __zerofill | grep "offset 0" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:
-	rm  main
+	rm -f main

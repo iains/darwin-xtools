@@ -50,9 +50,8 @@ all:
 # info seems to not work, use warning:
 	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c main.c -o main-${ARCH}.o
 
-
-	${FAIL_IF_ERROR} ${LD} -arch ${ARCH} \
-		-stack_addr ${STACK_ADDR} \
+	${FAIL_IF_SUCCESS} ${LD} -arch ${ARCH} -syslibroot ${SDK} \
+		-macosx_version_min 10.5 -stack_addr ${STACK_ADDR} \
 		-lcrt1.o -lSystem \
 		main-${ARCH}.o -o main \
 		2>lderr.out
@@ -61,17 +60,16 @@ all:
 #ifeq (,${findstring 64,$(ARCH)})
 #	grep "warning no -stack_size specified using the default size" lderr.out | ${FAIL_IF_EMPTY}
 #else
-#	grep "failed: -stack_addr must be used with -stack_size" lderr.out | ${FAIL_IF_EMPTY}
+	grep "\-stack_addr must be used with -stack_size" lderr.out | ${FAIL_IF_EMPTY}
 #endif
 
-	
 # Check for __UNIXSTACK section in object, check that it has the correct value
-	${FAIL_IF_ERROR} ${OTOOL} -l main>ldcmds.out
-	(echo '1,/^[ ]*segname __UNIXSTACK$$/-d'; echo '/^[ ]*segname /,$$d'; echo w; echo q) | ed ldcmds.out >/dev/null
-	grep __UNIXSTACK ldcmds.out | ${FAIL_IF_EMPTY}
-	grep " vmsize[ ]*${STACK_SIZE}" ldcmds.out | ${FAIL_IF_EMPTY}
-	grep " vmaddr[ ]*${STACK_TOP}" ldcmds.out | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
+#	${FAIL_IF_ERROR} ${OTOOL} -l main>ldcmds.out
+#	(echo '1,/^[ ]*segname __UNIXSTACK$$/-d'; echo '/^[ ]*segname /,$$d'; echo w; echo q) | ed ldcmds.out >/dev/null
+#	grep __UNIXSTACK ldcmds.out | ${FAIL_IF_EMPTY}
+#	grep " vmsize[ ]*${STACK_SIZE}" ldcmds.out | ${FAIL_IF_EMPTY}
+#	grep " vmaddr[ ]*${STACK_TOP}" ldcmds.out | ${FAIL_IF_EMPTY}
+#	${PASS_IFF_GOOD_MACHO} main
 
 clean:
 	rm -rf *.o *.err *.out main

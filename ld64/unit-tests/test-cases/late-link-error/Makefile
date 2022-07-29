@@ -34,8 +34,8 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} link_error.s -dynamiclib -o link_error-${ARCH}  2> fail.log
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} link_error.s -dynamiclib -o link_error-${ARCH}  2> fail.log
 	${FAIL_IFF} cat link_error-${ARCH}  2> fail.log
 
 clean:
-	rm link_error-* fail.log
+	rm -f link_error-* fail.log

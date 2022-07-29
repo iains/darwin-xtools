@@ -31,18 +31,18 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -c -o foo.o 
-	${CC} ${CCFLAGS} bar.c -c -o bar.o 
-	${CC} ${CCFLAGS} baz.c -c -o baz.o 
-	${CC} ${CCFLAGS} bat.c -c -o bat.o 
-	libtool -static foo.o bar.o -o libfoobar.a
-	libtool -static baz.o bat.o -o libbazbat.a
-	${CC} ${CCFLAGS} main.c -Wl,-force_load,libfoobar.a libbazbat.a -o main -Wl,-why_load
-	nm main | grep "_bar" | ${FAIL_IF_EMPTY}
-	nm main | grep "_foo" | ${FAIL_IF_EMPTY}
-	nm main | grep "_baz" | ${FAIL_IF_STDIN}
-	nm main | grep "_bat" | ${FAIL_IF_STDIN}
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${CCFLAGS} foo.c -c -o foo-${ARCH}.o 
+	${CC} ${CCFLAGS} bar.c -c -o bar-${ARCH}.o 
+	${CC} ${CCFLAGS} baz.c -c -o baz-${ARCH}.o 
+	${CC} ${CCFLAGS} bat.c -c -o bat-${ARCH}.o 
+	${LIBTOOL} -static foo-${ARCH}.o bar-${ARCH}.o -o libfoobar-${ARCH}.a
+	${LIBTOOL} -static baz-${ARCH}.o bat-${ARCH}.o -o libbazbat-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c -Wl,-force_load,libfoobar-${ARCH}.a libbazbat-${ARCH}.a -o main-${ARCH} -Wl,-why_load
+	${NM} main-${ARCH} | grep "_bar" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_foo" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_baz" | ${FAIL_IF_STDIN}
+	${NM} main-${ARCH} | grep "_bat" | ${FAIL_IF_STDIN}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf main *.o *.a
+	rm -rf main-* *.o *.a

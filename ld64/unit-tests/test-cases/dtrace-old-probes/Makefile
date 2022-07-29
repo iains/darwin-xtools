@@ -28,9 +28,9 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all: 
-	${CC} ${CCFLAGS} main.c -o main 
-	nm main | grep _dtrace_probe | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${LINKFLAGS} main.c -o main-${ARCH}
+	${NM} main-${ARCH} | grep _dtrace_probe | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 	
 clean:
-	rm -rf main 
+	rm -rf main-${ARCH}

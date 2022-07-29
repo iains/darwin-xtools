@@ -23,7 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # The point of this test is to verify a .o built with
 # commons and one built without commons can be merged.

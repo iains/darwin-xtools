@@ -32,8 +32,8 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -dynamiclib -exported_symbols_list test.exp -o libtest.dylib
-	nm -jg libtest.dylib | grep '^_' > test.nm
+	${CC} ${LINKFLAGS} test.c -dynamiclib -exported_symbols_list test.exp -o libtest.dylib
+	${NM} -jg libtest.dylib | grep '^_' > test.nm
 	diff test.nm expected.nm
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
 

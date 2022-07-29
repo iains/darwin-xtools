@@ -32,10 +32,10 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name "${PWD}/libbar.dylib"
-	${CC} ${CCFLAGS} foo.c "${PWD}/libbar.dylib" -dynamiclib -o libfoo.dylib -sub_library libbar
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -dylib_file "${PWD}/libbar.dylib:libbar2.dylib" 2>warnings.log
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name "${PWD}/libbar.dylib"
+	${CC} ${LINKFLAGS} foo.c "${PWD}/libbar.dylib" -dynamiclib -o libfoo.dylib -sub_library libbar
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -dylib_file "${PWD}/libbar.dylib:libbar2.dylib" 2>warnings.log
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

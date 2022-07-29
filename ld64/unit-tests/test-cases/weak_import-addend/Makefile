@@ -43,7 +43,7 @@ all-true:
 	${PASS_IFF} true
 
 all-x86_64:	
-	${CC} ${CCFLAGS} -dynamiclib test.s -o libtest.dylib -mmacosx-version-min=10.6
+	${CC} ${LINKFLAGS} -dynamiclib test.s -o libtest.dylib -mmacosx-version-min=10.6
 	${DYLDINFO} -bind -lazy_bind libtest.dylib | grep _malloc | grep weak | ${FAIL_IF_EMPTY}
 	${DYLDINFO} -bind -lazy_bind libtest.dylib | grep _free | grep weak | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib

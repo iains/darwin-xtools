@@ -34,4 +34,4 @@ all:
 	${OBJECTDUMP} foo.o | grep "address of direct(_end)" | ${PASS_IFF_STDIN}
 
 clean:
-	rm  foo.o
+	rm -f foo.o

@@ -31,8 +31,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -bundle -o foo.bundle
+	${CC} ${LINKFLAGS} foo.c -bundle -o foo.bundle
 	${PASS_IFF_GOOD_MACHO} foo.bundle
 
 clean:
-	rm foo.bundle
+	rm -f foo.bundle

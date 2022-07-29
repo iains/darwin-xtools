@@ -32,13 +32,13 @@ run: all
 all:
 
 # Test with the flag
-	${CC} ${CCFLAGS} foo.c -o foo-${ARCH} -Wl,-allow_stack_execute
+	${CC} ${LINKFLAGS} foo.c -o foo-${ARCH} -Wl,-allow_stack_execute
 	${FAIL_IF_BAD_MACHO} foo-${ARCH}
 	${OTOOL} -hv foo-${ARCH} | grep ALLOW_STACK_EXECUTION | ${FAIL_IF_EMPTY}
 	rm -f foo-${ARCH}
 
 # Test without the flag
-	${CC} ${CCFLAGS} foo.c -o foo-${ARCH}
+	${CC} ${LINKFLAGS} foo.c -o foo-${ARCH}
 	${FAIL_IF_BAD_MACHO} foo-${ARCH}
 	${OTOOL} -hv foo-${ARCH} | grep ALLOW_STACK_EXECUTION | ${PASS_IFF_EMPTY}
 

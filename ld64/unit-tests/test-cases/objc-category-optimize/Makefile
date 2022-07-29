@@ -29,7 +29,7 @@ include ${TESTROOT}/include/common.makefile
 OPTIONS = 
 
 ifeq ($(ARCH),i386)
-	OPTIONS = -mios-simulator-version-min=6.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/
+#	OPTIONS = -mios-simulator-version-min=6.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/
 endif
 
 ifeq ($(ARCH),arm)
@@ -38,8 +38,10 @@ endif
 
 all:	all-${ARCH}
 
-all-ppc:
-	${PASS_IFF} true
+all-ppc: all-rest
+all-ppc64: all-rest
+
+#	${PASS_IFF} true
 
 all-i386: all-rest
 all-x86_64: all-rest
@@ -48,26 +50,26 @@ all-armv7: all-rest
 
 all-rest:
 	# check optimization can be turned off
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -framework Foundation -Wl,-no_objc_category_merging -o libno.dylib
-	size -l libno.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_STDIN}
-	otool -ov libno.dylib | grep -A17 __objc_classlist | grep -A16 '_OBJC_CLASS_$$_Foo' | grep "count 1" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -framework Foundation -Wl,-no_objc_category_merging -o libno.dylib
+	${SIZE} -l libno.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_STDIN}
+	${OTOOL} -ov libno.dylib | grep -A17 __objc_classlist | grep -A16 '_OBJC_CLASS_$$_Foo' | grep "count 1" | ${FAIL_IF_EMPTY}
 	# check optimzation of category methods
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -framework Foundation -o libfoo.dylib
-	size -l libfoo.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
-	otool -ov libfoo.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 4" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -framework Foundation -o libfoo.dylib
+	${SIZE} -l libfoo.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
+	${OTOOL} -ov libfoo.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 4" | ${FAIL_IF_EMPTY}
 	# check optimzation of protocol and category methods
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DPROTOCOLS -framework Foundation -o libfoo2.dylib
-	size -l libfoo2.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
-	otool -ov libfoo2.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 6" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DPROTOCOLS -framework Foundation -o libfoo2.dylib
+	${SIZE} -l libfoo2.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
+	${OTOOL} -ov libfoo2.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 6" | ${FAIL_IF_EMPTY}
 	# check optimzation of properties and category methods
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DPROPERTIES -framework Foundation -o libfoo3.dylib
-	size -l libfoo3.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
-	otool -ov libfoo3.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 6" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DPROPERTIES -framework Foundation -o libfoo3.dylib
+	${SIZE} -l libfoo3.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
+	${OTOOL} -ov libfoo3.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 6" | ${FAIL_IF_EMPTY}
 	# check optimzation of category methods and no base methods
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DNO_BASE_METHODS -framework Foundation -o libfoo4.dylib
-	size -l libfoo4.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
-	otool -ov libfoo4.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 3" | ${FAIL_IF_EMPTY}
-	otool -ov libfoo4.dylib | grep -A20 "Meta Class" | grep "count 2" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m cat2.m -DNO_BASE_METHODS -framework Foundation -o libfoo4.dylib
+	${SIZE} -l libfoo4.dylib | grep "__objc_catlist: 0" | ${FAIL_IF_EMPTY}
+	${OTOOL} -ov libfoo4.dylib | grep -A20 __objc_classlist | grep -A20 '_OBJC_CLASS_$$_Foo' | grep "count 3" | ${FAIL_IF_EMPTY}
+	${OTOOL} -ov libfoo4.dylib | grep -A20 "Meta Class" | grep "count 2" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo3.dylib
 	
 	

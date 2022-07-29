@@ -32,14 +32,14 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name "${PWD}/libbar.dylib"
-	${CC} ${CCFLAGS} bar.c -DBAR_EXTRA -dynamiclib -o libbar2.dylib -install_name "${PWD}/libbar.dylib"
-	${CC} ${CCFLAGS} foo.c "${PWD}/libbar.dylib" -dynamiclib -o libfoo.dylib -sub_library libbar
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name "${PWD}/libbar.dylib"
+	${CC} ${LINKFLAGS} bar.c -DBAR_EXTRA -dynamiclib -o libbar2.dylib -install_name "${PWD}/libbar.dylib"
+	${CC} ${LINKFLAGS} foo.c "${PWD}/libbar.dylib" -dynamiclib -o libfoo.dylib -sub_library libbar
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
 	# verify that if main needs bar_extra, it fails
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.c -DBAR_EXTRA libfoo.dylib -o main  2> fail.log
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.c -DBAR_EXTRA libfoo.dylib -o main  2> fail.log
 	# verify that if main needs bar_extra, it works with -dylib_file option
-	${CC} ${CCFLAGS} main.c -DBAR_EXTRA libfoo.dylib -o main -dylib_file "${PWD}/libbar.dylib:libbar2.dylib"
+	${CC} ${LINKFLAGS} main.c -DBAR_EXTRA libfoo.dylib -o main -dylib_file "${PWD}/libbar.dylib:libbar2.dylib"
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

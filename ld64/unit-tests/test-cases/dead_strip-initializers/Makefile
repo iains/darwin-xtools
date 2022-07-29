@@ -31,17 +31,17 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CXX} ${CCFLAGS} main.cxx other.cxx -dead_strip -o main
-	${FAIL_IF_BAD_MACHO} main
-	nm main | grep dead_door_knob | ${FAIL_IF_STDIN}
-	nm main | grep ctr | ${FAIL_IF_EMPTY}
-	nm main | grep dtr | ${FAIL_IF_EMPTY}
-	${CXX} ${CCFLAGS} -static main.cxx other.cxx -dead_strip -nostdlib -e _main -o main-static -Wl,-new_linker
-	${FAIL_IF_BAD_MACHO} main-static
-	nm main-static | grep dead_door_knob | ${FAIL_IF_STDIN}
-	nm main-static | grep ctr | ${FAIL_IF_EMPTY}
-	nm main-static | grep dtr | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main-static
+	${CXX} ${LINKFLAGS} main.cxx other.cxx -dead_strip -o main-${ARCH}
+	${FAIL_IF_BAD_MACHO} main-${ARCH}
+	${NM} main-${ARCH} | grep dead_door_knob | ${FAIL_IF_STDIN}
+	${NM} main-${ARCH} | grep ctr | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep dtr | ${FAIL_IF_EMPTY}
+	${CXX} ${LINKFLAGS} -fapple-kext -static main.cxx other.cxx -dead_strip -nostdlib -e _main -o main-static-${ARCH} -Wl,-new_linker
+	${FAIL_IF_BAD_MACHO} main-static-${ARCH}
+	${NM} main-static-${ARCH} | grep dead_door_knob | ${FAIL_IF_STDIN}
+	${NM} main-static-${ARCH} | grep ctr | ${FAIL_IF_EMPTY}
+	${NM} main-static-${ARCH} | grep dtr | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main-static-${ARCH}
 
 clean:
-	rm -rf main main-static
+	rm -rf main-${ARCH} main-static-${ARCH}

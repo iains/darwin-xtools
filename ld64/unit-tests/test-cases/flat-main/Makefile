@@ -32,9 +32,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -o main-${ARCH} -flat_namespace 
-	otool -Iv main-${ARCH} | grep _foo | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -o main-${ARCH} -flat_namespace 
+	${OTOOL} -Iv main-${ARCH} | grep _foo | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm  main-*
+	rm  -f main-*

@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS=10.4
 include ${TESTROOT}/include/common.makefile
 
 SHELL = bash # use bash shell so we can redirect just stderr
@@ -34,16 +35,17 @@ all: all-${ARCH}
 
 all-i386: all-mac
 all-x86_64: all-mac
+all-ppc: all-mac
+all-ppc64: all-mac
 all-armv6: all-good
 all-armv7: all-good
 
-
 all-mac: 
 	mkdir -p other
-	${CC} foo.c -dynamiclib -o other/libfoo.dylib -mmacosx-version-min=10.4
-	${CC} bar.c -dynamiclib -o libbar.dylib other/libfoo.dylib -sub_library libfoo -mmacosx-version-min=10.4
-	${CC} foo.c -dynamiclib -o libfoo.dylib libbar.dylib -sub_library libbar -mmacosx-version-min=10.4
-	${CC} main.c libfoo.dylib -o main -L. 2>errmsg || true
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o other/libfoo.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib other/libfoo.dylib -sub_library libfoo
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib libbar.dylib -sub_library libbar
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -L. 2>errmsg || true
 	grep "cycle" errmsg | ${PASS_IFF_STDIN}
 
 all-good:

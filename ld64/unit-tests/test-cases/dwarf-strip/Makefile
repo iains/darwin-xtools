@@ -31,10 +31,10 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} -gdwarf-2 hello.c -Wl,-S -o hello 
+	${CC} ${LINKFLAGS} -gdwarf-2 hello.c -Wl,-S -o hello 
 	#${CC} ${CCFLAGS} -gdwarf-2 hello.c -o hello 
 	${FAIL_IF_BAD_MACHO} hello
-	nm -ap hello | grep -e " - " | ${PASS_IFF_EMPTY}	
+	${NM} -ap hello | grep -e " - " | ${PASS_IFF_EMPTY}	
 
 clean:
 	rm -rf hello hello.dSYM

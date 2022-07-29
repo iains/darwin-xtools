@@ -30,15 +30,15 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} common.c -o common
-	otool -lv common | grep -A8 __common | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} common.c -o common
+	${OTOOL} -lv common | grep -A8 __common | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} common
-	${CC} ${CCFLAGS} bss.c -o bss
-	otool -lv bss | grep -A8 __bss | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} bss.c -o bss
+	${OTOOL} -lv bss | grep -A8 __bss | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} bss
-	${CC} ${CCFLAGS} both.c -o both
-	otool -lv both | grep -A8 __common | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
-	otool -lv both | grep -A8 __bss | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} both.c -o both
+	${OTOOL} -lv both | grep -A8 __common | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv both | grep -A8 __bss | grep S_ZEROFILL | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} both
 
 clean:

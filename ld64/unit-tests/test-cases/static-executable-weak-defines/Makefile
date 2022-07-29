@@ -28,8 +28,8 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all:
-	${CC} ${CCFLAGS} test.c -static -o test -e _entry -nostdlib -Wl,-new_linker
-	strip -S test -o test.stripped
+	${CC} ${LINKFLAGS} test.c -static -o test -e _entry -nostdlib -Wl,-new_linker
+	${STRIP} -S test -o test.stripped
 	${PASS_IFF_GOOD_MACHO} test
 
 clean:

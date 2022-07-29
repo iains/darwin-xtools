@@ -25,10 +25,9 @@ include ${TESTROOT}/include/common.makefile
 
 run: all
 
-
 all:
-	${FAIL_IF_ERROR} $(CXX) main.cxx -arch ${ARCH} -o main
-	${FAIL_IF_ERROR} nm -j main | grep '\.eh$$'| ${FAIL_IF_STDIN}
+	${FAIL_IF_ERROR} $(CXX) $(CXXLINKFLAGS) main.cxx -o main
+	${FAIL_IF_ERROR} ${NM} -j main | grep '\.eh$$'| ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
 clean:
 	rm -rf *.o main main-* *.nm

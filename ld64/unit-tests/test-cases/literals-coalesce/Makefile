@@ -31,7 +31,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${ASMFLAGS} literals.s -c -o literals-${ARCH}.o
+	${AS} -arch ${ARCH} literals.s -o literals-${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} literals-${ARCH}.o | grep 'name:'| uniq -c | grep -v '^   [1|2]' | ${FAIL_IF_STDIN}
 	${LD} -arch ${ARCH} -r literals-${ARCH}.o -o literals-r-${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} literals-r-${ARCH}.o | grep 'name:' | uniq -d | ${PASS_IFF_EMPTY}

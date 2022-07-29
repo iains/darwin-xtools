@@ -29,12 +29,14 @@ include ${TESTROOT}/include/common.makefile
 # 3 mod 16.  Therefore the last hexdigit of the address 
 # must be 3.
 
+# Ensure that the compiler picks up the intended linker
+
 run: all
 
 all:
-	${CC} ${ASMFLAGS} -dynamiclib -single_module -dead_strip foo.c align.s  -exported_symbols_list foo.exp -o foo.${ARCH}.dylib
+	${CC} ${LINKFLAGS} -dynamiclib -single_module -dead_strip foo.c align.s  -exported_symbols_list foo.exp -o foo.${ARCH}.dylib
 	${FAIL_IF_BAD_MACHO} foo.${ARCH}.dylib
-	nm foo.${ARCH}.dylib | grep "3 d _b" | ${PASS_IFF_STDIN}
+	${NM} foo.${ARCH}.dylib | grep "3 d _b" | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf *.dylib 

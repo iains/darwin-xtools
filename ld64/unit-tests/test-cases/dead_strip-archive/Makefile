@@ -35,9 +35,9 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${FAIL_IF_BAD_OBJ} foo.o
-	libtool -static foo.o -o libfoo.a
-	${CC} ${CCFLAGS}  main.c -Os libfoo.a -dead_strip -o main
-	${PASS_IFF_GOOD_MACHO} main
+	${LIBTOOL} -static foo.o -o libfoo.a
+	${CC} ${LINKFLAGS}  main.c -Os libfoo.a -dead_strip -o main-${ARCH}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf main *.a *.o
+	rm -rf main-${ARCH} *.a *.o

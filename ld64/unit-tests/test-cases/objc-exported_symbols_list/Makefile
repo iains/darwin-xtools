@@ -31,9 +31,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} -dynamiclib foo.m  -framework Foundation -exported_symbols_list foo.exp -o libfoo.dylib
-	nm -m libfoo.dylib | grep Foo | grep ') external' | ${FAIL_IF_EMPTY}
-	nm -m libfoo.dylib | grep Bar | grep non-external | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} -dynamiclib foo.m  -framework Foundation -exported_symbols_list foo.exp -o libfoo.dylib
+	${NM} -m libfoo.dylib | grep Foo | grep ') external' | ${FAIL_IF_EMPTY}
+	${NM} -m libfoo.dylib | grep Bar | grep non-external | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:

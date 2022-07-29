@@ -30,12 +30,11 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -dynamiclib -Wl,-interposable -o libtest.dylib
+	${CC} ${LINKFLAGS} test.c -dynamiclib -Wl,-interposable -o libtest.dylib
 	# only stub should be to _test
-	otool -Iv libtest.dylib | grep '1 entries' | ${FAIL_IF_EMPTY}
-	otool -Iv libtest.dylib | grep '_test' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv libtest.dylib | grep '1 entries' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv libtest.dylib | grep '_test' | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
-	
 
 clean:
-	rm libtest.dylib
+	rm -f libtest.dylib

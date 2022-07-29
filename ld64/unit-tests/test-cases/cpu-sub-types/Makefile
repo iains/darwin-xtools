@@ -29,7 +29,12 @@ include ${TESTROOT}/include/common.makefile
 
 CC_ARM = $(shell xcrun -find clang)  -miphoneos-version-min=5.0 -isysroot ${IOS_SDK}
 
-test: test-${ARCH}
+ADD_SDK =
+ifneq (${SDK_10_5},)
+ADD_SDK = -isysroot ${SDK_10_5}
+endif
+
+all: test-${ARCH}
 
 test-ppc64:
 	${PASS_IFF} true
@@ -119,53 +124,53 @@ test-arm:
 
 
 test-ppc:
-	gcc  foo.c -arch ppc  -mmacosx-version-min=10.4   -c -o foo.o
+	${CC} ${ADD_SDK} foo.c -arch ppc  -mmacosx-version-min=10.4   -c -o foo.o
 	${FAIL_IF_BAD_OBJ} foo.o
-	gcc  foo.c -arch ppc750  -c -o foo-G3.o
+	${CC} ${ADD_SDK} foo.c -arch ppc750  -c -o foo-G3.o
 	${FAIL_IF_BAD_OBJ} foo-G3.o
-	gcc  foo.c -arch ppc7400 -c -o foo-G4.o
+	${CC} ${ADD_SDK} foo.c -arch ppc7400 -c -o foo-G4.o
 	${FAIL_IF_BAD_OBJ} foo-G4.o
-	gcc  foo.c -arch ppc970  -c -o foo-G5.o
+	${CC} ${ADD_SDK} foo.c -arch ppc970  -c -o foo-G5.o
 	${FAIL_IF_BAD_OBJ} foo-G5.o
-	gcc  main.c -arch ppc   -mmacosx-version-min=10.4  -c -o main.o
+	${CC} ${ADD_SDK} main.c -arch ppc   -mmacosx-version-min=10.4  -c -o main.o
 	${FAIL_IF_BAD_OBJ} main.o
-	gcc  main.c -arch ppc970 -c -o main-G5.o
+	${CC} ${ADD_SDK} main.c -arch ppc970 -c -o main-G5.o
 	${FAIL_IF_BAD_OBJ} main-G5.o
 
 	# check ALL+ALL -> ALL
 	${LD} -r main.o foo.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ALL | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ALL | ${FAIL_IF_EMPTY}
 
 	# check G3+ALL -> G3
 	${LD} -r main.o foo-G3.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ppc750 | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ppc750 | ${FAIL_IF_EMPTY}
 
 	# check G4+ALL -> G4
 	${LD} -r main.o foo-G4.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ppc7400 | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ppc7400 | ${FAIL_IF_EMPTY}
 
 	# check G5+ALL -> G5
 	${LD} -r main.o foo-G5.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
 
 	# check G5+G4 -> G5
 	${LD} -r main-G5.o foo-G4.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
 
 	# check G4+G5 -> G5
 	${LD} -r foo-G4.o main-G5.o -o main-r.o
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv main-r.o | grep ppc970 | ${FAIL_IF_EMPTY}
 
 	# check -force_cpusubtype_ALL
 	${LD} -r main.o foo-G5.o -o main-r.o -force_cpusubtype_ALL
 	${FAIL_IF_BAD_OBJ} main-r.o
-	otool -hv main-r.o | grep ALL | ${PASS_IFF_STDIN}
+	${OTOOL} -hv main-r.o | grep ALL | ${PASS_IFF_STDIN}
 
 clean:
 	rm -f *.o
