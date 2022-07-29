@@ -23,7 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # Tests when a hidden class is made file scoped (via ld -r)
 #

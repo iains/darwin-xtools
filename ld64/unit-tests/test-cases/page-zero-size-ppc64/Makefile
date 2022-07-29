@@ -1,6 +1,8 @@
 # Test that we adjust the page 0 size correctly when mdynamic-no-pic
 # code is used with ppc64
 
+# Test and fix by Iain Sandoe <iain@sandoe.co.uk>
+
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 

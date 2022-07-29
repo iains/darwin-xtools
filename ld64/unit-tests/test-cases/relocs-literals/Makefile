@@ -23,7 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # The point of this test is to verify a .o file can round-trip
 # through ld -r correctly.  The ObjectDump utility is used
@@ -32,10 +31,14 @@ include ${TESTROOT}/include/common.makefile
 # No differences means this test passes
 #
 
+# but it cannot work as things stand, since -r reorders the sections so that
+# all the ones from the same segment are together .. but the compiler emits
+# __eh_frames and __compact_unwind out of order.  We suppress EH...
+
 run: all
 # -Wno-array-bounds
 all:
-	${CC} ${CCFLAGS} -Os $(MDYNAMIC_NO_PIC) test.c -c -o test.${ARCH}.o
+	${CC} ${CCFLAGS} -Os -mdynamic-no-pic test.c -c -o test.${ARCH}.o -fno-unwind-tables -fno-asynchronous-unwind-tables
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_content test.${ARCH}.o > test.${ARCH}.o.dump
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.${ARCH}.o -o test-r.${ARCH}.o

@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-extern void back();
+extern int back();
 
-void foo()
+int foo()
 {
-	fprintf(stdout, "foo\n");
-  back();
+  fprintf(stdout, "foo\n");
+  return back();
 }
 
