@@ -38,7 +38,6 @@
 #include <dlfcn.h>
 #include <xar/xar.h>
 #include "mach-o/loader.h"
-#include "objc/objc-runtime.h"
 #include "stuff/allocate.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
