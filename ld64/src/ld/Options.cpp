@@ -3523,24 +3523,24 @@ void Options::reconfigureDefaults()
 		case Options::kStaticExecutable:
 		case Options::kKextBundle:
 			if ( fDataInCodeInfoLoadCommandForcedOn )
-				fDataInCodeInfoLoadCommand = true;
+				fDataInCodeInfoLoadCommand = fMacVersionMin > ld::mac10_6;
 			if ( fFunctionStartsForcedOn )
-				fFunctionStartsLoadCommand = true;
+				fFunctionStartsLoadCommand = fMacVersionMin > ld::mac10_6;
 			break;
 		case Options::kObjectFile:
 			if ( !fDataInCodeInfoLoadCommandForcedOff )
-				fDataInCodeInfoLoadCommand = true;
+				fDataInCodeInfoLoadCommand = fMacVersionMin > ld::mac10_6;
 			if ( fFunctionStartsForcedOn )
-				fFunctionStartsLoadCommand = true;
+				fFunctionStartsLoadCommand = fMacVersionMin > ld::mac10_6;
 			break;
 		case Options::kDynamicExecutable:
 		case Options::kDyld:
 		case Options::kDynamicLibrary:
 		case Options::kDynamicBundle:
 			if ( !fDataInCodeInfoLoadCommandForcedOff )
-				fDataInCodeInfoLoadCommand = true;
+				fDataInCodeInfoLoadCommand = fMacVersionMin > ld::mac10_6;
 			if ( !fFunctionStartsForcedOff )
-				fFunctionStartsLoadCommand = true;
+				fFunctionStartsLoadCommand = fMacVersionMin > ld::mac10_6;
 			break;
 	}
 		
