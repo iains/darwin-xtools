@@ -3998,7 +3998,14 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			FILE *out = isVersion ? stdout : stderr;
 			fVerbose = true;
 			extern const char ldVersionString[];
-			fprintf(out, "%s", ldVersionString);
+			/* skip backwards compatible header on GNU-style --version,
+			 * keep it on -v for tools like meson */
+			const char *ldvers;
+			if (isVersion)
+				ldvers = strchr(ldVersionString, '\n') + 1;
+			else
+				ldvers = ldVersionString;
+			fprintf(out, "%s", ldvers);
 			fprintf(out, "configured to support archs: %s\n", ALL_SUPPORTED_ARCHS);
 #ifdef LTO_SUPPORT
             const char* ltoVers = lto::version();
