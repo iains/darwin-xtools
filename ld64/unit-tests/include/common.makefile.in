@@ -33,7 +33,6 @@ endif
 CXXFLAGS += $(CCFLAGS)
 
 LINKFLAGS ?= -arch $(ARCH)
-LINKFLAGS += -B $(BUILT_PRODUCTS_DIR)
 ifneq ($(SDK),)
 LINKFLAGS += -isysroot $(SDK)
 else
@@ -46,8 +45,6 @@ else
 LINKFLAGS += -mmacosx-version-min=10.5
 endif
 
-CXXLINKFLAGS += $(LINKFLAGS)
-
 ASMFLAGS = -arch $(ARCH)
 
 ifneq ($(MINOS),)
@@ -55,6 +52,30 @@ ASMFLAGS += -mmacosx-version-min=$(MINOS)
 else
 ASMFLAGS += -mmacosx-version-min=10.5
 endif
+
+ifeq (1,$(TEST_SYSTEM_TOOLS))
+
+DYLDINFO = $(BUILT_PRODUCTS_DIR)/dyldinfo
+LD = /usr/bin/ld
+MACHOCHECK = $(BUILT_PRODUCTS_DIR)/machocheck
+OBJECTDUMP = $(BUILT_PRODUCTS_DIR)/ObjectDump
+REBASE = $(BUILT_PRODUCTS_DIR)/rebase
+
+# From cctools.
+AR = /usr/bin/ar
+AS = /usr/bin/as
+CODESIGN_ALLOCATE = /usr/bin/codesign_allocate
+LIBTOOL = /usr/bin/libtool
+LIPO = /usr/bin/lipo
+NM = /usr/bin/nm
+OTOOL = /usr/bin/otool
+RANLIB = /usr/bin/ranlib
+SIZE = /usr/bin/size
+STRIP = /usr/bin/strip
+
+else
+
+LINKFLAGS += -B $(BUILT_PRODUCTS_DIR)
 
 # From ld64
 DYLDINFO = $(BUILT_PRODUCTS_DIR)/dyldinfo
@@ -74,6 +95,9 @@ OTOOL = $(BUILT_PRODUCTS_DIR)/otool
 RANLIB = $(BUILT_PRODUCTS_DIR)/ranlib
 SIZE = $(BUILT_PRODUCTS_DIR)/size
 STRIP = $(BUILT_PRODUCTS_DIR)/strip
+endif
+
+CXXLINKFLAGS += $(LINKFLAGS)
 
 VERSION_NEW_LINKEDIT = -mmacosx-version-min=10.5
 VERSION_OLD_LINKEDIT = -mmacosx-version-min=10.4
