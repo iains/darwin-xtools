@@ -233,6 +233,7 @@ extern vm_offset_t		interrupt_stack[];
  */
 
 #define	CPU_SUBTYPE_I386_ALL	((cpu_subtype_t) 3)
+#define	CPU_SUBTYPE_X86_ALL	CPU_SUBTYPE_I386_ALL
 #define	CPU_SUBTYPE_X86_64_ALL	CPU_SUBTYPE_I386_ALL
 #define CPU_SUBTYPE_386		((cpu_subtype_t) 3)
 #define CPU_SUBTYPE_486		((cpu_subtype_t) 4)
