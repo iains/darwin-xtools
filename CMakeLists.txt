@@ -1,26 +1,11 @@
 # Top Level CMake file for XTOOLS.
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.9.6)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to MinSizeRel")
   set(CMAKE_BUILD_TYPE MinSizeRel)
   set(XTOOLS_ENABLE_ASSERTIONS 1)
-endif()
-
-if (POLICY CMP0051)
-  # CMake 3.1 and higher include generator expressions of the form
-  # $<TARGETLIB:obj> in the SOURCES property.  These need to be
-  # stripped everywhere that access the SOURCES property, so we just
-  # defer to the OLD behavior of not including generator expressions
-  # in the output for now.
-  cmake_policy(SET CMP0051 OLD)
-endif()
-
-if(CMAKE_VERSION VERSION_LESS 3.1.20141117)
-  set(cmake_3_2_USES_TERMINAL)
-else()
-  set(cmake_3_2_USES_TERMINAL USES_TERMINAL)
 endif()
 
 project(XTOOLS)
@@ -54,9 +39,9 @@ string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
 set(UNIX_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 
 if(CMAKE_CROSSCOMPILING)
-  message(STATUS "*Top Level* Cross compiling")
+  message(STATUS "*Top Level* Cross compiling for ${CMAKE_SYSTEM_VERSION}")
 else()
-  message(STATUS "*Top Level* native build")
+  message(STATUS "*Top Level* native build version ${CMAKE_SYSTEM_VERSION}")
 endif()
 
 if(XTOOLS_LTO_PATH AND
@@ -98,17 +83,29 @@ SET(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
 
 include(config-ix)
 
-if(XTOOLS_CXX_HAS_STDLIB_FLAG AND NOT DEFINED XTOOLS_USES_LIBSTDCXX)
-  message(STATUS "*Top Level* -stdlib= option is available but no choice specified")
-  if(XTOOLS_CXX_HAS_STDCXX11_FLAG)
-    message(STATUS "*Top Level* .. setting to -stdlib=libc++")
-    set(XTOOLS_USES_LIBSTDCXX NO CACHE BOOL "use libc++")
-  else()
-    message(STATUS "*Top Level* .. setting to -stdlib=libstdc++")
-    set(XTOOLS_USES_LIBSTDCXX YES CACHE BOOL "use libstdc++")
+# check for Darwin version stuff.
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  if(NOT DEFINED XTOOLS_USES_LIBSTDCXX)
+    if(CMAKE_SYSTEM_VERSION GREATER_EQUAL 12.0.0)
+      set(XTOOLS_USES_LIBSTDCXX NO CACHE BOOL "default to libc++ here")
+    else()
+      set(XTOOLS_USES_LIBSTDCXX YES CACHE BOOL "default to libstdc++ here.")
+    endif()
   endif()
-else(DEFINED XTOOLS_USES_LIBSTDCXX)
-    message(STATUS "*Top Level* .. using -stdlib=libstdc++")
+  if(XTOOLS_CXX_HAS_STDLIB_FLAG)
+    message(STATUS "*Top Level* -stdlib= option is available but no choice specified")
+    if(XTOOLS_CXX_HAS_STDCXX11_FLAG)
+      message(STATUS "*Top Level* .. setting to -stdlib=libc++")
+      set(XTOOLS_USES_LIBSTDCXX NO CACHE BOOL "use libc++")
+    else()
+      message(STATUS "*Top Level* .. setting to -stdlib=libstdc++")
+      set(XTOOLS_USES_LIBSTDCXX YES CACHE BOOL "use libstdc++")
+    endif()
+  elseif(${XTOOLS_USES_LIBSTDCXX})
+      message(STATUS "*Top Level* .. using -stdlib=libstdc++")
+  else()
+      message(STATUS "*Top Level* .. using -stdlib=libc++")
+  endif()
 endif()
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
@@ -173,10 +170,12 @@ if(XTOOLS_NEEDS_STRLIB)
                 COPYONLY)
 endif()
 
-# Darwin < 10 doesn't specify the uuid_string_t, provide it here.
-configure_file(${CMAKE_SOURCE_DIR}/host-includes/uuid/uuid.h
+if(CMAKE_SYSTEM_VERSION LESS 10.0.0)
+  # Darwin < 10 doesn't specify the uuid_string_t, provide it here.
+  configure_file(${CMAKE_SOURCE_DIR}/host-includes/uuid/uuid.h
                ${CMAKE_BINARY_DIR}/host-includes/uuid/uuid.h
                COPYONLY)
+endif()
 
 if (NOT XTOOLS_HAS_MODERNXAR)
   add_subdirectory(xar-additions)
