@@ -24,6 +24,8 @@
 #ifndef __MACH_O_FILE_ABSTRACTION__
 #define __MACH_O_FILE_ABSTRACTION__
 
+#include <stddef.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
@@ -34,7 +36,6 @@
 #include <mach-o/x86_64/reloc.h>
 #include <mach-o/compact_unwind_encoding.h>
 #include <mach/machine.h>
-#include <stddef.h>
 #include <libunwind.h>
 
 #include "FileAbstraction.hpp"
@@ -231,7 +232,6 @@
 #endif
 
 
-
 #ifndef CPU_SUBTYPE_ARM_V7F
   #define CPU_SUBTYPE_ARM_V7F    ((cpu_subtype_t) 10)
 #endif
@@ -242,15 +242,15 @@
   #define CPU_SUBTYPE_ARM_V7S    ((cpu_subtype_t) 11)
 #endif
 
-
-
 // hack until arm64 headers are worked out
-#define CPU_TYPE_ARM64			(CPU_TYPE_ARM | CPU_ARCH_ABI64)
-#ifndef CPU_SUBTYPE_ARM64_ALL
-# define CPU_SUBTYPE_ARM64_ALL	0
-#endif
-#ifndef CPU_SUBTYPE_ARM64_V8
-# define CPU_SUBTYPE_ARM64_V8    1
+#ifndef CPU_TYPE_ARM64
+# define CPU_TYPE_ARM64			(CPU_TYPE_ARM | CPU_ARCH_ABI64)
+# ifndef CPU_SUBTYPE_ARM64_ALL
+#  define CPU_SUBTYPE_ARM64_ALL	0
+# endif
+# ifndef CPU_SUBTYPE_ARM64_V8
+#  define CPU_SUBTYPE_ARM64_V8    1
+# endif
 #endif
 
 #define ARM64_RELOC_UNSIGNED            0 // for pointers
@@ -264,7 +264,6 @@
 #define ARM64_RELOC_TLVP_LOAD_PAGE21    8 // pc-rel distance to page of TLVP slot
 #define ARM64_RELOC_TLVP_LOAD_PAGEOFF12 9 // offset within page of TLVP slot, scaled by r_length
 #define ARM64_RELOC_ADDEND				10 // r_symbolnum is addend for next reloc
-
 
 
 #define UNW_ARM64_X0     0

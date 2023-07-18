@@ -28,11 +28,13 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
-#include <mach-o/loader.h>
-
-#include <mach/i386/thread_status.h>
-
 #include <vector>
+
+/* Target Headers.  */
+#include <mach-o/loader.h>
+#include <mach/arm/thread_status.h>
+#include <mach/i386/thread_status.h>
+#include <mach/ppc/thread_status.h>
 
 #include "MachOFileAbstraction.hpp"
 #include "Options.h"
@@ -1174,7 +1176,7 @@ uint8_t* HeaderAndLoadCommandsAtom<A>::copySourceVersionLoadCommand(uint8_t* p) 
 template <>
 uint32_t HeaderAndLoadCommandsAtom<ppc>::threadLoadCommandSize() const
 {
-	return this->alignedSize(16 + 40*4);	// base size + PPC_THREAD_STATE_COUNT * 4
+	return this->alignedSize(16 + PPC_THREAD_STATE_COUNT * 4);	// base size + PPC_THREAD_STATE_COUNT * 4
 }
 
 
@@ -1186,8 +1188,8 @@ uint8_t* HeaderAndLoadCommandsAtom<ppc>::copyThreadsLoadCommand(uint8_t* p) cons
 	macho_thread_command<ppc::P>* cmd = (macho_thread_command<ppc::P>*)p;
 	cmd->set_cmd(LC_UNIXTHREAD);
 	cmd->set_cmdsize(threadLoadCommandSize());
-	cmd->set_flavor(1);				// PPC_THREAD_STATE
-	cmd->set_count(40);				// PPC_THREAD_STATE_COUNT;
+	cmd->set_flavor(PPC_THREAD_STATE);				// PPC_THREAD_STATE
+	cmd->set_count(PPC_THREAD_STATE_COUNT);			// PPC_THREAD_STATE_COUNT;
 	cmd->set_thread_register(0, start);
 	if ( _options.hasCustomStack() )
 		cmd->set_thread_register(3, _options.customStackAddr());	// r1
@@ -1197,7 +1199,7 @@ uint8_t* HeaderAndLoadCommandsAtom<ppc>::copyThreadsLoadCommand(uint8_t* p) cons
 template <>
 uint32_t HeaderAndLoadCommandsAtom<ppc64>::threadLoadCommandSize() const
 {
-	return this->alignedSize(16 + 76*4);	// base size + PPC_THREAD_STATE64_COUNT * 4
+	return this->alignedSize(16 + PPC_THREAD_STATE64_COUNT * 4);	// base size + PPC_THREAD_STATE64_COUNT * 4
 }
 
 template <>
@@ -1208,8 +1210,8 @@ uint8_t* HeaderAndLoadCommandsAtom<ppc64>::copyThreadsLoadCommand(uint8_t* p) co
 	macho_thread_command<P>* cmd = (macho_thread_command<P>*)p;
 	cmd->set_cmd(LC_UNIXTHREAD);
 	cmd->set_cmdsize(threadLoadCommandSize());
-	cmd->set_flavor(5);				// PPC_THREAD_STATE64
-	cmd->set_count(76);				// PPC_THREAD_STATE64_COUNT;
+	cmd->set_flavor(PPC_THREAD_STATE64);			// PPC_THREAD_STATE64 5
+	cmd->set_count(PPC_THREAD_STATE64_COUNT);		// PPC_THREAD_STATE64_COUNT 76;
 	cmd->set_thread_register(0, start);
 	//cmd->set_thread_register(0, (start>>32));
 	if ( _options.hasCustomStack() )
@@ -1220,7 +1222,7 @@ uint8_t* HeaderAndLoadCommandsAtom<ppc64>::copyThreadsLoadCommand(uint8_t* p) co
 template <>
 uint32_t HeaderAndLoadCommandsAtom<x86>::threadLoadCommandSize() const
 {
-	return this->alignedSize(16 + 16*4);	// base size + i386_THREAD_STATE_COUNT * 4
+	return this->alignedSize(16 + i386_THREAD_STATE_COUNT * 4);	// base size + i386_THREAD_STATE_COUNT * 4
 }
 
 template <>
@@ -1231,8 +1233,8 @@ uint8_t* HeaderAndLoadCommandsAtom<x86>::copyThreadsLoadCommand(uint8_t* p) cons
 	macho_thread_command<P>* cmd = (macho_thread_command<P>*)p;
 	cmd->set_cmd(LC_UNIXTHREAD);
 	cmd->set_cmdsize(threadLoadCommandSize());
-	cmd->set_flavor(1);				// i386_THREAD_STATE
-	cmd->set_count(16);				// i386_THREAD_STATE_COUNT;
+	cmd->set_flavor(i386_THREAD_STATE);				// i386_THREAD_STATE
+	cmd->set_count(i386_THREAD_STATE_COUNT);		// i386_THREAD_STATE_COUNT;
 	cmd->set_thread_register(10, start);
 	if ( _options.hasCustomStack() )
 		cmd->set_thread_register(7, _options.customStackAddr());	// r1
@@ -1253,8 +1255,8 @@ uint8_t* HeaderAndLoadCommandsAtom<x86_64>::copyThreadsLoadCommand(uint8_t* p) c
 	macho_thread_command<P>* cmd = (macho_thread_command<P>*)p;
 	cmd->set_cmd(LC_UNIXTHREAD);
 	cmd->set_cmdsize(threadLoadCommandSize());
-	cmd->set_flavor(x86_THREAD_STATE64);			
-	cmd->set_count(x86_THREAD_STATE64_COUNT);	
+	cmd->set_flavor(x86_THREAD_STATE64);
+	cmd->set_count(x86_THREAD_STATE64_COUNT);
 	cmd->set_thread_register(16, start);		// rip 
 	if ( _options.hasCustomStack() )
 		cmd->set_thread_register(7, _options.customStackAddr());	// r1
@@ -1264,7 +1266,7 @@ uint8_t* HeaderAndLoadCommandsAtom<x86_64>::copyThreadsLoadCommand(uint8_t* p) c
 template <>
 uint32_t HeaderAndLoadCommandsAtom<arm>::threadLoadCommandSize() const
 {
-	return this->alignedSize(16 + 17 * 4); // base size + ARM_THREAD_STATE_COUNT * 4
+	return this->alignedSize(16 + ARM_THREAD_STATE_COUNT * 4); // base size + ARM_THREAD_STATE_COUNT * 4
 }
 
 template <>
@@ -1277,9 +1279,9 @@ uint8_t* HeaderAndLoadCommandsAtom<arm>::copyThreadsLoadCommand(uint8_t* p) cons
 	macho_thread_command<P>* cmd = (macho_thread_command<P>*)p;
 	cmd->set_cmd(LC_UNIXTHREAD);
 	cmd->set_cmdsize(threadLoadCommandSize());
-	cmd->set_flavor(1);			
-	cmd->set_count(17);	
-	cmd->set_thread_register(15, start);		// pc
+	cmd->set_flavor(ARM_THREAD_STATE);
+	cmd->set_count(ARM_THREAD_STATE_COUNT);
+	cmd->set_thread_register(15, start);	// pc
 	if ( _options.hasCustomStack() )
 		cmd->set_thread_register(13, _options.customStackAddr());	// sp
 	return p + threadLoadCommandSize();

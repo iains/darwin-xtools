@@ -33,14 +33,15 @@
 #include <errno.h>
 #include <limits.h>
 #include <unistd.h>
+#include <dlfcn.h>
+
 #include <mach/mach_time.h>
 #include <mach/vm_statistics.h>
 #include <mach/mach_init.h>
 #include <mach/mach_host.h>
-#include <dlfcn.h>
 #include <mach-o/dyld.h>
 #include <mach-o/fat.h>
-#include <sys/sysctl.h>
+
 #include <libkern/OSAtomic.h>
 
 #include <string>
@@ -52,7 +53,6 @@
 #include <algorithm>
 #include <ext/hash_map>
 #include <ext/hash_set>
-#include <dlfcn.h>
 #include <AvailabilityMacros.h>
 
 #include "Options.h"
@@ -668,9 +668,7 @@ void InputFiles::createOpaqueFileSections()
 		if ( _options.dumpDependencyInfo() )
 			_options.dumpDependency(Options::depSection, it->path);
 	}
-
 }
-
 
 void InputFiles::checkDylibClientRestrictions(ld::dylib::File* dylib)
 {
@@ -778,7 +776,11 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 		}
 	}
 
-	// no thin .o files found, so default to same architecture this tool was built as
+#if __APPLE__ && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ \
+    && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101100
+	// no thin .o files found; so, for self-hosts in the supported range,
+	// (which have SDKs without .tbd files) default to same architecture
+	// this tool was built for.
 	warning("-arch not specified");
 #if __ppc__
 	opts.setArchitecture(CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL);
@@ -788,12 +790,17 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 	opts.setArchitecture(CPU_TYPE_POWERPC64, CPU_SUBTYPE_POWERPC_ALL);
 #elif __x86_64__
 	opts.setArchitecture(CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_ALL);
+#elif __aarch64__
+	opts.setArchitecture(CPU_TYPE_ARM64, CPU_SUBTYPE_ARM64_ALL);
 #elif __arm__
 	opts.setArchitecture(CPU_TYPE_ARM, CPU_SUBTYPE_ARM_V6);
 #else
 	#error unknown default architecture
 #endif
 	*archName = opts.architectureName();
+#else
+	throwf("-arch not specified, and cannot deduce it from objects.");
+#endif
 }
 
 
