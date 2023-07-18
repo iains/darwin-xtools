@@ -15,6 +15,7 @@ check_c_compiler_flag(-fPIC               XTOOLS_C_HAS_FPIC_FLAG)
 check_c_compiler_flag(-Wno-deprecated     XTOOLS_C_HAS_WNODEPRECATED_FLAG)
 check_c_compiler_flag(-fno-common         XTOOLS_C_HAS_FNOCOMMON_FLAG)
 
+check_cxx_compiler_flag(-std=c++98        XTOOLS_CXX_HAS_STDCXX98_FLAG)
 check_cxx_compiler_flag(-std=c++11        XTOOLS_CXX_HAS_STDCXX11_FLAG)
 check_cxx_compiler_flag(-stdlib=libc++    XTOOLS_CXX_HAS_STDLIB_FLAG)
 
@@ -23,7 +24,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   check_cxx_compiler_flag(-static-libstdc++ XTOOLS_CXX_HAS_STATICCXX_FLAG)
 endif()
 
-# Check for common headers/libs that we need.
+# Check for C++11 headers/libs that are used by some versions of ld64.
 
 if (XTOOLS_CXX_HAS_STDCXX11_FLAG)
   if(XTOOLS_CXX_HAS_STDLIB_FLAG)
