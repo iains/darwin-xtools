@@ -68,6 +68,33 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LD64_CXX_FLAGS} ")
 
+# link the C++ runtime statically where possible.
+# (this avoids the linker's behaviour being altered by DYLD_LIBRARY_PATH adding
+# paths to a newly built libstdc++ when constructing toolchains).
+if(CMAKE_SYSTEM_VERSION LESS 11.0 AND XTOOLS_USES_LIBSTDCXX)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION LESS 4.3)
+      message(STATUS "configuring static c++ runtime for GCC ${CMAKE_CXX_COMPILER_VERSION}")
+      if(XTOOLS_CXX_HAS_STDLIB_FLAG)
+        message(ERROR "unexpected flags combination")
+      endif()
+      if(CMAKE_SYSTEM_VERSION LESS 9.0)
+        set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -nodefaultlibs -lstdc++-static -lgcc_s.10.4 -lgcc -lSystem")
+      elseif(CMAKE_SYSTEM_VERSION LESS 10.0)
+        set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -nodefaultlibs -lstdc++-static -lgcc_s.10.5 -lgcc -lSystem")
+      else()
+        set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -nodefaultlibs -lstdc++-static -lSystem -lgcc")
+      endif()
+    elseif(XTOOLS_CXX_HAS_STATICCXX_FLAG)
+      set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -static-libstdc++")
+    endif()
+  endif()
+elseif(XTOOLS_USES_LIBSTDCXX AND XTOOLS_CXX_HAS_STATICCXX_FLAG)
+  set(LD64_CXX_FLAGS "${LD64_CXX_FLAGS} -static-libstdc++")
+endif()
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${LD64_CXX_FLAGS} ")
+
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/abstraction")
 
 add_subdirectory(ld)
