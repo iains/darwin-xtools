@@ -266,7 +266,8 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 						fileOffset, fileOffset+len, info.fileLen);
 			}
 			// if requested architecture is page aligned within fat file, then remap just that portion of file
-			if ( (fileOffset & 0x00000FFF) == 0 ) {
+			int page_size = getpagesize();
+			if ( (fileOffset & (page_size-1)) == 0 ) {
 				// unmap whole file
 				munmap((caddr_t)p, info.fileLen);
 				// re-map just part we need
