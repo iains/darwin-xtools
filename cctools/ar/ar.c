@@ -123,12 +123,12 @@ main(argc, argv)
 	run_ranlib = 1;
 
 	if (argc < 3) {
-	   if(strcmp(argv[1], "--version") == 0){
+	   if(argc >= 2 && strcmp(argv[1], "--version") == 0){
 		/* Implement a gnu-style --version to be friendly to GCC.  */
 		fprintf(stdout, "xtools-%s ar %s\nBased on Apple Inc. %s\n",
 		        xtools_version, package_version, apple_version);
 		exit(0);
-	   } else if(strcmp(argv[1], "--help") == 0){
+	   } else if(argc >= 2 && strcmp(argv[1], "--help") == 0){
 		usage(0);
 		fprintf(stdout, "Please report bugs to %s\n", support_url);
 		exit(0);
