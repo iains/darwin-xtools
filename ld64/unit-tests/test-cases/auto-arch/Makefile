@@ -21,14 +21,39 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
-include ${TESTROOT}/include/common.makefile
 
-ifeq ($(FILEARCH),arm)
-	LD_VERS = -ios_version_min 4.0 -syslibroot $(IOS_SDK)
-else
-	LD_VERS = -macosx_version_min 10.6
+# Do these before including the common piece so that we can override MINOS.
+DYLIB_EXTRA =
+
+ifeq ($(ARCH),ppc)
+  LD_VERS = -macosx_version_min 10.5
+  DYLIB_EXTRA = -syslibroot ${SDK} -ldylib1.10.5.o
+endif
+ifeq ($(ARCH),ppc64)
+  LD_VERS = -macosx_version_min 10.5
+  DYLIB_EXTRA = -syslibroot ${SDK} -ldylib1.10.5.o
 endif
 
+# To use the ld64 internal dylib crts, we have to be on 10.6+ (or iOS4+)
+ifeq ($(FILEARCH),arm)
+  LD_VERS = -ios_version_min 4.0 -syslibroot $(IOS_SDK)
+endif
+
+ifeq ($(ARCH),i386)
+  # To use the ld built-in version, we need to be on 10.6.
+  LD_VERS = -macosx_version_min 10.6.8
+  DYLIB_EXTRA = -syslibroot ${SDK}
+  MINOS = 10.6.8
+endif
+
+ifeq ($(ARCH),x86_64)
+  # To use the ld built-in version, we need to be on 10.6.
+  LD_VERS = -macosx_version_min 10.6.8
+  MINOS = 10.6.8
+  DYLIB_EXTRA = -syslibroot ${SDK}
+endif
+
+include ${TESTROOT}/include/common.makefile
 
 #
 # Check that ld can figure out architecture from .o files without -arch option
@@ -37,10 +62,10 @@ endif
 run: all
 
 all:
-	${CC} ${CCFLAGS} hello.c -c -o hello.o 
-	${FAIL_IF_BAD_OBJ} hello.o
-	${LD} ${LDFLAGS} hello.o -dylib -o hello.dylib -lSystem $(LD_VERS) 
-	file hello.dylib | grep ${FILEARCH} | ${PASS_IFF_STDIN}
+	${CC} ${CCFLAGS} hello.c -c -o hello-${ARCH}.o 
+	${FAIL_IF_BAD_OBJ} hello-${ARCH}.o
+	${LD} hello-${ARCH}.o -dylib ${DYLIB_EXTRA} -o hello-${ARCH}.dylib -lSystem $(LD_VERS) 
+	file hello-${ARCH}.dylib | grep ${ARCH} | ${PASS_IFF_STDIN}
 
 clean:
-	rm -rf hello.o hello.dylib
+	rm -rf *.o hello-*.dylib

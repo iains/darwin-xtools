@@ -23,8 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
-
 #
 # test thumb2 branch ranges
 #
@@ -32,6 +30,12 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:	all-${ARCH}
+
+all-ppc:
+	${PASS_IFF} true
+
+all-ppc64:
+	${PASS_IFF} true
 
 all-i386:
 	${PASS_IFF} true
@@ -43,13 +47,13 @@ all-armv7:
 	${CC} ${CCFLAGS} -static foo.c -c 
 	${CC} ${CCFLAGS} bar.s -c 
 	# verify islands are created and used
-	${CC} ${CCFLAGS} foo.o bar.o -e _foo -o foobar -nostdlib -Wl,-preload -segaddr __MY 0x3000000
+	${CC} ${LINKFLAGS} foo.o bar.o -e _foo -o foobar -nostdlib -Wl,-preload -segaddr __MY 0x3000000
 	${OTOOL} -s __MY __text -V foobar | grep '_myweak1.island:' | ${FAIL_IF_EMPTY}
 	${OTOOL} -s __MY __text -V foobar | grep '_foo2.island:' | ${FAIL_IF_EMPTY}
 	${OTOOL} -s __MY __text -V foobar | grep '_foo.island:' | ${FAIL_IF_EMPTY}
 	${OTOOL} -s __MY __text -V foobar | grep "bl\t_foo.island" | ${FAIL_IF_EMPTY}
 	# verify that is close enough islands are bypassed and target called directly
-	${CC} ${CCFLAGS} foo.o bar.o -e _foo -o foobar2 -nostdlib -Wl,-preload -segaddr __MY 0x30000
+	${CC} ${LINKFLAGS} foo.o bar.o -e _foo -o foobar2 -nostdlib -Wl,-preload -segaddr __MY 0x30000
 	${OTOOL} -s __MY __text -V foobar2 | grep 'bl\t_foo' | ${FAIL_IF_EMPTY}
 	${OTOOL} -s __MY __text -V foobar2 | grep 'bl\t_foo2' | ${FAIL_IF_EMPTY}
 	${OTOOL} -s __MY __text -V foobar2 | grep 'bl\t_myweak1' | ${FAIL_IF_EMPTY}

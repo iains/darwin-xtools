@@ -34,3 +34,7 @@ add_executable(rebase  rebase.cpp)
 add_executable(unwinddump  unwinddump.cpp)
 
 install(TARGETS ObjectDump dyldinfo machocheck rebase unwinddump DESTINATION bin)
+
+add_test(ObjectDump_ok ${CMAKE_BINARY_DIR}/bin/ObjectDump --help)
+add_test(dyldinfo_ok ${CMAKE_BINARY_DIR}/bin/dyldinfo --help)
+add_test(machocheck_ok ${CMAKE_BINARY_DIR}/bin/machocheck --help)

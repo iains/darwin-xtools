@@ -28,21 +28,24 @@ include ${TESTROOT}/include/common.makefile
 # can link a program with a large zero-fill section
 #
 
-all:	test-${FILEARCH}
+all:	test-${ARCH}
 
 # i386 catches the problem in the assembler phase
 test-i386:
 	${PASS_IFF} true
 
 test-x86_64:
-	${CC} ${CCFLAGS} -DSHRINK=1 test.c --save-temps -o test-${ARCH}
+	${CC} ${LINKFLAGS} -DSHRINK=1 test.c --save-temps -o test-${ARCH}
 	${PASS_IFF_GOOD_MACHO} test-${ARCH}
 
 test-ppc:
-	${PASS_IFF_ERROR} ${CC} ${CCFLAGS} -DSHRINK=4 test.c --save-temps -o test-${ARCH} 2>/dev/null
+	${PASS_IFF_ERROR} ${CC} ${LINKFLAGS} -DSHRINK=4 test.c --save-temps -o test-${ARCH} 2>/dev/null
+
+test-ppc64:
+	${PASS_IFF_ERROR} ${CC} ${LINKFLAGS} -DSHRINK=1 test.c --save-temps -o test-${ARCH} 2>/dev/null
 
 test-arm:
-	${PASS_IFF_ERROR} ${CC} ${CCFLAGS} -DSHRINK=4 test.c --save-temps -o test-${ARCH} 2>/dev/null
+	${PASS_IFF_ERROR} ${CC} ${LINKFLAGS} -DSHRINK=4 test.c --save-temps -o test-${ARCH} 2>/dev/null
 
 clean:
 	rm -rf test-* *.o *.s *.i

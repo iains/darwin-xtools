@@ -38,10 +38,10 @@ all:
 	${CC} ${CCFLAGS} -c -g bar.m -o bar.${ARCH}.o
 	${FAIL_IF_BAD_OBJ} bar.${ARCH}.o
 
-	${CC} ${CCFLAGS} foo.${ARCH}.o bar.${ARCH}.o -dynamiclib -Wl,-no_uuid -Wl,-no_order_data -o libfoo.${ARCH}.dylib -framework Foundation  -framework CoreFoundation 
+	${CC} ${LINKFLAGS} foo.${ARCH}.o bar.${ARCH}.o -dynamiclib -Wl,-no_uuid -Wl,-no_order_data -o libfoo.${ARCH}.dylib -framework Foundation  -framework CoreFoundation 
 	${FAIL_IF_BAD_MACHO} libfoo.${ARCH}.dylib
 
-	${CC} ${CCFLAGS} foo.${ARCH}.o bar.${ARCH}.o -dynamiclib -Wl,-no_uuid -Wl,-no_order_data -o libfoo-alt.${ARCH}.dylib -framework Foundation -framework CoreFoundation  -seg1addr 0x12340000 -install_name libfoo.${ARCH}.dylib
+	${CC} ${LINKFLAGS} foo.${ARCH}.o bar.${ARCH}.o -dynamiclib -Wl,-no_uuid -Wl,-no_order_data -o libfoo-alt.${ARCH}.dylib -framework Foundation -framework CoreFoundation  -seg1addr 0x12340000 -install_name libfoo.${ARCH}.dylib
 	${FAIL_IF_BAD_MACHO} libfoo-alt.${ARCH}.dylib
 	
 	${REBASE} -arch ${ARCH} -low_address 0x12340000 libfoo.${ARCH}.dylib

@@ -29,6 +29,10 @@ include ${TESTROOT}/include/common.makefile
 
 IMAGE_INFO = "__image_info"
 
+# OBJC2 archs.
+ifeq ($(ARCH),ppc64)
+	IMAGE_INFO = "__objc_imageinfo"
+endif
 ifeq ($(ARCH),x86_64)
 	IMAGE_INFO = "__objc_imageinfo"
 endif
@@ -36,15 +40,14 @@ ifeq (${FILEARCH},arm)
 	IMAGE_INFO = "__objc_imageinfo"
 endif
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.m -c -o main.o
-	libtool -static main.o -o libmain.a
-	${CC} ${CCFLAGS} libmain.a -o main -framework Foundation
-	size -l main | grep ${IMAGE_INFO} | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${CCFLAGS} main.m -c -o main-${ARCH}.o
+	${LIBTOOL} -static main-${ARCH}.o -o libmain-${ARCH}.a
+	${CC} ${LINKFLAGS} libmain-${ARCH}.a -o main-${ARCH} -framework Foundation
+	${SIZE} -l main-${ARCH} | grep ${IMAGE_INFO} | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf main.o libmain.a main
+	rm -rf *.o *.a main-*

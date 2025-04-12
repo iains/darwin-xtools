@@ -34,18 +34,18 @@ all:
 	# test that _my_other_weak is hidden
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${CC} ${CCFLAGS} other.s -c -o other.o
-	${CC} ${CCFLAGS} main.o other.o -o main
-	nm -m main | grep _my_weak | grep "weak external" | ${FAIL_IF_EMPTY}
-	nm -m main | grep _my_other_weak | grep "non-external" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.o other.o -o main
+	${NM} -m main | grep _my_weak | grep "weak external" | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep _my_other_weak | grep "non-external" | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} main
 	# test that .exp file can override auto-hide
-	${CC} ${CCFLAGS} main.o other.o -o main2 -Wl,-exported_symbol,_my_other_weak
-	nm -m main2 | grep _my_weak | grep "non-external" | ${FAIL_IF_EMPTY}
-	nm -m main2 | grep _my_other_weak | grep "weak external" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.o other.o -o main2 -Wl,-exported_symbol,_my_other_weak
+	${NM} -m main2 | grep _my_weak | grep "non-external" | ${FAIL_IF_EMPTY}
+	${NM} -m main2 | grep _my_other_weak | grep "weak external" | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} main2
-	${CC} ${CCFLAGS} main.o other.o -o main2 -Wl,-exported_symbol,_main
-	nm -m main2 | grep _my_weak | grep "non-external" | ${FAIL_IF_EMPTY}
-	nm -m main2 | grep _my_other_weak | grep "non-external" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.o other.o -o main2 -Wl,-exported_symbol,_main
+	${NM} -m main2 | grep _my_weak | grep "non-external" | ${FAIL_IF_EMPTY}
+	${NM} -m main2 | grep _my_other_weak | grep "non-external" | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} main2
 	# test that auto-hide bit survives ld -r
 	${LD} -r -arch ${ARCH} other.o -o other-r.o

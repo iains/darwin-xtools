@@ -39,15 +39,15 @@ all:
 	${LD} -arch ${ARCH} -r -keep_private_externs test.o -exported_symbols_list test.exp -o test-r.o
 	${FAIL_IF_BAD_OBJ} test-r.o
 	# verify common not in export-list got demoted to private extern
-	nm -m test-r.o | grep "private external _common_global1" | ${FAIL_IF_EMPTY} 
+	${NM} -m test-r.o | grep "private external _common_global1" | ${FAIL_IF_EMPTY} 
 	# verify only _common_global1 and _func_global1 changed
-	nm -m test.o | egrep -v '_common_global1|_func_global1|__eh_frame|__data' > test.nm
-	nm -m test-r.o | egrep -v '_common_global1|_func_global1|__eh_frame|__data' > test-r.nm
+	${NM} -m test.o | egrep -v '_common_global1|_func_global1|__eh_frame|__data' > test.nm
+	${NM} -m test-r.o | egrep -v '_common_global1|_func_global1|__eh_frame|__data' > test-r.nm
 	diff test.nm test-r.nm
 	# verify without -keep_private_externs that commons stay private extern 
 	${LD} -arch ${ARCH} -r  test.o -exported_symbols_list test.exp -o test-rr.o
-	nm -m test-rr.o | grep _common_hidden | grep ') external' | ${FAIL_IF_STDIN}
-	nm -m test-rr.o | grep _common_global1 | grep ') external' | ${FAIL_IF_STDIN}
+	${NM} -m test-rr.o | grep _common_hidden | grep ') external' | ${FAIL_IF_STDIN}
+	${NM} -m test-rr.o | grep _common_global1 | grep ') external' | ${FAIL_IF_STDIN}
 	# should error out if told to export unavailable symbol 
 	${FAIL_IFF_SUCCESS} ${LD} -arch ${ARCH} -r test.o -exported_symbols_list test-bad.exp -o test2.o 2>/dev/null
 

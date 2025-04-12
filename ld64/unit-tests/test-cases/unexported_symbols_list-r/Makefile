@@ -34,7 +34,7 @@ run: all
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${LD} -arch ${ARCH} foo.o -r -unexported_symbols_list foo.exp -o foo2.o
-	nm -m foo2.o | grep _foo | grep "non-external" | ${PASS_IFF_STDIN}
+	${NM} -m foo2.o | grep _foo | grep "non-external" | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf foo.o foo2.o

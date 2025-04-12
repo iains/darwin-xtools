@@ -23,21 +23,19 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 run: all
 
 all: 
 	# verify if operator new is overridden that WEAK_DEFINES is set
-	${CXX} ${CXXFLAGS} -DOP_NEW -I${TESTROOT}/include -o main main.cxx
-	otool -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
+	${CXX} ${CXXLINKFLAGS} -DOP_NEW -I${TESTROOT}/include -o main main.cxx
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${FAIL_IF_EMPTY}
 	# verify if operator new is overridden but not exported, WEAK_DEFINES is not set
-	${CXX} ${CXXFLAGS} -DOP_NEW -I${TESTROOT}/include -o main main.cxx -Wl,-exported_symbol,_main
-	otool -hv main | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
+	${CXX} ${CXXLINKFLAGS} -DOP_NEW -I${TESTROOT}/include -o main main.cxx -Wl,-exported_symbol,_main
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${FAIL_IF_STDIN}
 	# verify if operator new is not overridden that WEAK_DEFINES is not set
-	${CXX} ${CXXFLAGS} -I${TESTROOT}/include -o main main.cxx
-	otool -hv main | grep WEAK_DEFINES | ${PASS_IFF_EMPTY}
-
+	${CXX} ${CXXLINKFLAGS} -I${TESTROOT}/include -o main main.cxx
+	${OTOOL} -hv main | grep WEAK_DEFINES | ${PASS_IFF_EMPTY}
 
 clean:
-	${RM} ${RMFLAGS} *~ main  
+	rm -f *~ main  
 

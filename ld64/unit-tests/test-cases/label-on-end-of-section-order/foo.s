@@ -8,6 +8,14 @@ _main:
 	movl $0, _mybss(%rip)
 #elif __i386__
 	movl $0, _mybss
+#elif __ppc__
+        lis r2,ha16(_mybss)
+        la r2,lo16(_mybss)(r2)
+        stw r0,0(r2)
+#elif __ppc64__
+        lis r2,ha16(_mybss)
+        la r2,lo16(_mybss)(r2)
+        stw r0,0(r2)
 #elif __arm__
 	.long	_mybss
 #endif

@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.6
 include ${TESTROOT}/include/common.makefile
 
 
@@ -36,11 +37,12 @@ SELECTOR_REFS = "__OBJC,__message_refs"
 ifeq ($(ARCH),x86_64)
 	SELECTOR_REFS = "__DATA,__objc_selrefs"
 endif
+ifeq ($(ARCH),ppc64)
+	SELECTOR_REFS = "__DATA,__objc_selrefs"
+endif
 ifeq ($(ARCH),armv6)
 	SELECTOR_REFS = "__DATA,__objc_selrefs"
 endif
-
-
 
 run: all
 

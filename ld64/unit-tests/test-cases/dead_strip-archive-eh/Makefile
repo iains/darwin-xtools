@@ -35,11 +35,11 @@ run: all
 all:
 	${CXX} ${CXXFLAGS} foo.cxx -c -o foo.o
 	${CXX} ${CXXFLAGS} bar.cxx -c -o bar.o
-	libtool -static foo.o bar.o -o libfoobar.a
-	${CXX} ${CXXFLAGS}  main.cxx libfoobar.a -dead_strip -o main
-	dwarfdump --eh-frame --verify main >/dev/null
-	${PASS_IFF_GOOD_MACHO} main
+	${LIBTOOL} -static foo.o bar.o -o libfoobar.a
+	${CXX} ${CXXLINKFLAGS}  main.cxx libfoobar.a -dead_strip -o main-${ARCH}
+	dwarfdump --eh-frame --verify main-${ARCH} >/dev/null
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 	
 
 clean:
-	rm -rf main foo.o bar.o libfoobar.a
+	rm -rf main-${ARCH} foo.o bar.o libfoobar.a

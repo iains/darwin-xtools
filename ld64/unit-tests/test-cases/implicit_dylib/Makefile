@@ -34,15 +34,15 @@ PWD = $(shell pwd)
 run: all
 
 all:
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name /usr/lib/libbar.dylib
-	${CC} ${CCFLAGS} foo.c  -dynamiclib -o libfoo.dylib -Wl,-reexport_library,libbar.dylib -sub_library libbar
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name /usr/lib/libbar.dylib
+	${CC} ${LINKFLAGS} foo.c  -dynamiclib -o libfoo.dylib -Wl,-reexport_library,libbar.dylib -sub_library libbar
 	# verify that main gets bar from libbar
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -L.
-	nm -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -L.
+	${NM} -m main | grep _bar | grep libbar | ${FAIL_IF_EMPTY}
 	# verify that -no_implicit_dylibs causes main to get bar from libfoo
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main -Wl,-no_implicit_dylibs -L.
-	nm -m main | grep _bar | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main -Wl,-no_implicit_dylibs -L.
+	${NM} -m main | grep _bar | grep libfoo | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
-	
+
 clean:
 	rm -rf libfoo.dylib libbar.dylib main 

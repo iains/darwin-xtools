@@ -25,7 +25,7 @@ include ${TESTROOT}/include/common.makefile
 
 # Test the ld option -stack_addr and -stack_size used together
 
-ifeq ($(FILEARCH),arm)
+ifeq ($(ARCH),arm)
 	STACK_ADDR = 0x2C000000
 	STACK_SIZE = 0x05000000
 	STACK_TOP  = 0x27000000
@@ -46,14 +46,14 @@ run: all
 
 
 all:
-	${CC} ${CCFLAGS} main.c -o main -Wl,-stack_size,${STACK_SIZE} -Wl,-stack_addr,${STACK_ADDR}
+	${CC} ${LINKFLAGS} main.c -o main -Wl,-stack_size,${STACK_SIZE} -Wl,-stack_addr,${STACK_ADDR}
 	# Check for __UNIXSTACK section in object, check that it has the correct value
-	otool -l main | grep -A6 __UNIXSTACK > main.otool
+	${OTOOL} -l main | grep -A6 __UNIXSTACK > main.otool
 	grep " vmsize[ ]*${STACK_SIZE}" main.otool | ${FAIL_IF_EMPTY}
 	grep " vmaddr[ ]*${STACK_TOP}" main.otool | ${FAIL_IF_EMPTY}
 	${FAIL_IF_BAD_MACHO} main
-	${CC} ${CCFLAGS} -static main.c -o main2 -e _main -nostdlib -Wl,-new_linker -Wl,-stack_size,${STACK_SIZE} -Wl,-stack_addr,${STACK_ADDR}
-	otool -l main2 | grep -A6 __UNIXSTACK > main2.otool
+	${CC} ${LINKFLAGS} -static main.c -o main2 -e _main -nostdlib -Wl,-new_linker -Wl,-stack_size,${STACK_SIZE} -Wl,-stack_addr,${STACK_ADDR}
+	${OTOOL} -l main2 | grep -A6 __UNIXSTACK > main2.otool
 	grep " vmsize[ ]*${STACK_SIZE}" main2.otool | ${FAIL_IF_EMPTY}
 	grep " vmaddr[ ]*${STACK_TOP}" main2.otool | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main2

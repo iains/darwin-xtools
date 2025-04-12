@@ -45,8 +45,7 @@ all:
 	${FAIL_IF_BAD_OBJ} test.o
 
 	${LD} -arch ${ARCH} -d -r test.o -exported_symbol _tent1 -o test-r.o
-	otool -rv test-r.o | grep ${BETTER_NOT_FIND} | ${PASS_IFF_EMPTY}
-	
+	${OTOOL} -rv test-r.o | grep ${BETTER_NOT_FIND} | ${PASS_IFF_EMPTY}
 
 clean:
 	rm -rf *.o

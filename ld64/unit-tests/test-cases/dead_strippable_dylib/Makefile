@@ -35,15 +35,14 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib 
-	${CC} ${CCFLAGS} -dynamiclib bar.c -o libbar.dylib 
-	${CC} ${CCFLAGS} -dynamiclib baz.c -o libbaz.dylib -Wl,-mark_dead_strippable_dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib libbar.dylib libbaz.dylib -o main
-	otool -L main | grep libfoo.dylib | ${FAIL_IF_EMPTY}
-	otool -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
-	otool -L main | grep libbaz.dylib | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib bar.c -o libbar.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib baz.c -o libbaz.dylib -Wl,-mark_dead_strippable_dylib
+	${CC} ${LINKFLAGS} main.c libfoo.dylib libbar.dylib libbaz.dylib -o main
+	${OTOOL} -L main | grep libfoo.dylib | ${FAIL_IF_EMPTY}
+	${OTOOL} -L main | grep libbar.dylib | ${FAIL_IF_EMPTY}
+	${OTOOL} -L main | grep libbaz.dylib | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main
-
 
 clean:
 

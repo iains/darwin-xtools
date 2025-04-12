@@ -30,8 +30,8 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -dynamiclib -o libmain.dylib
-	${CC} ${CCFLAGS} foo.c libmain.dylib -o main -Wl,-new_main
+	${CC} ${LINKFLAGS} main.c -dynamiclib -o libmain.dylib
+	${CC} ${LINKFLAGS} foo.c libmain.dylib -o main -Wl,-new_main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

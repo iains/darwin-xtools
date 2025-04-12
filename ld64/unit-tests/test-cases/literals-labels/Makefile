@@ -11,7 +11,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${ASMFLAGS} literals.s -c -o literals.o
+	${AS} -arch ${ARCH} literals.s -o literals.o
 	${OBJECTDUMP} literals.o > literals.o.dump
 	${LD} -arch ${ARCH} -r literals.o -o literals-r.o
 	${OBJECTDUMP} literals-r.o > literals-r.o.dump

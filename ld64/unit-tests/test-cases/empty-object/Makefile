@@ -32,9 +32,9 @@ run: all
 
 all:
 	touch empty.s
-	as -arch ${ARCH} -n empty.s -o empty.o
-	${CC} ${CCFLAGS} main.c empty.o -o main
+	${AS} -arch ${ARCH} -n empty.s -o empty.o
+	${CC} ${LINKFLAGS} main.c empty.o -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:
-	rm  main empty.s empty.o
+	rm -f main empty.s empty.o

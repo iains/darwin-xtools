@@ -31,17 +31,17 @@ run: all
 
 all:
 	# by default, no test* functions should go through stubs
-	${CC} ${CCFLAGS} test.c -dynamiclib -o libtest.dylib
+	${CC} ${LINKFLAGS} test.c -dynamiclib -o libtest.dylib
 	# -interposable should make all four test* functions go through stubs
-	${CC} ${CCFLAGS} test.c -dynamiclib -Wl,-interposable -o libtest.dylib
-	otool -Iv libtest.dylib | grep '4 entries' | ${FAIL_IF_EMPTY}
-	otool -Iv libtest.dylib | grep '_test' | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} test.c -dynamiclib -Wl,-interposable -o libtest.dylib
+	${OTOOL} -Iv libtest.dylib | grep '4 entries' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv libtest.dylib | grep '_test' | ${FAIL_IF_EMPTY}
 	# -interposable_list should make just two test* functions go through stubs
-	${CC} ${CCFLAGS} test.c -dynamiclib -Wl,-interposable_list test.exp -o libtest.dylib
-	otool -Iv libtest.dylib | grep '2 entries' | ${FAIL_IF_EMPTY}
-	otool -Iv libtest.dylib | grep '_test3' | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} test.c -dynamiclib -Wl,-interposable_list test.exp -o libtest.dylib
+	${OTOOL} -Iv libtest.dylib | grep '2 entries' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv libtest.dylib | grep '_test3' | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
 	
 
 clean:
-	rm libtest.dylib
+	rm -f libtest.dylib

@@ -34,7 +34,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${ASMFLAGS} relocs-asm.s -c -o relocs-asm.${ARCH}.o
+	${CC} ${LINKFLAGS} relocs-asm.s -c -o relocs-asm.${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_content relocs-asm.${ARCH}.o > relocs-asm.${ARCH}.o.dump
 
 	${LD} -arch ${ARCH} -r -keep_private_externs relocs-asm.${ARCH}.o -o relocs-asm-r.${ARCH}.o

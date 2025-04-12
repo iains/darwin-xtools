@@ -32,7 +32,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.m other.m -o main -framework Foundation
+	${CC} ${LINKFLAGS} main.m other.m -o main -framework Foundation
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

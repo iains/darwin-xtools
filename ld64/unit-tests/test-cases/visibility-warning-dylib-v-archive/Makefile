@@ -35,10 +35,10 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 	${CC} ${CCFLAGS} -c bar.c -o bar.o
-	libtool -static bar.o -o libbar.a
-	${CC} ${CCFLAGS} main.c -o main libfoo.dylib libbar.a 2>warning.log
+	${LIBTOOL} -static bar.o -o libbar.a
+	${CC} ${LINKFLAGS} main.c -o main libfoo.dylib libbar.a 2>warning.log
 	cat warning.log | ${PASS_IFF_EMPTY}
 	
 

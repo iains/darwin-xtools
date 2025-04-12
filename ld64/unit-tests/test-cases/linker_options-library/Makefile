@@ -30,12 +30,12 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 	${CC} ${CCFLAGS} bar.c -c -o bar.o
-	libtool -static bar.o -o libbar.a
+	${LIBTOOL} -static bar.o -o libbar.a
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${LD} -r main.o -add_linker_option -lfoo -add_linker_option -lbar -o main2.o 
-	${CC} ${CCFLAGS} main2.o -o main -L.
+	${CC} ${LINKFLAGS} main2.o -o main -L.
 	${DYLDINFO} -lazy_bind main | grep _foo | grep libfoo | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 

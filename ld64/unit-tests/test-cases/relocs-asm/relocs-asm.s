@@ -779,4 +779,6 @@ Lfiller:
 	.space	0x9000
 _c:
 	.long	0
+lsplit:
+	.space	0x4000000-0x9000
 

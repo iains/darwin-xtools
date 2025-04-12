@@ -1,9 +1,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-SHELL = bash # use bash shell so we can redirect just stderr
-
-
 run: all
 
 all:

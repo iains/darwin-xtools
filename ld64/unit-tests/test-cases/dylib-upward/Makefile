@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.6
 include ${TESTROOT}/include/common.makefile
 
 #  Verify upward dylib options work
@@ -28,15 +29,15 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC}  ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib
-	${CC}  ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward-lbar -L.
-	otool -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep libbar.dylib | ${FAIL_IF_EMPTY}
-	${CC}  ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward_library,libbar.dylib
-	otool -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep libbar.dylib | ${FAIL_IF_EMPTY}
+	${CC}  ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib
+	${CC}  ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward-lbar -L.
+	${OTOOL} -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep libbar.dylib | ${FAIL_IF_EMPTY}
+	${CC}  ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward_library,libbar.dylib
+	${OTOOL} -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep libbar.dylib | ${FAIL_IF_EMPTY}
 	mkdir -p Bar.framework
-	${CC}  ${CCFLAGS} bar.c -dynamiclib -o Bar.framework/Bar
-	${CC}  ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward_framework,Bar -F.
-	otool -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep Bar.framework/Bar | ${FAIL_IF_EMPTY}
+	${CC}  ${LINKFLAGS} bar.c -dynamiclib -o Bar.framework/Bar
+	${CC}  ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -Wl,-upward_framework,Bar -F.
+	${OTOOL} -lv libfoo.dylib | grep -A2 LC_LOAD_UPWARD_DYLIB | grep Bar.framework/Bar | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:

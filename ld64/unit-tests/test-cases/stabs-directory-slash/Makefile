@@ -31,9 +31,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all: 
-	$(CC) -gstabs+ main.c -o outfile
+	${CC} ${LINKFLAGS} -gstabs+ main.c -o outfile
 	${FAIL_IF_BAD_MACHO} outfile
-	nm -ap outfile | grep '.*\<SO\>.*test-cases.*/$$' | ${PASS_IFF_STDIN}
+	${NM} -ap outfile | grep '.*\<SO\>.*test-cases.*/$$' | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf outfile* 

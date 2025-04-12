@@ -31,9 +31,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} -gdwarf-2 hello.c -o dwarf-hello-${ARCH}
+	${CC} ${LINKFLAGS} -gdwarf-2 hello.c -o dwarf-hello-${ARCH}
 	${FAIL_IF_BAD_MACHO} dwarf-hello-${ARCH}
-	size -l dwarf-hello-${ARCH} | grep __DWARF | ${PASS_IFF_EMPTY}
+	${SIZE} -l dwarf-hello-${ARCH} | grep __DWARF | ${PASS_IFF_EMPTY}
 
 clean:
 	rm -rf dwarf-hello-*

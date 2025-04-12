@@ -40,24 +40,24 @@ all:
 	${CC} ${CCFLAGS} -c foo.c -o foo.o
 	${CC} ${CCFLAGS} -c foo_hidden.c -o foo_hidden.o
 	# weak default and weak hidden should pick default
-	${CC} ${CCFLAGS} foo_weak_hidden.o foo_weak.o -dynamiclib -o libfoo.dylib 
-	nm -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo_weak_hidden.o foo_weak.o -dynamiclib -o libfoo.dylib 
+	${NM} -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
 	# weak default and weak hidden should pick default
-	${CC} ${CCFLAGS} foo_weak.o foo_weak_hidden.o -dynamiclib -o libfoo.dylib 
-	nm -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo_weak.o foo_weak_hidden.o -dynamiclib -o libfoo.dylib 
+	${NM} -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
 	# weak hidden and strong should not warn and pick strong
-	${CC} ${CCFLAGS} foo_weak_hidden.o foo.o -dynamiclib -o libfoo.dylib  
-	nm -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
-	nm -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo_weak_hidden.o foo.o -dynamiclib -o libfoo.dylib  
+	${NM} -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
+	${NM} -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_STDIN}
 	# weak default and strong hidden should not warn and pick hidden
-	${CC} ${CCFLAGS} foo_weak.o foo_hidden.o -dynamiclib -o libfoo.dylib 
-	nm -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
-	nm -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo_weak.o foo_hidden.o -dynamiclib -o libfoo.dylib 
+	${NM} -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
+	${NM} -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_EMPTY}
 	# weak default and strong hidden should not warn and pick hidden
-	${CC} ${CCFLAGS} foo_hidden.o foo_weak.o  -dynamiclib -o libfoo.dylib 
-	nm -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
-	nm -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo_hidden.o foo_weak.o  -dynamiclib -o libfoo.dylib 
+	${NM} -m libfoo.dylib | grep _foo | grep weak | ${FAIL_IF_STDIN}
+	${NM} -m libfoo.dylib | grep _foo | grep "private external" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:
-	rm  libfoo.dylib foo_weak_hidden.o foo_weak.o foo.o foo_hidden.o warnings.log
+	rm -f libfoo.dylib foo_weak_hidden.o foo_weak.o foo.o foo_hidden.o warnings.log

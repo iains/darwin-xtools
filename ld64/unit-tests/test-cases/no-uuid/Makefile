@@ -32,7 +32,7 @@ run: all
 all:
 
 # Test main executable built with dwarf has uuid
-	${CC} ${CCFLAGS} foo.c -o foo -gdwarf-2
+	${CC} ${LINKFLAGS} foo.c -o foo -gdwarf-2
 	${FAIL_IF_BAD_MACHO} foo
 	${OTOOL} -hlv foo | grep LC_UUID | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} foo

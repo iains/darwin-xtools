@@ -31,9 +31,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:	
-	${CC} ${CCFLAGS} main.c foo.c -o main
+	${CC} ${LINKFLAGS} main.c foo.c -o main
 	${FAIL_IF_BAD_MACHO} main
-	${CC} ${CCFLAGS} main.c foo.c -o main ${VERSION_OLD_LINKEDIT}
+	${CC} ${LINKFLAGS} main.c foo.c -o main ${VERSION_OLD_LINKEDIT}
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

@@ -33,9 +33,9 @@ all:
 	${CC} ${CCFLAGS} foo.s -c -o foo.o
 	${CC} ${CCFLAGS} bar.s -c -o bar.o
 	${LD} -r foo.o bar.o -o foobar.o
-	nm -m foobar.o | grep _next | grep __other | ${FAIL_IF_EMPTY}
+	${NM} -m foobar.o | grep _next | grep __other | ${FAIL_IF_EMPTY}
 	${LD} -r foobar.o -o foobar2.o
-	nm -m foobar2.o | grep _next | grep __other | ${PASS_IFF_STDIN}
+	${NM} -m foobar2.o | grep _next | grep __other | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf *.o

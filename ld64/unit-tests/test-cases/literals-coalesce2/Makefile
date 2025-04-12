@@ -1,5 +1,5 @@
 ##
-# Copyright (c) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (c) 2005 Apple Computer, Inc. All rights reserved.
 #
 # @APPLE_LICENSE_HEADER_START@
 #
@@ -24,16 +24,17 @@ TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
 #
-# The point of this test is to determine if
-#  common symbols are not allowed with MH_DYLIB output format with the -multi_module option
+# The point of this test is to verify that literals are uniqued.
+# After running ld -r all duplicates should be removed.
 #
 
 run: all
 
 all:
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c test.c -o test-${ARCH}.o
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c a.c -o a-${ARCH}.o
-	${PASS_IFF_ERROR} libtool -dynamic -o libtest-${ARCH}.a test-${ARCH}.o 2>/dev/null
+	${FAIL_IF_ERROR} ${AS} -arch ${ARCH} literals.s -o literals-${ARCH}.o
+	${FAIL_IF_ERROR} ${OBJECTDUMP} -only literals-${ARCH}.o | uniq -c | grep -v '^   [1|2]' | ${FAIL_IF_STDIN}
+	${FAIL_IF_ERROR} ${LD} -arch ${ARCH} -r literals-${ARCH}.o -o literals-r-${ARCH}.o
+	${PASS_IFF} ./test.sh literals-r-${ARCH}.o ${SIZE}
 
 clean:
-	rm -rf *.o *.a
+	rm -rf *.o

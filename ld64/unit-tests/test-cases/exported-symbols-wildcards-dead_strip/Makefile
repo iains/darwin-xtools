@@ -30,10 +30,10 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} -dynamiclib foo.c -o libfoo.dylib -Wl,-exported_symbol -Wl,'_AB*' -dead_strip
-	nm -j -f libfoo.dylib | grep _good | ${FAIL_IF_EMPTY}
-	nm -j -f libfoo.dylib | grep _bad | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib -Wl,-exported_symbol -Wl,'_AB*' -dead_strip
+	${NM} -j -f libfoo.dylib | grep _good | ${FAIL_IF_EMPTY}
+	${NM} -j -f libfoo.dylib | grep _bad | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 	
 clean:
-	rm libfoo.dylib
+	rm -f libfoo.dylib

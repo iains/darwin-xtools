@@ -37,14 +37,14 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all: 
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} main.c -o main libfoo.dylib libbar.dylib
-	nm -m main | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
-	nm -m main | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -o main libfoo.dylib libbar.dylib
+	${NM} -m main | grep _aaa | grep libbar | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep _bbb | grep libfoo | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:
-	rm libfoo.dylib  libbar.dylib main
+	rm -f libfoo.dylib  libbar.dylib main

@@ -35,12 +35,12 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all: 
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name @loader_path/libbar.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar.dylib -install_name @loader_path/libbar.dylib
 	${FAIL_IF_BAD_MACHO} libbar.dylib
-	${CC} ${CCFLAGS} foo.c libbar.dylib -dynamiclib -o libfoo.dylib 
+	${CC} ${LINKFLAGS} foo.c libbar.dylib -dynamiclib -o libfoo.dylib 
 	${FAIL_IF_BAD_MACHO} libfoo.dylib
-	${CC} ${CCFLAGS} main.c -o main libfoo.dylib 
+	${CC} ${LINKFLAGS} main.c -o main libfoo.dylib 
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:
-	rm *.dylib main
+	rm -f *.dylib main

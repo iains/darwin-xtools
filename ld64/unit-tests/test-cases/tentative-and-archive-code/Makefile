@@ -41,19 +41,19 @@ all:
 	${CC} ${CCFLAGS} junk.c -c -o junk.o
 	# verify data symbol does get pulled in
 	${CC} ${CCFLAGS} foo_data.c -c -o foo_data.o
-	libtool -static junk.o foo_data.o -o libfoo_data.a
-	${CC} ${CCFLAGS} main.c libfoo_data.a -o main_data
-	nm -m main_data | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
+	${LIBTOOL} -static junk.o foo_data.o -o libfoo_data.a
+	${CC} ${LINKFLAGS} main.c libfoo_data.a -o main_data
+	${NM} -m main_data | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
 	# verify tentative does not
 	${CC} ${CCFLAGS} foo_tent.c -c -o foo_tent.o
-	libtool -static junk.o foo_tent.o -o libfoo_tent.a
-	${CC} ${CCFLAGS} main.c libfoo_tent.a -o main_tent
-	nm -m main_tent | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
+	${LIBTOOL} -static junk.o foo_tent.o -o libfoo_tent.a
+	${CC} ${LINKFLAGS} main.c libfoo_tent.a -o main_tent
+	${NM} -m main_tent | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
 	# verify code does not
 	${CC} ${CCFLAGS} foo_code.c -c -o foo_code.o
-	libtool -static junk.o foo_code.o -o libfoo_code.a
-	${CC} ${CCFLAGS} main.c libfoo_code.a -o main_code
-	nm -m main_code | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
+	${LIBTOOL} -static junk.o foo_code.o -o libfoo_code.a
+	${CC} ${LINKFLAGS} main.c libfoo_code.a -o main_code
+	${NM} -m main_code | grep _foo | grep __TEXT | ${FAIL_IF_STDIN}
 	# verify warning when code force to override tent
 	#${CC} ${CCFLAGS} main.c -Wl,-force_load,libfoo_code.a -o main_code_force 2>main_code_force_warnings.txt
 	#grep warning main_code_force_warnings.txt | ${FAIL_IF_EMPTY}

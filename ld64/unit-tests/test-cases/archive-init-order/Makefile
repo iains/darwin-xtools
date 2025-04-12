@@ -30,19 +30,19 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -c -o foo.o 
-	${CC} ${CCFLAGS} foo2.c -c -o foo2.o 
-	${CC} ${CCFLAGS} foo3.c -c -o foo3.o 
-	${CC} ${CCFLAGS} bar.c -c -o bar.o 
-	${CC} ${CCFLAGS} bar2.c -c -o bar2.o 
-	${CC} ${CCFLAGS} bar3.c -c -o bar3.o 
-	libtool -static foo.o foo2.o foo3.o -o libfoo.a
-	libtool -static bar3.o bar2.o bar.o -o libbar.a
-	${CC} ${CCFLAGS} main.c -lbar -lfoo -L. -o main -Wl,-map,main.map
-	grep anon main.map | awk '{ print $$4}' > main-actual.txt
-	sort main-actual.txt > main-should.txt
-	diff main-actual.txt main-should.txt
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${CCFLAGS} foo.c -c -o foo-${ARCH}.o 
+	${CC} ${CCFLAGS} foo2.c -c -o foo2-${ARCH}.o 
+	${CC} ${CCFLAGS} foo3.c -c -o foo3-${ARCH}.o 
+	${CC} ${CCFLAGS} bar.c -c -o bar-${ARCH}.o 
+	${CC} ${CCFLAGS} bar2.c -c -o bar2-${ARCH}.o 
+	${CC} ${CCFLAGS} bar3.c -c -o bar3-${ARCH}.o 
+	${LIBTOOL} -static foo-${ARCH}.o foo2-${ARCH}.o foo3-${ARCH}.o -o libfoo-${ARCH}.a
+	${LIBTOOL} -static bar3-${ARCH}.o bar2-${ARCH}.o bar-${ARCH}.o -o libbar-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c -lbar-${ARCH} -lfoo-${ARCH} -L. -o main-${ARCH} -Wl,-map,main-${ARCH}.map
+	grep anon main-${ARCH}.map | awk '{ print $$4}' > main-${ARCH}-actual.txt
+	sort main-${ARCH}-actual.txt > main-${ARCH}-should.txt
+	diff main-${ARCH}-actual.txt main-${ARCH}-should.txt
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf *.o *.a main main.map main*.txt
+	rm -rf *.o *.a main-* *.map main*.txt

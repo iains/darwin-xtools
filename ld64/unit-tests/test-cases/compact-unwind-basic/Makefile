@@ -27,11 +27,13 @@ include ${TESTROOT}/include/common.makefile
 # Check compiler emitted compact unwind info
 #
 
-all: all-${FILEARCH}
+all: all-${ARCH}
 
 all-i386: all-cu
 all-x86_64: all-cu
 all-arm: all-good
+all-ppc: all-good
+all-ppc64: all-good
 
 all-cu:
 	${CC} ${CCFLAGS} test.s -c -o test.o

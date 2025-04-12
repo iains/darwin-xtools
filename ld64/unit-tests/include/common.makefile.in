@@ -1,0 +1,119 @@
+
+TEST_SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/../test-cases
+TESTBIN=${CMAKE_CURRENT_SOURCE_DIR}/../bin
+
+XT_VERSION=@XTOOLS_VERSION@
+
+BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}/bin
+
+CC ?= ${CMAKE_C_COMPILER}
+CXX ?= ${CMAKE_CXX_COMPILER}
+
+# We need this one for ppc64
+ifneq (${SDK_FOR_10_5},)
+SDK_10_5 = ${SDK_FOR_10_5}
+else
+SDK_10_5 = /Developer/SDKs/MacOSX10.5.sdk
+endif
+
+CCFLAGS ?= -arch $(ARCH)
+
+ifneq ($(SDK),)
+CCFLAGS += -isysroot $(SDK)
+else
+CCFLAGS += -isysroot ${CMAKE_OSX_SYSROOT}
+endif
+
+ifneq ($(MINOS),)
+CCFLAGS += -mmacosx-version-min=$(MINOS)
+else
+CCFLAGS += -mmacosx-version-min=10.5
+endif
+
+CXXFLAGS += $(CCFLAGS)
+
+LINKFLAGS ?= -arch $(ARCH)
+ifneq ($(SDK),)
+LINKFLAGS += -isysroot $(SDK)
+else
+LINKFLAGS += -isysroot ${CMAKE_OSX_SYSROOT}
+endif
+
+ifneq ($(MINOS),)
+LINKFLAGS += -mmacosx-version-min=$(MINOS)
+else
+LINKFLAGS += -mmacosx-version-min=10.5
+endif
+
+ASMFLAGS = -arch $(ARCH)
+
+ifneq ($(MINOS),)
+ASMFLAGS += -mmacosx-version-min=$(MINOS)
+else
+ASMFLAGS += -mmacosx-version-min=10.5
+endif
+
+ifeq (1,$(TEST_SYSTEM_TOOLS))
+
+DYLDINFO = $(BUILT_PRODUCTS_DIR)/dyldinfo
+LD = /usr/bin/ld
+MACHOCHECK = $(BUILT_PRODUCTS_DIR)/machocheck
+OBJECTDUMP = $(BUILT_PRODUCTS_DIR)/ObjectDump
+REBASE = $(BUILT_PRODUCTS_DIR)/rebase
+
+# From cctools.
+AR = /usr/bin/ar
+AS = /usr/bin/as
+CODESIGN_ALLOCATE = /usr/bin/codesign_allocate
+LIBTOOL = /usr/bin/libtool
+LIPO = /usr/bin/lipo
+NM = /usr/bin/nm
+OTOOL = /usr/bin/otool
+RANLIB = /usr/bin/ranlib
+SIZE = /usr/bin/size
+STRIP = /usr/bin/strip
+
+else
+
+LINKFLAGS += -B $(BUILT_PRODUCTS_DIR)
+
+# From ld64
+DYLDINFO = $(BUILT_PRODUCTS_DIR)/dyldinfo
+LD = $(BUILT_PRODUCTS_DIR)/ld
+MACHOCHECK = $(BUILT_PRODUCTS_DIR)/machocheck
+OBJECTDUMP = $(BUILT_PRODUCTS_DIR)/ObjectDump
+REBASE = $(BUILT_PRODUCTS_DIR)/rebase
+
+# From cctools.
+AR = $(BUILT_PRODUCTS_DIR)/ar
+AS = $(BUILT_PRODUCTS_DIR)/as
+CODESIGN_ALLOCATE = $(BUILT_PRODUCTS_DIR)/codesign_allocate
+LIBTOOL = $(BUILT_PRODUCTS_DIR)/libtool
+LIPO = $(BUILT_PRODUCTS_DIR)/lipo
+NM = $(BUILT_PRODUCTS_DIR)/nm
+OTOOL = $(BUILT_PRODUCTS_DIR)/otool
+RANLIB = $(BUILT_PRODUCTS_DIR)/ranlib
+SIZE = $(BUILT_PRODUCTS_DIR)/size
+STRIP = $(BUILT_PRODUCTS_DIR)/strip
+endif
+
+CXXLINKFLAGS += $(LINKFLAGS)
+
+VERSION_NEW_LINKEDIT = -mmacosx-version-min=10.5
+VERSION_OLD_LINKEDIT = -mmacosx-version-min=10.4
+LD_NEW_LINKEDIT = -macosx_version_min 10.5
+
+PASS_IFF		= $(TESTBIN)/pass-iff-exit-zero.pl
+PASS_IFF_SUCCESS	= $(PASS_IFF)
+PASS_IFF_EMPTY		= $(TESTBIN)/pass-iff-no-stdin.pl
+PASS_IFF_STDIN		= $(TESTBIN)/pass-iff-stdin.pl
+FAIL_IFF		= $(TESTBIN)/fail-iff-exit-zero.pl
+FAIL_IFF_SUCCESS	= $(FAIL_IFF)
+PASS_IFF_ERROR		= $(TESTBIN)/pass-iff-exit-non-zero.pl
+FAIL_IF_ERROR		= $(TESTBIN)/fail-if-exit-non-zero.pl
+FAIL_IF_SUCCESS		= $(TESTBIN)/fail-if-exit-zero.pl
+FAIL_IF_EMPTY		= $(TESTBIN)/fail-if-no-stdin.pl
+FAIL_IF_STDIN		= $(TESTBIN)/fail-if-stdin.pl
+PASS_IFF_GOOD_MACHO	= $(PASS_IFF) $(MACHOCHECK)
+FAIL_IF_BAD_MACHO	= $(FAIL_IF_ERROR) $(MACHOCHECK)
+FAIL_IF_BAD_OBJ		= $(FAIL_IF_ERROR) $(OBJECTDUMP) >/dev/null

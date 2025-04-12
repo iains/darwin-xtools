@@ -32,9 +32,9 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
-	libtool -static foo.o -o libfoo.a
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS}  bar.c -Os libfoo.a -o foo -Wl,-e,_foo -nostartfiles
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS}  bar.c -Os libfoo.a -dead_strip -o foo -Wl,-e,_foo 
+	${LIBTOOL} -static foo.o -o libfoo.a
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS}  bar.c -Os libfoo.a -o foo -Wl,-e,_foo -nostartfiles
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS}  bar.c -Os libfoo.a -dead_strip -o foo -Wl,-e,_foo 
 	${PASS_IFF_GOOD_MACHO} foo
 
 clean:

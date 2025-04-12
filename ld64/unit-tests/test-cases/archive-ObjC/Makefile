@@ -37,12 +37,12 @@ all:
 	${FAIL_IF_BAD_OBJ} bar-${ARCH}.o
 	${CC} ${CCFLAGS} baz.m -c -o baz-${ARCH}.o 
 	${FAIL_IF_BAD_OBJ} baz-${ARCH}.o
-	libtool -static foo-${ARCH}.o bar-${ARCH}.o baz-${ARCH}.o -o libfoobarbaz-${ARCH}.a
-	${CC} ${CCFLAGS} main.c -lfoobarbaz-${ARCH} -L. -o main-${ARCH} -ObjC -framework Foundation -framework CoreFoundation
+	${LIBTOOL} -static foo-${ARCH}.o bar-${ARCH}.o baz-${ARCH}.o -o libfoobarbaz-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c -lfoobarbaz-${ARCH} -L. -o main-${ARCH} -ObjC -framework Foundation -framework CoreFoundation
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
-	nm main-${ARCH} | grep "_bar" | ${FAIL_IF_STDIN}
-	nm main-${ARCH} | grep "_Foo" | ${FAIL_IF_EMPTY}
-	nm main-${ARCH} | grep "_Baz" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_bar" | ${FAIL_IF_STDIN}
+	${NM} main-${ARCH} | grep "_Foo" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_Baz" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:

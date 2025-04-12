@@ -30,13 +30,12 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
-	otool -Iv main | grep '_foo' | ${FAIL_IF_EMPTY}
-	otool -Iv main | grep '_bar' | ${FAIL_IF_EMPTY}
-	otool -Iv main | grep '_baz' | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
+	${OTOOL} -Iv main | grep '_foo' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv main | grep '_bar' | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv main | grep '_baz' | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
-	
 
 clean:
-	rm libfoo.dylib main
+	rm -f libfoo.dylib main

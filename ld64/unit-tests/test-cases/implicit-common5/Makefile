@@ -33,8 +33,8 @@ run: all
 all:
 	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c test.c -o test-${ARCH}.o
 	${FAIL_IF_ERROR} ${CC} ${CCFLAGS} -c a.c -o a-${ARCH}.o
-	${FAIL_IF_ERROR} libtool -o libtest-${ARCH}.a test-${ARCH}.o
-	${FAIL_IF_ERROR} ${CC} ${LDFLAGS} a-${ARCH}.o -L. -ltest-${ARCH} -o a-${ARCH}
+	${FAIL_IF_ERROR} ${LIBTOOL} -o libtest-${ARCH}.a test-${ARCH}.o
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS} a-${ARCH}.o -L. -ltest-${ARCH} -o a-${ARCH}
 	${PASS_IFF_GOOD_MACHO} a-${ARCH}
 
 clean:

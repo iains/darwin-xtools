@@ -1,15 +1,15 @@
 ##
-# Copyright (c) 2005 Apple Computer, Inc. All rights reserved.
+# Copyright (c) 2008-2009 Apple Inc. All rights reserved.
 #
 # @APPLE_LICENSE_HEADER_START@
-#
+# 
 # This file contains Original Code and/or Modifications of Original Code
 # as defined in and that are subject to the Apple Public Source License
 # Version 2.0 (the 'License'). You may not use this file except in
 # compliance with the License. Please obtain a copy of the License at
 # http://www.opensource.apple.com/apsl/ and read it before using this
 # file.
-#
+# 
 # The Original Code and all software distributed under the License are
 # distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
 # EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -17,24 +17,29 @@
 # FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
 # Please see the License for the specific language governing rights and
 # limitations under the License.
-#
+# 
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
 #
-# The point of this test is to verify that literals are uniqued.
-# After running ld -r all duplicates should be removed.
+# Simple test for branch islands, where we have to cross between different
+# sections in __TEXT
 #
 
 run: all
 
 all:
-	${FAIL_IF_ERROR} ${CC} ${ASMFLAGS} literals.s -c -o literals-${ARCH}.o
-	${FAIL_IF_ERROR} ${OBJECTDUMP} -only literals-${ARCH}.o | uniq -c | grep -v '^   [1|2]' | ${FAIL_IF_STDIN}
-	${FAIL_IF_ERROR} ${LD} -arch ${ARCH} -r literals-${ARCH}.o -o literals-r-${ARCH}.o
-	${PASS_IFF} ./test.sh literals-r-${ARCH}.o
+	# Verify that we fail if there is no valid place to insert branch islands.
+	${CC} ${LINKFLAGS} hello.c atomic_space.s extra.c -o hello-${ARCH}  2>&1 | grep "Unable to insert branch island. No insertion point available." | ${PASS_IFF_STDIN}
+	${CC} ${LINKFLAGS} hello.c space.s extra.c -Os -o hello-${ARCH}
+	${FAIL_IF_BAD_MACHO} hello-${ARCH}
+ifneq (${EXECUTE_OK},)
+	./hello-${ARCH}
+else
+	${PASS_IFF} true
+endif
 
 clean:
-	rm -rf *.o
+	rm  -f hello-*

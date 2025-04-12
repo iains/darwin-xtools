@@ -36,13 +36,13 @@ all:
 	${CC} ${CCFLAGS} -c hello.c -o hello.o
 	${FAIL_IF_BAD_OBJ} hello.o
 	echo "${PWD}/hello.o" > "${PWD}/filelist1"
-	cd /tmp && ${CC} ${CCFLAGS} -filelist "${PWD}/filelist1"  -o "${PWD}/hello" 
+	cd /tmp && ${CC} ${LINKFLAGS} -filelist "${PWD}/filelist1"  -o "${PWD}/hello" 
 	${FAIL_IF_BAD_MACHO} hello
 	echo "hello.o" > "${PWD}/filelist2"
-	cd /tmp && ${CC} ${CCFLAGS} -filelist "${PWD}/filelist2,${PWD}" -o "${PWD}/hello"
+	cd /tmp && ${CC} ${LINKFLAGS} -filelist "${PWD}/filelist2,${PWD}" -o "${PWD}/hello"
 	${FAIL_IF_BAD_MACHO} hello
 	echo "${PWD}/hello.o" > "${PWD}/filelist,withComma"
-	cd /tmp && ${CC} ${CCFLAGS} -filelist "${PWD}/filelist,withComma"  -o "${PWD}/hello"
+	cd /tmp && ${CC} ${LINKFLAGS} -filelist "${PWD}/filelist,withComma"  -o "${PWD}/hello"
 	${PASS_IFF_GOOD_MACHO} hello
 
 clean:

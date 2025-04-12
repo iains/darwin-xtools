@@ -31,19 +31,19 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -flat_namespace -dynamiclib -o libfoo.dylib -undefined suppress
+	${CC} ${LINKFLAGS} foo.c -flat_namespace -dynamiclib -o libfoo.dylib -undefined suppress
 	${CC} ${CCFLAGS} bar.c -c -o bar.o
-	libtool -static bar.o -o libbar.a
+	${LIBTOOL} -static bar.o -o libbar.a
 	# test that linking main executable -twolevel_namespace does not pull in bar()
-	${CC} ${CCFLAGS} main.c libfoo.dylib libbar.a -o main
-	nm -mn main | grep _bar | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib libbar.a -o main
+	${NM} -mn main | grep _bar | ${FAIL_IF_STDIN}
 	# test that linking dylib -flat_namespace does not pull in bar()
-	${CC} ${CCFLAGS} main.c -flat_namespace libfoo.dylib libbar.a -dynamiclib -o main.dylib
-	nm -mn main.dylib | grep _bar | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c -flat_namespace libfoo.dylib libbar.a -dynamiclib -o main.dylib
+	${NM} -mn main.dylib | grep _bar | ${FAIL_IF_STDIN}
 	# test that linking main executable -flat_namespace pulls in bar()
-	${CC} ${CCFLAGS} main.c -flat_namespace libfoo.dylib libbar.a -o main_flat
-	nm -mn main_flat | grep _bar | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c -flat_namespace libfoo.dylib libbar.a -o main_flat
+	${NM} -mn main_flat | grep _bar | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main_flat
 	
 clean:
-	rm libfoo.dylib libbar.a bar.o main main_flat main.dylib 
+	rm -f libfoo.dylib libbar.a bar.o main main_flat main.dylib 

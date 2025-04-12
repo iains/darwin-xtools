@@ -27,7 +27,6 @@ include ${TESTROOT}/include/common.makefile
 # Check that non-lazy-pointers in different section are properly handled by -r
 #
 
-
 all: all-${ARCH}
 
 all-ppc: hasnl
@@ -38,11 +37,11 @@ all-armv6: hasnl
 
 all-armv7: hasnl
 
+all-ppc64: all-true
 all-x86_64: all-true
 
 all-true:
 	${PASS_IFF} true
-
 
 hasnl:
 	${CC} ${CCFLAGS} -c foo.s -o foo.o
