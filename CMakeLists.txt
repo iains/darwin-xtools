@@ -178,12 +178,15 @@ if(CMAKE_SYSTEM_VERSION LESS 10.0.0)
                COPYONLY)
 endif()
 
+if (FALSE)
+# We do not need xar for this version.
 if (NOT XTOOLS_HAS_MODERNXAR)
   add_subdirectory(xar-additions)
   configure_file(
                 ${CMAKE_SOURCE_DIR}/xar-additions/xar.h
                 ${CMAKE_BINARY_DIR}/host-includes/xar/xar.h
                 COPYONLY)
+endif()
 endif()
 
 # Evaluate first so that we find out about libprunetrie.
