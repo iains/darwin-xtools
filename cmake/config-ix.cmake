@@ -50,5 +50,7 @@ check_function_exists(OSAtomicAdd64 XTOOLS_HAS_64BATADD)
 # systems - we provide a replacement.
 check_function_exists(map_fd XTOOLS_HAS_MAP_FD)
 
-set(CMAKE_REQUIRED_LIBRARIES "xar")
-check_function_exists(xar_extract_tobuffersz XTOOLS_HAS_MODERNXAR)
+if (FALSE)
+  set(CMAKE_REQUIRED_LIBRARIES "xar")
+  check_function_exists(xar_extract_tobuffersz XTOOLS_HAS_MODERNXAR)
+endif()
