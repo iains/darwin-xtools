@@ -28,7 +28,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <stuff/symbol_list.h>
-#include <stuff/allocate.h>
+#include <allocate.h>
 #include <stuff/errors.h>
 
 static int cmp_qsort_name(

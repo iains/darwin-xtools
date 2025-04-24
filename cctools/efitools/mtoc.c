@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include "stuff/breakout.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/reloc.h"
 #include "stuff/rnd.h"
 

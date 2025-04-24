@@ -32,7 +32,7 @@
 #include "stuff/bool.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/guess_short_name.h"
 char *progname = NULL;
 

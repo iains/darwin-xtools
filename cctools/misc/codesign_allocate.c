@@ -24,10 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"
-#include "stuff/allocate.h"
 
 /*
  * The structure that holds the -a <arch> <size> information from the command

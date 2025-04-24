@@ -8,7 +8,7 @@
 #include <llvm-c/lto.h>
 #include "stuff/ofile.h"
 #include "stuff/lto.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include <mach-o/nlist.h>
 #include <mach-o/dyld.h>
 

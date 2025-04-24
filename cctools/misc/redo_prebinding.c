@@ -100,7 +100,6 @@
 #import <mach-o/arm/reloc.h>
 #import <stuff/breakout.h>
 #import <stuff/best_arch.h>
-#import <stuff/allocate.h>
 #import <stuff/errors.h>
 #import <stuff/rnd.h>
 #import <stuff/hppa.h>
@@ -110,6 +109,7 @@
 #import <stuff/macosx_deployment_target.h>
 
 #include <mach-o/dyld.h>
+#include <allocate.h>
 
 #define U_ABS(l) (((int32_t)(l))<0 ? (uint32_t)(-(l)) : (l))
 

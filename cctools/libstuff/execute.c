@@ -27,8 +27,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include "allocate.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/execute.h"
 #include "mach-o/dyld.h"
 

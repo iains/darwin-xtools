@@ -37,8 +37,8 @@
 #include <mach-o/reloc.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
+#include "allocate.h"
 #include "stuff/breakout.h"
-#include "stuff/allocate.h"
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
 #include "stuff/reloc.h"

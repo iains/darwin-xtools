@@ -26,7 +26,7 @@
 #import "stuff/ofile.h"
 #import "stuff/errors.h"
 #import "stuff/bytesex.h"
-#import "stuff/allocate.h"
+#include "allocate.h"
 
 /* name of the program for error messages (argv[0]) */
 __private_extern__ char *progname = NULL;

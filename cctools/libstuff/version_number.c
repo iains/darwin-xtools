@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "stuff/bool.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/errors.h"
 
 /*

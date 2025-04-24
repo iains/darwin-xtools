@@ -28,7 +28,7 @@
 #include <mach-o/rld.h>
 #endif /* defined(__OPENSTEP__) */
 #include "stuff/ofile.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/errors.h"
 #include "gprof.h"
 

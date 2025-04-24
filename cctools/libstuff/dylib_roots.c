@@ -36,7 +36,7 @@
 #include "stuff/SymLoc.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/dylib_roots.h"
 
 struct check_block {

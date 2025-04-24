@@ -28,7 +28,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/macosx_deployment_target.h"
 
 /* last value passed to put_macosx_deployment_target() */

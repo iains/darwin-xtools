@@ -20,8 +20,13 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#if defined(__MWERKS__) && !defined(__private_extern__)
-#define __private_extern__ __declspec(private_extern)
+
+/* Normalize compiler flags for host endianness.  */
+//#include <host-endian.h>
+#include "private-extern.h"
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /* defined in allocate.c */
@@ -38,3 +43,7 @@ __private_extern__ char *savestr(
 
 __private_extern__ char *makestr(
     const char *args, ...);
+
+#ifdef __cplusplus
+}
+#endif

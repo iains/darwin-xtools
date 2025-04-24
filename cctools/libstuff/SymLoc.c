@@ -31,8 +31,8 @@
 #import <pwd.h>
 #import "stuff/bool.h"
 #import "stuff/errors.h"
-#import "stuff/allocate.h"
 #import "stuff/SymLoc.h"
+#include "allocate.h"
 
 const char *
 symLocForDylib(const char *installName, const char *releaseName,

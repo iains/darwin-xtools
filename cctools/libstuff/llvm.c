@@ -4,8 +4,8 @@
 #include <sys/file.h>
 #include <dlfcn.h>
 #include "llvm-c/Disassembler.h"
+#include "allocate.h"
 #include "stuff/llvm.h"
-#include "stuff/allocate.h"
 #include <mach-o/dyld.h>
 
 /*

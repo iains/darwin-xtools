@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <mach-o/loader.h>
 #include <stuff/bool.h>
-#include <stuff/allocate.h>
+#include <allocate.h>
 #include "dyld_bind_info.h"
 
 const char *

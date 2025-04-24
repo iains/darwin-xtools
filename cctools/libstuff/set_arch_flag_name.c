@@ -22,8 +22,8 @@
  */
 #ifndef RLD
 #include <stdio.h>
+#include "allocate.h"
 #include "stuff/arch.h"
-#include "stuff/allocate.h"
 
 /*
  * set_arch_flag_name() sets the name field of the specified arch_flag to

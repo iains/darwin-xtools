@@ -58,9 +58,9 @@
 #include <mach/mach.h>
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
+#include "allocate.h"
 #include "stuff/arch.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/lto.h"
 
 /* The maximum section alignment allowed to be specified, as a power of two */

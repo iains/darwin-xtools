@@ -35,7 +35,7 @@
 
 #include "stuff/bool.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/guess_short_name.h"
 #include "stuff/seg_addr_table.h"
 

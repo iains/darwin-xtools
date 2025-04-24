@@ -63,6 +63,7 @@
 #import <mach/arm/thread_status.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
+#include "allocate.h"
 #include "stuff/bool.h"
 #ifdef OFI
 #include <mach-o/dyld.h>
@@ -73,7 +74,6 @@
 #include "stuff/arch.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/ofile.h"
 #include "stuff/print.h"
 

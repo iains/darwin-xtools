@@ -26,10 +26,10 @@
 #include <limits.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"
-#include "stuff/allocate.h"
 
 /* used by error routines as the name of the program */
 char *progname = NULL;

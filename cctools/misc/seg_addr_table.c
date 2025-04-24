@@ -28,8 +28,8 @@
 #include <sys/stat.h>
 #include <time.h>
 
+#include "allocate.h"
 #include "stuff/ofile.h"
-#include "stuff/allocate.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"
 #include "stuff/seg_addr_table.h"

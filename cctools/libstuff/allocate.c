@@ -25,8 +25,8 @@
 #include <string.h>
 #include <mach/mach.h>
 
-#include "stuff/allocate.h"
 #include "stuff/errors.h"
+#include <allocate.h>
 /*
  * allocate() is just a wrapper around malloc that prints an error message and
  * exits if the malloc fails.

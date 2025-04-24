@@ -40,11 +40,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/ofile.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/execute.h"
 #include "stuff/version_number.h"
 #include "stuff/unix_standard_mode.h"

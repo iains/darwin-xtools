@@ -28,9 +28,9 @@
 #ifndef __OPENSTEP__
 #include <utime.h>
 #endif
+#include "allocate.h"
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"
-#include "stuff/allocate.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"
 #ifdef LTO_SUPPORT

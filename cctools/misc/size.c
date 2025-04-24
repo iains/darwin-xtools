@@ -63,10 +63,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 
 char *progname = NULL;
 

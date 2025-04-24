@@ -24,10 +24,10 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "allocate.h"
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
 #include "stuff/arch.h"
-#include "stuff/allocate.h"
 
 /*
  * get_arch_from_host() gets the architecture from the host this is running on

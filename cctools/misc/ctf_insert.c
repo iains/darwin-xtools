@@ -28,7 +28,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "stuff/allocate.h"
+
+#include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"

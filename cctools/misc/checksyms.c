@@ -32,11 +32,11 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
+#include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/ofile.h"
 #include "stuff/symbol.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/dylib_table.h"
 #include "stuff/seg_addr_table.h"
 #include "stuff/guess_short_name.h"

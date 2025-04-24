@@ -33,7 +33,7 @@
 #include "stddef.h"
 #include "string.h"
 #include "mach-o/loader.h"
-#include "stuff/allocate.h"
+#include "allocate.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 #include "stuff/reloc.h"

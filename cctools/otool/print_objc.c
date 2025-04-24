@@ -32,7 +32,8 @@
 #include "string.h"
 #include "mach-o/loader.h"
 //#include "objc/objc-runtime.h"
-#include "stuff/allocate.h"
+
+#include "allocate.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 #include "dyld_bind_info.h"

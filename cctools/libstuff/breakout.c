@@ -24,9 +24,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "allocate.h"
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"
-#include "stuff/allocate.h"
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
 #include "stuff/crc32.h"

@@ -15,8 +15,8 @@
 #include "stuff/arch.h"
 #include "stuff/errors.h"
 #include "stuff/execute.h"
-#include "stuff/allocate.h"
 #include <mach-o/dyld.h>
+#include "allocate.h"
 
 /* used by error calls (exported) */
 char *progname = NULL;

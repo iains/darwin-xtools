@@ -35,10 +35,10 @@
 #include <ar.h>
 #include <mach-o/ranlib.h>
 #include <libc.h>
+#include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
-#include "stuff/allocate.h"
 #include "stuff/symbol.h"
 #include "stuff/symbol.h"
 #include "stuff/llvm.h"

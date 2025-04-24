@@ -44,7 +44,8 @@
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
 #include <mach/mach_error.h>
-#include "stuff/allocate.h"
+
+#include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
 #include "stuff/bytesex.h"

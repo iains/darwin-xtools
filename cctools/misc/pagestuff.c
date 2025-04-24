@@ -26,7 +26,7 @@
 #import <string.h>
 #import "stuff/ofile.h"
 #import "stuff/errors.h"
-#import "stuff/allocate.h"
+#include "allocate.h"
 
 enum file_part_type {
     FP_FAT_HEADERS,
