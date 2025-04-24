@@ -87,8 +87,7 @@ static char rcsid[] = "$OpenBSD: contents.c,v 1.2 1996/06/26 05:31:19 deraadt Ex
  *	skipping member contents.
  */
 int
-contents(argv)
-	char **argv;
+contents(char **argv)
 {
 	int afd, all;
 	struct tm *tp;

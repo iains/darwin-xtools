@@ -117,8 +117,7 @@ tmp()
  * 	does, remove it from the argument list.
  */
 char *
-files(argv)
-	char **argv;
+files(char **argv)
 {
 	char **list, *p;
 
@@ -133,8 +132,7 @@ files(argv)
 }
 
 void
-orphans(argv)
-	char **argv;
+orphans(char **argv)
 {
 
 	for (; *argv; ++argv)
@@ -142,8 +140,7 @@ orphans(argv)
 }
 
 char *
-rname(path)
-	char *path;
+rname(char *path)
 {
 	char *ind;
 
@@ -151,8 +148,7 @@ rname(path)
 }
 
 int
-compare(dest)
-	char *dest;
+compare(char *dest)
 {
 
 	if (options & AR_TR)
@@ -163,14 +159,16 @@ compare(dest)
 void
 badfmt()
 {
-
+#if __APPLE__
 	errno = EFTYPE;
+#else
+	errno = EINVAL;
+#endif
 	err(1, "%s", archive);
 }
 
 void
-error(name)
-	char *name;
+error(char *name)
 {
 
 	err(1, "%s", name);
