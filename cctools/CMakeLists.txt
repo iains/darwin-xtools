@@ -7,7 +7,7 @@ endif()
 
 set(CCTOOLS_VERSION_NUM 855)
 
-add_definitions(-DALLOW_64BIT_LEB_ON_32B_TARGET=1)
+add_definitions(-DALLOW_64BIT_LEB_ON_32B_TARGET=1 -DIN_CCTOOLS)
 
 option(CCTOOLS_EFITOOLS  "Build efitools as part of cctools" OFF)
 option(CCTOOLS_LD_CLASSIC  "Build ld_classic as part of cctools" ON)
