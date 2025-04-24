@@ -21,7 +21,16 @@ check_cxx_compiler_flag(-stdlib=libc++    XTOOLS_CXX_HAS_STDLIB_FLAG)
 
 # clang ignores this but produces a compile "unused option" warning.
 if (CMAKE_COMPILER_IS_GNUCXX)
-  check_cxx_compiler_flag(-static-libstdc++ XTOOLS_CXX_HAS_STATICCXX_FLAG)
+  check_cxx_compiler_flag(-static-libstdc++ XTOOLS_MAYBE_STATICCXX_FLAG)
+  if(XTOOLS_MAYBE_STATICCXX_FLAG)
+    try_compile(XTOOLS_CXX_HAS_STATICCXX_FLAG ${CMAKE_BINARY_DIR}
+                ${CMAKE_SOURCE_DIR}/cmake/test.C
+                LINK_LIBRARIES -static-libstdc++
+                CXX_STANDARD 98)
+    if(XTOOLS_CXX_HAS_STATICCXX_FLAG)
+      message(STATUS "*Top Level* -static-libstdc++ works")
+    endif()
+  endif()
 endif()
 
 # Check for C++11 headers/libs that are used by some versions of ld64.
