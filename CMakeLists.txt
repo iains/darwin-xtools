@@ -196,6 +196,12 @@ if (NOT XTOOLS_HAS_MODERNXAR)
 endif()
 endif()
 
+configure_file(${CMAKE_SOURCE_DIR}/host-includes/allocate.h
+               ${CMAKE_BINARY_DIR}/host-includes/allocate.h
+               COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/host-includes/maxpathlen.h
+               ${CMAKE_BINARY_DIR}/host-includes/maxpathlen.h
+               COPYONLY)
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)
