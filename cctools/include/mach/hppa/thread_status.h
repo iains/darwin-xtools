@@ -58,7 +58,7 @@
 #ifndef	_HPPA_THREAD_STATE_ 
 #define	_HPPA_THREAD_STATE_
 
-#include <mach/machine/boolean.h>
+#include <mach-for-target/machine/boolean.h>
 
 
 #define	HPPA_INTEGER_THREAD_STATE     1

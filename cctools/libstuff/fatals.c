@@ -26,8 +26,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <errno.h>
-#include <mach/mach.h>
-#include <mach/mach_error.h>
 
 #include "stuff/errors.h"
 
@@ -68,6 +66,10 @@ const char *format,
 	va_end(ap);
 	exit(1);
 }
+
+
+#  include <mach/mach.h>
+#  include <mach/mach_error.h>
 
 /*
  * Print the fatal error message along with the mach error string and exit.

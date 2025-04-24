@@ -81,7 +81,6 @@
  * problem as the BSD would treat the command "nm -Q" by saying "-Q" is an
  * invalid argument which was slightly inconsistant.
  */
-#include <mach/mach.h> /* first so to get rid of a precomp warning */
  
 #include <stdint.h>
 #include <stdio.h>
@@ -103,6 +102,7 @@
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
 
+#include <mach/mach.h> /* first so to get rid of a precomp warning */
 /* used by error routines as the name of the program */
 char *progname = NULL;
 

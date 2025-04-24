@@ -26,12 +26,14 @@
 #include "stdint.h"
 #include "stdlib.h"
 #include "string.h"
+
 #include "allocate.h"
 #include "stuff/all-thread-status.h"
+#include "stuff/arch.h"
 #include "stuff/bytesex.h"
+
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
-#include "stuff/arch.h"
 
 /*
  * The array of all currently know architecture flags (terminated with an entry

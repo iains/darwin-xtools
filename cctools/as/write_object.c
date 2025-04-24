@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 
 #include "arch64_32.h"
-#include "stuff/openstep_mach.h"
 #include <mach-o/loader.h>
 #include <mach-o/reloc.h>
 #include <mach-o/stab.h>
@@ -39,6 +38,7 @@
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/errors.h"
+
 #include "as.h"
 #include "struc-symbol.h"
 #include "symbols.h"
@@ -89,6 +89,8 @@
 #define RELOC_PAIR		ARM_RELOC_PAIR
 #endif
 
+#include <mach/mach.h>
+#include "stuff/openstep_mach.h"
 /*
  * These variables are set by layout_symbols() to organize the symbol table and
  * string table in order the dynamic linker expects.  They are then used in

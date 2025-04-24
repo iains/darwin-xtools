@@ -35,10 +35,11 @@
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/i860/reloc.h>
-#include "stuff/symbol.h"
 
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
+#include "stuff/symbol.h"
+
 #include "otool.h"
 #include "../as/i860-opcode.h"
 

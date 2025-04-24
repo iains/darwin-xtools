@@ -37,9 +37,10 @@
 
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
+#include "stuff/symbol.h"
+
 #include "dyld_bind_info.h"
 #include "ofile_print.h"
-#include "stuff/symbol.h"
 #include "otool.h"
 
 #define GET_DOUBLE(sect, left, length, swapped, d) \

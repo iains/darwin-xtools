@@ -24,8 +24,8 @@
 #define __private_extern__ __declspec(private_extern)
 #endif
 
-#import "stuff/bool.h"
 #include "mach-o/cpu-types.h"
+#include "stuff/bool.h"
 
 __private_extern__ uint32_t reloc_pair_r_type(
     cpu_type_t cputype);

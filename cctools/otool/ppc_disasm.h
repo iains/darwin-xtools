@@ -28,8 +28,6 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
-#import <mach-o/reloc.h>
-#import <mach-o/nlist.h>
 
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"

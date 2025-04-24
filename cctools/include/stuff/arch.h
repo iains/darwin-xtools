@@ -30,8 +30,8 @@
  * This file contains the current known set of flags and constants for the
  * known architectures.
  */
-#include <stuff/bytesex.h>
 #include "mach-o/cpu-types.h"
+#include "mach-for-target/vm_prot.h"
 
 /*
  * The structure describing an architecture flag with the string of the flag

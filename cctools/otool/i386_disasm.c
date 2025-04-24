@@ -63,11 +63,13 @@ WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/x86_64/reloc.h>
-#include "stuff/symbol.h"
+
 #include "allocate.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
+#include "stuff/symbol.h"
 #include "stuff/llvm.h"
+
 #include "otool.h"
 #include "dyld_bind_info.h"
 #include "ofile_print.h"

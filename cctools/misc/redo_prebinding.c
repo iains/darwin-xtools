@@ -83,24 +83,6 @@
 #include <mach-o/redo_prebinding.h>
 #endif /* defined(LIBRARY_API) */
 
-#import <mach-o/stab.h>
-#import <mach-o/loader.h>
-#import <mach-o/reloc.h>
-#import <mach-o/hppa/reloc.h>
-#import <mach-o/sparc/reloc.h>
-#import <mach-o/ppc/reloc.h>
-#import <mach-o/arm/reloc.h>
-#import <stuff/breakout.h>
-#import <stuff/best_arch.h>
-#import <stuff/errors.h>
-#import <stuff/rnd.h>
-#import <stuff/hppa.h>
-#import <stuff/execute.h>
-#import <stuff/guess_short_name.h>
-#import <stuff/seg_addr_table.h>
-#import <stuff/macosx_deployment_target.h>
-
-#include <mach-o/dyld.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
@@ -111,8 +93,25 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <mach-o/stab.h>
+#include <mach-o/loader.h>
+#include <mach-o/reloc.h>
+#include <mach-o/hppa/reloc.h>
+#include <mach-o/sparc/reloc.h>
+#include <mach-o/ppc/reloc.h>
+#include <mach-o/arm/reloc.h>
+
 #include <allocate.h>
 #include "stuff/all-thread-status.h"
+#include <stuff/breakout.h>
+#include <stuff/best_arch.h>
+#include <stuff/errors.h>
+#include <stuff/rnd.h>
+#include <stuff/hppa.h>
+#include <stuff/execute.h>
+#include <stuff/guess_short_name.h>
+#include <stuff/seg_addr_table.h>
+#include <stuff/macosx_deployment_target.h>
 
 #define U_ABS(l) (((int32_t)(l))<0 ? (uint32_t)(-(l)) : (l))
 

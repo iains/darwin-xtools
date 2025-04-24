@@ -36,8 +36,6 @@
 #ifdef SHLIB
 #include "shlib.h"
 #endif
-#include <mach/mach.h>
-#include "stuff/openstep_mach.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -59,13 +57,16 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
+
 #ifdef OFI
 #include <mach-o/dyld.h>
 #else
 #include "stuff/lto.h"
 #endif
+
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/arch.h"
@@ -74,6 +75,8 @@
 #include "stuff/ofile.h"
 #include "stuff/print.h"
 
+# include <mach/mach.h>
+# include "stuff/openstep_mach.h"
 #ifdef OTOOL
 #undef ALIGNMENT_CHECKS
 #include "otool.h"

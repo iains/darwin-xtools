@@ -25,22 +25,24 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stuff/arch.h"
-#include "stuff/bool.h"
 #include <stdio.h>
 
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/arm/reloc.h>
-#include "opcode/arm.h"
+
+#include "stuff/bool.h"
+#include "stuff/arch.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 #include "stuff/llvm.h"
+
 #include "otool.h"
 #include "dyld_bind_info.h"
 #include "ofile_print.h"
+#include "opcode/arm.h"
 #include "arm_disasm.h"
 #include "cxa_demangle.h"
 

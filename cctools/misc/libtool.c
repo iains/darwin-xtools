@@ -25,8 +25,6 @@
  * and Mach-O objects files (no 4.3bsd a.out files).  This is also the ranlib(1)
  * program.
  */
-#include <mach/mach.h>
-#include "stuff/openstep_mach.h"
 
 #include <stdint.h>
 #include <inttypes.h>
@@ -36,8 +34,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
-#include <ar.h>
-#include <mach-o/ranlib.h>
 #include <time.h>
 #ifndef __OPENSTEP__
 # include <utime.h>
@@ -46,6 +42,10 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+
+#include <ar.h>
+#include <mach-o/ranlib.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"
@@ -59,12 +59,16 @@
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
 
-#include <mach/mach_init.h>
-#if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
-#include <servers/netname.h>
-#else
-#include <servers/bootstrap.h>
-#endif
+# include <mach/mach.h>
+# include <mach/mach_init.h>
+# include "stuff/openstep_mach.h"
+# if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
+#  include <servers/netname.h>
+# else
+#  include <servers/bootstrap.h>
+# endif
+
+#include "maxpathlen.h"
 
 /*
  * This is used internally to build the table of contents.

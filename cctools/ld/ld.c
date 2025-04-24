@@ -35,8 +35,10 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <mach-o/loader.h>
+
+#include <mach-o/fat.h>
 #include <mach-o/nlist.h>
+#include <mach-o/loader.h>
 
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
@@ -45,9 +47,11 @@
 #include "stuff/guess_short_name.h"
 #include "stuff/macosx_deployment_target.h"
 #include "stuff/execute.h"
+
 #if !(defined(KLD))
 #include <stdio.h>
 #endif
+
 #if !(defined(KLD) && defined(__STATIC__))
 #include <signal.h>
 #include <errno.h>

@@ -30,7 +30,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <mach/mach.h>
 
 #include "allocate.h"
 #include "stuff/bool.h"
@@ -38,6 +37,9 @@
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/dylib_table.h"
+
+#include "maxpathlen.h"
+# include <mach/mach.h>
 /* This may change to "/MacOSX/System" someday */
 #define SYSTEM_LIBRARY "/System/Library"
 

@@ -24,6 +24,8 @@
 #define __private_extern__ __declspec(private_extern)
 #endif
 
+#include "stuff/bool.h"
+
 /*
  * Global types, variables and routines declared in the file specs.c.
  *

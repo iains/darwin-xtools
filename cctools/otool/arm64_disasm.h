@@ -1,10 +1,12 @@
-#import <mach-o/reloc.h>
-#import <mach-o/nlist.h>
+
+#include <mach-o/reloc.h>
+#include <mach-o/nlist.h>
 
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
+
 #include "llvm-c/Disassembler.h"
 
 extern uint32_t arm64_disassemble(

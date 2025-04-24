@@ -23,7 +23,6 @@
 #ifndef _DYLD_DEBUG_
 #define _DYLD_DEBUG_
 
-#include <mach/mach.h>
 #ifndef DYLD_BUILD /* do not include this when building dyld itself */
 #include <mach-o/dyld.h>
 #endif /* !defined(DYLD_BUILD) */

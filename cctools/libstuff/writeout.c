@@ -32,8 +32,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/time.h>
-#include <mach/mach.h>
-#include "stuff/openstep_mach.h"
+#include <sys/stat.h>
 #ifndef __OPENSTEP__
 #include <utime.h>
 #endif
@@ -43,10 +42,14 @@
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"
-#include "stuff/errors.h"
+
 #ifdef LTO_SUPPORT
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
+
+#include <mach/mach.h>
+#include "stuff/openstep_mach.h"
+#include "stuff/errors.h"
 
 static void copy_new_symbol_info(
     char *p,

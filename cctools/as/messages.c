@@ -21,13 +21,14 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mach/mach.h>
-#include <mach/mach_init.h>
-#if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
-#include <servers/netname.h>
-#else
-#include <servers/bootstrap.h>
-#endif
+# include <mach/mach.h>
+# include <mach/mach_init.h>
+# if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
+#  include <servers/netname.h>
+# else
+#  include <servers/bootstrap.h>
+# endif
+
 #include "as.h"
 #include "input-scrub.h"
 #include "messages.h"

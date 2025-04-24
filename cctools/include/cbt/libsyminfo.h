@@ -20,7 +20,6 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#include <mach/mach.h>
 
 #ifndef __SymInfoTypes__
 typedef void *SymInfoList;

@@ -42,16 +42,23 @@
 #include <stdlib.h>
 #if !(defined(KLD) && defined(__STATIC__))
 #include <stdio.h>
-#include <mach/mach.h>
-#else
-#include <mach/mach.h>
 #endif /* !(defined(KLD) && defined(__STATIC__)) */
 #include <stdarg.h>
 #include <string.h>
 #include <sys/param.h>
 #include "stuff/openstep_mach.h"
+
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
+#include <mach-o/nlist.h>
+#include <mach-o/reloc.h>
+#if defined(RLD) && !defined(SA_RLD) && !(defined(KLD) && defined(__STATIC__))
+#include <mach-o/rld.h>
+#include <streams/streams.h>
+#endif /* defined(RLD) && !defined(SA_RLD) &&
+	  !(defined(KLD) && defined(__STATIC__)) */
+
+#include "stuff/bool.h"
 #include <mach/m68k/thread_status.h>
 #undef MACHINE_THREAD_STATE	/* need to undef these to avoid warnings */
 #undef MACHINE_THREAD_STATE_COUNT
@@ -62,13 +69,6 @@
 #undef MACHINE_THREAD_STATE_COUNT
 #undef THREAD_STATE_NONE
 #undef VALID_THREAD_STATE_FLAVOR
-#include <mach-o/nlist.h>
-#include <mach-o/reloc.h>
-#if defined(RLD) && !defined(SA_RLD) && !(defined(KLD) && defined(__STATIC__))
-#include <mach-o/rld.h>
-#include <streams/streams.h>
-#endif /* defined(RLD) && !defined(SA_RLD) &&
-	  !(defined(KLD) && defined(__STATIC__)) */
 #include <mach/m88k/thread_status.h>
 #include <mach/i860/thread_status.h>
 #include <mach-for-target/i386/thread_status.h>
@@ -78,6 +78,8 @@
 
 #include "stuff/arch.h"
 #include "stuff/macosx_deployment_target.h"
+
+#include <mach/mach.h>
 
 #include "ld.h"
 #include "specs.h"

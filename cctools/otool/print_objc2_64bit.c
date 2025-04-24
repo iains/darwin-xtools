@@ -28,11 +28,12 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
-#include "mach-o/loader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <mach-o/loader.h>
+
 #include "allocate.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"

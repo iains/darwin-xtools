@@ -25,8 +25,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#import "mach/mach.h"
-
 #include <stdint.h>
 /* user defined (imported) */
 extern char *progname __attribute__((visibility("hidden")));
@@ -72,6 +70,7 @@ extern void system_fatal(
     __attribute__ ((format (printf, 1, 2)))
 #endif
     __attribute__((visibility("hidden")));
+#include "mach/mach.h"
 extern void my_mach_error(
     kern_return_t r,
     char *format, ...)

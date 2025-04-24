@@ -25,11 +25,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#import "stuff/ofile.h"
-#import "stuff/errors.h"
 #include "allocate.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
+#include "stuff/ofile.h"
+#include "stuff/errors.h"
 
 /* name of the program for error messages (argv[0]) */
 __private_extern__ char *progname = NULL;

@@ -23,10 +23,17 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <mach/mach.h>
 
-#include "stuff/errors.h"
 #include <allocate.h>
+#ifdef IN_CCTOOLS
+# include "stuff/errors.h"
+#else
+/* build as c++ in ld64.  */
+static inline void
+system_fatal (const char *m) {
+  throw m;
+}
+#endif
 /*
  * allocate() is just a wrapper around malloc that prints an error message and
  * exits if the malloc fails.

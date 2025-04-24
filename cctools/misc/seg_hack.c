@@ -26,11 +26,11 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "stuff/errors.h"
 
 #include "stuff/all-thread-status.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"
+#include "stuff/errors.h"
 
 /* used by error routines as the name of the program */
 char *progname = NULL;

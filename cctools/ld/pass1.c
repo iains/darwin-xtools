@@ -35,12 +35,13 @@
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "stuff/openstep_mach.h"
+
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/ldsyms.h>
+
 #if !(defined(KLD) && defined(__STATIC__))
 #include <libc.h>
 #include <stdio.h>
@@ -55,6 +56,7 @@
 #ifndef AR_EFMT1
 #define	AR_EFMT1	"#1/"		/* extended format #1 */
 #endif
+
 #include <mach-o/ranlib.h>
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
@@ -62,6 +64,7 @@
 #include "stuff/best_arch.h"
 #include "stuff/guess_short_name.h"
 #include "stuff/macosx_deployment_target.h"
+#include "stuff/openstep_mach.h"
 
 #include "ld.h"
 #include "pass1.h"

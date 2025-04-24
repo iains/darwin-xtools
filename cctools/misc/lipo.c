@@ -57,9 +57,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <mach/mach.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"
@@ -68,6 +69,7 @@
 #include "stuff/errors.h"
 #include "stuff/lto.h"
 
+#include <mach/mach.h>
 /* The maximum section alignment allowed to be specified, as a power of two */
 #define MAXSECTALIGN		15 /* 2**15 or 0x8000 */
 

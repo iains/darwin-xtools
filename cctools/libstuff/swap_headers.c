@@ -20,13 +20,9 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#define __darwin_i386_exception_state i386_exception_state
-#define __darwin_i386_float_state i386_float_state
-#define __darwin_i386_thread_state i386_thread_state
 #include <stdint.h>
 #include <stddef.h> // NULL
 
-#include <mach-o/loader.h>
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"

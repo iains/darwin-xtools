@@ -20,7 +20,6 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#include <mach/mach.h> /* first so to get rid of a precomp warning */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,12 +30,14 @@
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
 #include <mach-o/arch.h>
+
 #include "stuff/bool.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "allocate.h"
 #include "stuff/guess_short_name.h"
+
 char *progname = NULL;
 
 static void nm(

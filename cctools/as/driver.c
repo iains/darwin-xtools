@@ -13,12 +13,16 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/file.h>
-#include <mach/mach.h>
+
+#include "stuff/bool.h"
 #include "stuff/arch.h"
 #include "stuff/errors.h"
 #include "stuff/execute.h"
-#include <mach-o/dyld.h>
 #include "allocate.h"
+
+# include <mach/mach.h>
+# include <mach-o/dyld.h>
+#include "maxpathlen.h"
 
 /* used by error calls (exported) */
 char *progname = NULL;

@@ -21,7 +21,6 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#include <mach/mach.h> /* first to get rid of pre-comp warning */
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -30,10 +29,11 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+
+#include "maxpathlen.h"
 #include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/execute.h"
-#include "mach-o/dyld.h"
 
 /*
  * execute() does an execvp using the argv passed to it.  If the parameter

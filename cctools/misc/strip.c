@@ -47,13 +47,14 @@
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
 #include "stuff/reloc.h"
-#include "stuff/reloc.h"
 #include "stuff/symbol_list.h"
 #include "stuff/unix_standard_mode.h"
 #include "stuff/execute.h"
 #ifdef TRIE_SUPPORT
 #include <mach-o/prune_trie.h>
 #endif /* TRIE_SUPPORT */
+
+#include "maxpathlen.h"
 
 /* These are set from the command line arguments */
 __private_extern__

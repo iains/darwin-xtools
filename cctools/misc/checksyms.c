@@ -29,7 +29,7 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <mach/mach.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
@@ -45,6 +45,7 @@
 #include "stuff/guess_short_name.h"
 #include "stuff/macosx_deployment_target.h"
 
+#include <mach/mach.h>
 /* used by error routines as the name of the program */
 char *progname = NULL;
 

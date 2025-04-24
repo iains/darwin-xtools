@@ -31,13 +31,14 @@
 #ifdef __OPENSTEP__
 #define _POSIX_SOURCE
 #endif
-#import "stuff/bool.h"
-#import "stuff/errors.h"
-#import "stuff/SymLoc.h"
 #include <dirent.h>
 #include <pwd.h>
 
+#include "maxpathlen.h"
 #include "allocate.h"
+#include "stuff/bool.h"
+#include "stuff/errors.h"
+#include "stuff/SymLoc.h"
 
 const char *
 symLocForDylib(const char *installName, const char *releaseName,

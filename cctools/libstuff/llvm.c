@@ -6,9 +6,12 @@
 #include <sys/file.h>
 #include <dlfcn.h>
 #include "llvm-c/Disassembler.h"
+
 #include "allocate.h"
 #include "stuff/llvm.h"
-#include <mach-o/dyld.h>
+#include "maxpathlen.h"
+
+# include <mach-o/dyld.h>
 
 /*
  * The disassembler API is currently exported from libLTO.dylib.  Eventually we
