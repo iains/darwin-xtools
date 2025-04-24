@@ -44,7 +44,7 @@ else()
   message(STATUS "*Top Level* native build version ${CMAKE_SYSTEM_VERSION}")
 endif()
 
-if(XTOOLS_LTO_PATH AND
+if(FALSE AND XTOOLS_LTO_PATH AND
    EXISTS ${XTOOLS_LTO_PATH}/include/llvm-c/lto.h AND
    EXISTS ${XTOOLS_LTO_PATH}/lib/libLTO.dylib)
   configure_file(
@@ -59,9 +59,11 @@ if(XTOOLS_LTO_PATH AND
   message(STATUS "*Top Level* WITH LTO")
 else()
   option(XTOOLS_LTO_SUPPORT "Support LTO in cctools and ld64." OFF)
-  message(STATUS "*Top Level* NO LTO")
+  message(STATUS "*Top Level* NO LTO in 0.7.0 at present")
 endif()
 
+# No tapi for this version.
+if(FALSE)
 if(XTOOLS_TAPI_PATH AND
    EXISTS ${XTOOLS_TAPI_PATH}/include/tapi AND
    EXISTS ${XTOOLS_TAPI_PATH}/lib/libtapi.dylib)
@@ -74,6 +76,7 @@ if(XTOOLS_TAPI_PATH AND
 else()
   option(XTOOLS_TAPI_SUPPORT "Support TAPI in cctools and ld64." OFF)
   message(STATUS "*Top Level* NO TAPI")
+endif()
 endif()
 
 SET(CMAKE_C_FLAGS_MINSIZEREL   "-Os")
@@ -151,9 +154,13 @@ endif()
 include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/macho-target-includes")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/include")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/host-includes")
+
+# No tapi for this version.
+if(FALSE)
 if(XTOOLS_TAPI_SUPPORT)
   include_directories(BEFORE SYSTEM "${XTOOLS_TAPI_PATH}/include")
   message(STATUS "*Top Level* including ${XTOOLS_TAPI_PATH}/include")
+endif()
 endif()
 
 if (EXISTS ${CMAKE_BINARY_DIR}/lib)
