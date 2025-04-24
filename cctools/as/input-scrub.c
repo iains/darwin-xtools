@@ -350,7 +350,8 @@ int *line)
     char *p, *q;
     static char directory_buf[MAXPATHLEN];
 
-	getwd(directory_buf);
+	if (getcwd(directory_buf, MAXPATHLEN) == NULL)
+	  directory_buf[0] = 0;
 	*fileName = NULL;
 	*directory = directory_buf;
 	*line = 0;

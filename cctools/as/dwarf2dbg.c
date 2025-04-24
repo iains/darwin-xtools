@@ -2002,7 +2002,10 @@ struct frchain *ranges_section)
 #ifdef OLD
   comp_dir = getpwd ();
 #else
-  comp_dir = getwd(xmalloc(MAXPATHLEN + 1));
+  char *bbuf = xmalloc(MAXPATHLEN + 1);
+  comp_dir = getcwd(bbuf, MAXPATHLEN + 1);
+  if (comp_dir == NULL)
+    free (bbuf);
 #endif
   len = strlen (comp_dir) + 1;
   p = frag_more (len);
