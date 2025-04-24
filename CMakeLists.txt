@@ -202,6 +202,9 @@ configure_file(${CMAKE_SOURCE_DIR}/host-includes/allocate.h
 configure_file(${CMAKE_SOURCE_DIR}/host-includes/maxpathlen.h
                ${CMAKE_BINARY_DIR}/host-includes/maxpathlen.h
                COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/host-includes/private-extern.h
+               ${CMAKE_BINARY_DIR}/host-includes/private-extern.h
+               COPYONLY)
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)
