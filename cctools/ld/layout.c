@@ -38,6 +38,7 @@
  * link-editor.  In this phase the output file's addresses and offset are
  * set up.
  */
+#include <stdint.h>
 #include <stdlib.h>
 #if !(defined(KLD) && defined(__STATIC__))
 #include <stdio.h>

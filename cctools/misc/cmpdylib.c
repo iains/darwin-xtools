@@ -20,8 +20,10 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#import <stdio.h>
-#import <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #import "stuff/ofile.h"
 #import "stuff/errors.h"

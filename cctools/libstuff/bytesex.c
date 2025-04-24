@@ -182,6 +182,7 @@
 #define __dr6 dr6
 #define __dr7 dr7
 
+#include <stdint.h>
 #include <string.h>
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>

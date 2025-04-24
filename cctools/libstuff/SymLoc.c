@@ -21,17 +21,22 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#import <libc.h>
-#import <ctype.h>
-#import <sys/types.h>
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/types.h>
 #ifdef __OPENSTEP__
 #define _POSIX_SOURCE
 #endif
-#import <dirent.h>
-#import <pwd.h>
 #import "stuff/bool.h"
 #import "stuff/errors.h"
 #import "stuff/SymLoc.h"
+#include <dirent.h>
+#include <pwd.h>
+
 #include "allocate.h"
 
 const char *

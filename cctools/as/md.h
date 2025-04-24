@@ -25,6 +25,8 @@ notice and this notice must be preserved on all copies.  */
 #import "struc-symbol.h"
 #import "fixes.h"
 #import "read.h"
+#include <stdint.h>
+
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 

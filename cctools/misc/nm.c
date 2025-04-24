@@ -82,10 +82,13 @@
  * invalid argument which was slightly inconsistant.
  */
 #include <mach/mach.h> /* first so to get rid of a precomp warning */
+ 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>

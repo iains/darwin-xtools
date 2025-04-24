@@ -1,9 +1,11 @@
+#include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <sys/file.h>
-#include <libc.h>
-#include <mach/mach.h>
+#include <sys/stat.h>
+
 #include "arch64_32.h"
 #include "stuff/openstep_mach.h"
 #include <mach-o/loader.h>

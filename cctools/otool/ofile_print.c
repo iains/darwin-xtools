@@ -201,14 +201,19 @@
 #define __dr6 dr6
 #define __dr7 dr7
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <math.h>
+#include <time.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <ar.h>
-#include <libc.h>
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
 #include <mach-o/reloc.h>

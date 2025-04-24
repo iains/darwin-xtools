@@ -28,13 +28,14 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
 #include <ar.h>
 #include <mach-o/ranlib.h>
-#include <libc.h>
 
 #include "allocate.h"
 #include "stuff/bool.h"
@@ -45,6 +46,7 @@
 #include "stuff/symbol.h"
 #include "stuff/llvm.h"
 #include "stuff/guess_short_name.h"
+
 #include "otool.h"
 #include "dyld_bind_info.h"
 #include "ofile_print.h"

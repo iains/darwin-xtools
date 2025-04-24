@@ -28,8 +28,10 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>

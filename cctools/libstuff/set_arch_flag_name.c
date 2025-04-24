@@ -21,7 +21,10 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
+
+#include <stdint.h>
 #include <stdio.h>
+
 #include "allocate.h"
 #include "stuff/arch.h"
 

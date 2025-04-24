@@ -21,8 +21,10 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"

@@ -25,14 +25,17 @@
  * files (with the restriction the symbol table is at the end of the file) and
  * fat files with Mach-O files in them.
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <ctype.h>
-#include <libc.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/reloc.h>
 #include <mach-o/nlist.h>

@@ -23,6 +23,7 @@
 #ifndef RLD
 #include "stdio.h"
 #endif /* !defined(RLD) */
+#include "stdint.h"
 #include "stdlib.h"
 #include "string.h"
 #include "allocate.h"

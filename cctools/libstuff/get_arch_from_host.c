@@ -21,9 +21,11 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "allocate.h"
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"

@@ -22,11 +22,13 @@
    USA.
 */
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stuff/arch.h"
 #include "stuff/bool.h"
 #include <stdio.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>

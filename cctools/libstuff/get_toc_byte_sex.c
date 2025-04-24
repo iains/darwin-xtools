@@ -20,6 +20,7 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ar.h>

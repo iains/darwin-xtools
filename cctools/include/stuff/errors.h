@@ -27,6 +27,7 @@
  */
 #import "mach/mach.h"
 
+#include <stdint.h>
 /* user defined (imported) */
 extern char *progname __attribute__((visibility("hidden")));
 

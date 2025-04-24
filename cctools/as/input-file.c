@@ -30,7 +30,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <libc.h>
+
 #include "input-file.h"
 #include "xmalloc.h"
 #include "input-scrub.h"

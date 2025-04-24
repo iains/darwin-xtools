@@ -22,6 +22,7 @@
  */
 #ifndef RLD
 #include <mach/mach.h> /* first to get rid of pre-comp warning */
+#include <stdint.h>
 #include <stdio.h>
 #include "stuff/arch.h"
 #include "stuff/errors.h"

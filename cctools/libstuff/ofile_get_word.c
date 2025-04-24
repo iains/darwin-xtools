@@ -20,6 +20,7 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <string.h>
 
 #include "stuff/all-thread-status.h"

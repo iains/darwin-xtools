@@ -24,6 +24,7 @@
 #define __darwin_i386_float_state i386_float_state
 #define __darwin_i386_thread_state i386_thread_state
 
+#include <stdint.h>
 #include <stdarg.h>
 
 #include "stuff/all-thread-status.h"

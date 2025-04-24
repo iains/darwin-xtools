@@ -36,18 +36,25 @@
 #ifdef SHLIB
 #include "shlib.h"
 #endif
-#include <libc.h>
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+
+#include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
 #include <limits.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 #include <ar.h>
+#include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/mman.h>
+
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>

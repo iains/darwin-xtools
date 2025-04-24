@@ -29,6 +29,7 @@
  * miscellaneous small global routines.  It also defines the global varaibles
  * that are set or changed by command line arguments.
  */
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

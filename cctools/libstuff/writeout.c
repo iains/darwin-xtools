@@ -21,10 +21,19 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
+#include <stdint.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
+#include <time.h>
 #include <sys/time.h>
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
-#include <libc.h>
 #ifndef __OPENSTEP__
 #include <utime.h>
 #endif

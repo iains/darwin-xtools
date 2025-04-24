@@ -21,6 +21,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>

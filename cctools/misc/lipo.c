@@ -37,9 +37,11 @@
  *   -segalign <arch_type> <value>
  *   -verify_arch <arch_type> ...
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <ar.h>
 #ifndef AR_EFMT1
 #define	AR_EFMT1	"#1/"		/* extended format #1 */
@@ -47,7 +49,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <ctype.h>
-#include <libc.h>
+
 #ifndef __OPENSTEP__
 #include <utime.h>
 #endif

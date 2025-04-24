@@ -60,6 +60,7 @@
  * Mach-O objects files (no BSD a.out files).  A few lines of code were taken
  * and adapted from the BSD release.
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

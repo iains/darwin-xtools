@@ -31,7 +31,6 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <mach/mach.h>
-#include <libc.h>
 
 #include "stuff/bool.h"
 #include "stuff/errors.h"

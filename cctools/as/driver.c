@@ -6,10 +6,12 @@
  * make sure their are not multiple arch_flags and then passes all flags to the
  * assembler it will run.
  */
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "libc.h"
+#include <stdint.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 #include <sys/file.h>
 #include <mach/mach.h>
 #include "stuff/arch.h"

@@ -83,14 +83,6 @@
 #include <mach-o/redo_prebinding.h>
 #endif /* defined(LIBRARY_API) */
 
-#import <stdio.h>
-#import <stdlib.h>
-#import <string.h>
-#import <limits.h>
-#import <libc.h>
-#import <malloc/malloc.h>
-#import <sys/types.h>
-#import <sys/stat.h>
 #import <mach-o/stab.h>
 #import <mach-o/loader.h>
 #import <mach-o/reloc.h>
@@ -109,6 +101,16 @@
 #import <stuff/macosx_deployment_target.h>
 
 #include <mach-o/dyld.h>
+#include <stdint.h>
+#include <stdarg.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
 #include <allocate.h>
 #include "stuff/all-thread-status.h"
 

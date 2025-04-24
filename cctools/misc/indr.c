@@ -20,14 +20,16 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <limits.h>
 #include <time.h>
-#include <libc.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <mach-o/nlist.h>
 
 #include "allocate.h"

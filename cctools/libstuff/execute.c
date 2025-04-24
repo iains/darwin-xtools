@@ -21,10 +21,13 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#include <libc.h> /* first to get rid of pre-comp warning */
 #include <mach/mach.h> /* first to get rid of pre-comp warning */
-#include "stdio.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdio.h>
 #include <signal.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <sys/file.h>
 #include "allocate.h"

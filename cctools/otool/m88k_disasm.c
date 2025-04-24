@@ -28,6 +28,7 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <mach-o/loader.h>
@@ -38,6 +39,7 @@
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
+
 #include "otool.h"
 
 #define	D(x)		(((x) >> 21) & 0x1f)

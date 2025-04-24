@@ -21,6 +21,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #include <mach/mach.h>
+#include <stdint.h>
 
 struct macosx_deployment_target {
     uint32_t major;	/* major version */

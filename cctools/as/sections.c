@@ -17,14 +17,16 @@ You should have received a copy of the GNU General Public License
 along with GAS; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
 /* FROM line 25 */
 #include "as.h"
 
 /*
  * Mach-O sections are chains of fragments.
  */
-#include <stdlib.h>
-#include <strings.h>
 #include "sections.h"
 #include "obstack.h"
 #include "xmalloc.h"

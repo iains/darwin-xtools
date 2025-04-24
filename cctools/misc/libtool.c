@@ -27,17 +27,23 @@
  */
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
-#include <libc.h>
-#ifndef __OPENSTEP__
-#include <utime.h>
-#endif
+
+#include <stdint.h>
+#include <inttypes.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <signal.h>
 #include <ar.h>
 #include <mach-o/ranlib.h>
+#include <time.h>
+#ifndef __OPENSTEP__
+# include <utime.h>
+#endif
 #include <sys/types.h>
+#include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include "allocate.h"

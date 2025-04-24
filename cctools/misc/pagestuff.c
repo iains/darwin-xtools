@@ -21,11 +21,12 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #include <stdint.h>
-#import <stdio.h>
-#import <stdlib.h>
-#import <string.h>
 #import "stuff/ofile.h"
 #import "stuff/errors.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "allocate.h"
 #include "stuff/all-thread-status.h"
 

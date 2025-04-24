@@ -29,16 +29,19 @@
  *   -replace <segname> <sectname> <filename>
  *   -output <filename>
  */
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include <stdio.h>
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <libc.h>
+#include <fcntl.h>
+
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
 #include <mach/mach.h>
