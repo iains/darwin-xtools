@@ -38,7 +38,9 @@
 #include <mach-o/reloc.h>
 #include <mach-o/i860/reloc.h>
 #include <mach-o/nlist.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 #include "ld.h"

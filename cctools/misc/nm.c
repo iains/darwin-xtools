@@ -89,8 +89,10 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/guess_short_name.h"

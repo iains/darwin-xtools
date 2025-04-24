@@ -50,7 +50,9 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 #include "ld.h"

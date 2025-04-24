@@ -219,11 +219,14 @@
 #include <mach-o/sparc/reloc.h>
 #include <mach-o/arm/reloc.h>
 #include <mach-o/arm64/reloc.h>
+
 #include "allocate.h"
 #include "stuff/symbol.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/guess_short_name.h"
+
 #include "dyld_bind_info.h"
 #include "ofile_print.h"
 

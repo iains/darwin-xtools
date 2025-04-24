@@ -185,26 +185,11 @@
 #include <string.h>
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
-#include <mach/m68k/thread_status.h>
-#undef MACHINE_THREAD_STATE	/* need to undef these to avoid warnings */
-#undef MACHINE_THREAD_STATE_COUNT
-#undef THREAD_STATE_NONE
-#undef VALID_THREAD_STATE_FLAVOR
-#include <mach/ppc/thread_status.h>
-#undef MACHINE_THREAD_STATE	/* need to undef these to avoid warnings */
-#undef MACHINE_THREAD_STATE_COUNT
-#undef THREAD_STATE_NONE
-#undef VALID_THREAD_STATE_FLAVOR
-#include <mach/m88k/thread_status.h>
-#include <mach/i860/thread_status.h>
-#include <mach/i386/thread_status.h>
-#include <mach/hppa/thread_status.h>
-#include <mach/sparc/thread_status.h>
-#include <mach/arm/thread_status.h>
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/ranlib.h>
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 __private_extern__

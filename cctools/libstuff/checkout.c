@@ -23,6 +23,7 @@
 #ifndef RLD
 #include <stdio.h>
 #include <string.h>
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"

@@ -20,12 +20,13 @@ in a file named COPYING.  Among other things, the copyright
 notice and this notice must be preserved on all copies.  */
 
 #import <mach/machine.h>
-#import "stuff/bytesex.h"
 #import "frags.h"
 #import "relax.h"
 #import "struc-symbol.h"
 #import "fixes.h"
 #import "read.h"
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 
 /* These are the default cputype and cpusubtype for this target MACHINE */
 extern const cpu_type_t md_cputype;

@@ -43,6 +43,9 @@
 #include <mach-o/reloc.h>
 #include <mach-o/ppc/reloc.h>
 #include <mach-o/hppa/reloc.h>
+
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/arch.h"
 #include "stuff/reloc.h"
 

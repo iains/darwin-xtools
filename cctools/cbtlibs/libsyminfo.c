@@ -30,6 +30,7 @@
 #include <mach-o/stab.h>
 #include <mach-o/arch.h>
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "allocate.h"

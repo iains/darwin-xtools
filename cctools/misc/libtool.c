@@ -42,6 +42,7 @@
 #include <sys/mman.h>
 #include "allocate.h"
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"

@@ -47,6 +47,7 @@
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/macosx_deployment_target.h"
 #include "stuff/unix_standard_mode.h"

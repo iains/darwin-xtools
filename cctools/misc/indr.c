@@ -29,7 +29,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <mach-o/nlist.h>
+
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/breakout.h"
 #include "stuff/hash_string.h"
 #include "stuff/errors.h"

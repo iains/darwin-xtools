@@ -36,6 +36,9 @@
 #include <sys/stat.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
+
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/arch.h"
 #include "stuff/version_number.h"
 #include "stuff/guess_short_name.h"

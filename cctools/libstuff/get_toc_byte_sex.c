@@ -27,6 +27,7 @@
 #define	AR_EFMT1	"#1/"		/* extended format #1 */
 #endif
 #include <mach-o/loader.h>
+#include <stuff/all-thread-status.h>
 #include <stuff/bytesex.h>
 #include <stuff/rnd.h>
 

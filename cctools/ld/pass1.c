@@ -56,6 +56,8 @@
 #define	AR_EFMT1	"#1/"		/* extended format #1 */
 #endif
 #include <mach-o/ranlib.h>
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/arch.h"
 #include "stuff/best_arch.h"
 #include "stuff/guess_short_name.h"

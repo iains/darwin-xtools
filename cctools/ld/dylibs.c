@@ -31,7 +31,9 @@
 #include <string.h>
 #include <mach-o/fat.h>
 #include <mach-o/loader.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/guess_short_name.h"
 

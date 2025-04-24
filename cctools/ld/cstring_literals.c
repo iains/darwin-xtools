@@ -44,7 +44,9 @@
 #include <string.h>
 #include "stuff/openstep_mach.h"
 #include <mach-o/loader.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 #include "ld.h"

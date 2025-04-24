@@ -32,7 +32,9 @@
 #include <fts.h>
 #endif
 #include <sys/errno.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/SymLoc.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"

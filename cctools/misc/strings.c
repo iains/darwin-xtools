@@ -76,8 +76,10 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 

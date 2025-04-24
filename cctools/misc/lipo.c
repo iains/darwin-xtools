@@ -59,6 +59,9 @@
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
 #include "allocate.h"
+#include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/arch.h"
 #include "stuff/errors.h"
 #include "stuff/lto.h"

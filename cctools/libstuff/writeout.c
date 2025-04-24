@@ -28,7 +28,9 @@
 #ifndef __OPENSTEP__
 #include <utime.h>
 #endif
+
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"

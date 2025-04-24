@@ -28,10 +28,12 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
-#import <stuff/bytesex.h>
 #import <mach-o/reloc.h>
 #import <mach-o/nlist.h>
-#import <stuff/bool.h>
+
+#include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 
 extern uint32_t m68k_disassemble(

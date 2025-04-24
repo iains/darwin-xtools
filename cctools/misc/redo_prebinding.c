@@ -110,6 +110,7 @@
 
 #include <mach-o/dyld.h>
 #include <allocate.h>
+#include "stuff/all-thread-status.h"
 
 #define U_ABS(l) (((int32_t)(l))<0 ? (uint32_t)(-(l)) : (l))
 

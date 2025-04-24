@@ -34,6 +34,8 @@
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/m88k/reloc.h>
+
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 #include "otool.h"

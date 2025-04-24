@@ -40,7 +40,9 @@
 #include <stdarg.h>
 #include <string.h>
 #include <mach-o/loader.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 #include "ld.h"

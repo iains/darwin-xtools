@@ -32,7 +32,9 @@
 #if defined(I386) && defined(ARCH64)
 #include <mach-o/x86_64/reloc.h>
 #endif
+
 #include "stuff/rnd.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/errors.h"
 #include "as.h"

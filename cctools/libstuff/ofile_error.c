@@ -25,6 +25,8 @@
 #define __darwin_i386_thread_state i386_thread_state
 
 #include <stdarg.h>
+
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/print.h"
 #include "stuff/errors.h"

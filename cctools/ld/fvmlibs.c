@@ -35,6 +35,7 @@
 #include <mach-o/loader.h>
 #include <ar.h>
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 
 #include "ld.h"

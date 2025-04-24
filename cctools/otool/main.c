@@ -35,8 +35,10 @@
 #include <ar.h>
 #include <mach-o/ranlib.h>
 #include <libc.h>
+
 #include "allocate.h"
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/symbol.h"

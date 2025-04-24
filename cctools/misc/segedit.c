@@ -46,9 +46,10 @@
 #include <mach/mach_error.h>
 
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
+#include "stuff/bytesex.h"
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
-#include "stuff/bytesex.h"
 
 /* These variables are set from the command line arguments */
 __private_extern__

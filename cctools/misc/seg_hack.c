@@ -26,6 +26,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "stuff/errors.h"
+
+#include "stuff/all-thread-status.h"
 #include "stuff/breakout.h"
 #include "stuff/rnd.h"
 

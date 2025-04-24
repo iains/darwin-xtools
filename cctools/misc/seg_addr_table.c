@@ -29,6 +29,7 @@
 #include <time.h>
 
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/rnd.h"
 #include "stuff/errors.h"

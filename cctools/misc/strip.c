@@ -37,7 +37,9 @@
 #include <mach-o/reloc.h>
 #include <mach-o/nlist.h>
 #include <mach-o/stab.h>
+
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/breakout.h"
 #include "stuff/errors.h"
 #include "stuff/rnd.h"

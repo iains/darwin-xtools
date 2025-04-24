@@ -46,7 +46,9 @@
 #include <mach-o/stab.h>
 #include <mach-o/ldsyms.h>
 #include <ar.h>
+
 #include "stuff/bool.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/macosx_deployment_target.h"
 #ifndef RLD

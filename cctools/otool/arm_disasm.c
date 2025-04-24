@@ -32,6 +32,7 @@
 #include <mach-o/reloc.h>
 #include <mach-o/arm/reloc.h>
 #include "opcode/arm.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
 #include "stuff/llvm.h"

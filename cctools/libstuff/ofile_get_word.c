@@ -21,6 +21,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #include <string.h>
+
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 
 /*

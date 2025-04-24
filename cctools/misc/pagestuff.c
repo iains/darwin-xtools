@@ -27,6 +27,7 @@
 #import "stuff/ofile.h"
 #import "stuff/errors.h"
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 
 enum file_part_type {
     FP_FAT_HEADERS,

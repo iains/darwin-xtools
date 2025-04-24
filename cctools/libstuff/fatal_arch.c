@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+
+#include "stuff/all-thread-status.h"
 #include "stuff/breakout.h"
 #include "stuff/errors.h"
 

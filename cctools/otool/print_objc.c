@@ -34,8 +34,10 @@
 //#include "objc/objc-runtime.h"
 
 #include "allocate.h"
+#include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 #include "stuff/symbol.h"
+
 #include "dyld_bind_info.h"
 #include "ofile_print.h"
 

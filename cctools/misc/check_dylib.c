@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#include "stuff/all-thread-status.h"
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/seg_addr_table.h"
