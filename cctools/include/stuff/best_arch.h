@@ -24,7 +24,7 @@
 #define __private_extern__ __declspec(private_extern)
 #endif
 
-#include <mach/machine.h>
+#include "mach-o/cpu-types.h"
 #include <stuff/bool.h>
 
 /*

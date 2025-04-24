@@ -19,7 +19,6 @@ so you can know your rights and responsibilities.  It should be
 in a file named COPYING.  Among other things, the copyright
 notice and this notice must be preserved on all copies.  */
 
-#import <mach/machine.h>
 #import "frags.h"
 #import "relax.h"
 #import "struc-symbol.h"
@@ -27,6 +26,7 @@ notice and this notice must be preserved on all copies.  */
 #import "read.h"
 #include <stdint.h>
 
+#include "mach-o/cpu-types.h"
 #include "stuff/all-thread-status.h"
 #include "stuff/bytesex.h"
 

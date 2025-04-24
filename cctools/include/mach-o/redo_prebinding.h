@@ -24,7 +24,7 @@
 #define _MACH_O_REDO_PREBINDING_H_
 
 #define REDO_PREBINDING_VERSION 3
-#include <mach/machine.h>
+#include "mach-o/cpu-types.h"
 /*
  * For all APIs in this file the parameters program_name and error_message
  * are used the same.  For unrecoverable resource errors like being unable to

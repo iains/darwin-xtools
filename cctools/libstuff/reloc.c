@@ -20,7 +20,6 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#include <mach/machine.h>
 #include <stdint.h>
 
 #include <mach-o/reloc.h>
@@ -31,6 +30,7 @@
 #include <mach-o/sparc/reloc.h>
 #include <mach-o/x86_64/reloc.h>
 #include <mach-o/arm/reloc.h>
+
 #include "stuff/bool.h"
 #include "stuff/errors.h"
 #include "stuff/reloc.h"

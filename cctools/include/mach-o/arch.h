@@ -30,7 +30,7 @@
  */
 
 #include <stdint.h>
-#include <mach/machine.h>
+#include "mach-o/cpu-types.h"
 #include <architecture/byte_order.h>
 
 /* The NXArchInfo structs contain the architectures symbolic name

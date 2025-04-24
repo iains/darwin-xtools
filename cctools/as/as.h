@@ -63,9 +63,9 @@ extern char version_string[];
 
 /* These #imports are for type definitions etc. */
 #include <stdint.h>
-#import <mach/machine.h>
 #include <stdio.h>
 #include <assert.h>
+#include "mach-o/cpu-types.h"
 
 /* These defines are potentially useful */
 #undef FALSE
