@@ -345,8 +345,13 @@ char **envp)
 		/* Implement a gnu-style --version.  */
 		char *pnam = strrchr(progname, '/');
 		pnam = (pnam)?pnam+1:progname;
+#ifdef LTO_SUPPORT
+		fprintf(stderr, "xtools %s - based on Apple Inc. %s "
+			"with LTO support %s\n", pnam, apple_version, lto_support);
+#else
 		fprintf(stderr, "xtools %s - based on Apple Inc. %s\n",
-		        pnam, apple_version, lto_support);
+		        pnam, apple_version);
+#endif
 		exit(0);
 	    }
 	    if(argv[i][0] == '-' && argv[i][1] == '\0'){
