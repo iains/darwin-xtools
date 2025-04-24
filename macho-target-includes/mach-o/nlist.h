@@ -20,8 +20,8 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#ifndef _MACHO_NLIST_H_
-#define _MACHO_NLIST_H_
+#ifndef _MACH_O_TGT_NLIST_H_
+#define _MACH_O_TGT_NLIST_H_
 /*	$NetBSD: nlist.h,v 1.5 1994/10/26 00:56:11 cgd Exp $	*/
 
 /*-
@@ -309,4 +309,4 @@ extern int nlist (const char *filename, struct nlist *list);
 #endif /* __cplusplus */
 #endif /* __STRICT_BSD__ */
 
-#endif /* _MACHO_LIST_H_ */
+#endif /* _MACH_O_TGT_NLIST_H_ */

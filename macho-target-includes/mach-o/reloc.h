@@ -49,8 +49,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MACHO_RELOC_H_
-#define _MACHO_RELOC_H_
+#ifndef _MACH_O_TGT_RELOC_H_
+#define _MACH_O_TGT_RELOC_H_
 #include <stdint.h>
 
 /*
@@ -143,6 +143,12 @@ struct relocation_info {
  * design work this structure must be laid out in memory the same way so the
  * mask can be applied can check the same bit each time (r_scattered).
  */
+#elif defined (__BYTE_ORDER__)
+# if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#  define __LITTLE_ENDIAN__ 1
+# elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#  define __BIG_ENDIAN__ 1
+# endif
 #endif /* defined(__BIG_ENDIAN__) || defined(__LITTLE_ENDIAN__) */
 #define R_SCATTERED 0x80000000	/* mask to be applied to the r_address field 
 				   of a relocation_info structure to tell that
@@ -200,4 +206,4 @@ enum reloc_type_generic
     GENERIC_RELOC_TLV		/* thread local variables */
 };
 
-#endif /* _MACHO_RELOC_H_ */
+#endif /* _MACH_O_TGT_RELOC_H_ */

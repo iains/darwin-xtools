@@ -21,12 +21,11 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 /*	ranlib.h	4.1	83/05/03	*/
-#ifndef _MACH_O_RANLIB_H_
-#define _MACH_O_RANLIB_H_
+#ifndef _MACH_O_TGT_RANLIB_H_
+#define _MACH_O_TGT_RANLIB_H_
 
 #include <stdint.h>
-#include <sys/types.h>		/* off_t */
-
+ 
 /*
  * There are two known orders of table of contents for archives.  The first is
  * the order ranlib(1) originally produced and still produces without any
@@ -56,12 +55,12 @@
  * string table whose first byte is numbered 0.
  */
 struct	ranlib {
-    union {
-	uint32_t	ran_strx;	/* string table index of */
+  union {
+    uint32_t	ran_strx;	/* string table index of */
 #ifndef __LP64__
-	char		*ran_name;	/* symbol defined by */
+    char	*ran_name;	/* symbol defined by */
 #endif
-    } ran_un;
-    uint32_t		ran_off;	/* library member at this offset */
+  } ran_un;
+  uint32_t	ran_off;	/* library member at this offset */
 };
-#endif /* _MACH_O_RANLIB_H_ */
+#endif /* _MACH_O_TGT_RANLIB_H_ */

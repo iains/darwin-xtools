@@ -20,32 +20,27 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#ifndef _MACHO_LOADER_H_
-#define _MACHO_LOADER_H_
+#ifndef _MACH_O_TGT_LOADER_H_
+#define _MACH_O_TGT_LOADER_H_
+
+#include <stdint.h>
 
 /*
  * This file describes the format of mach object files.
  */
-#include <stdint.h>
 
 /*
  * <mach/machine.h> is needed here for the cpu_type_t and cpu_subtype_t types
  * and contains the constants for the possible values of these types.
  */
-#include <mach/machine.h>
+
+#include "mach-o/cpu-types.h"
 
 /*
  * <mach/vm_prot.h> is needed here for the vm_prot_t type and contains the 
  * constants that are or'ed together for the possible values of this type.
  */
-#include <mach/vm_prot.h>
-
-/*
- * <machine/thread_status.h> is expected to define the flavors of the thread
- * states and the structures of those flavors for each machine.
- */
-#include <mach/machine/thread_status.h>
-#include <architecture/byte_order.h>
+#include <mach-for-target/vm_prot.h>
 
 /*
  * The 32-bit mach header appears at the very beginning of the object file for
@@ -1078,8 +1073,8 @@ struct dylib_module_64 {
  * <mach-o/nlist.h> as they are also used for symbol table entries.
  */
 struct dylib_reference {
-    uint32_t isym:24,		/* index into the symbol table */
-    		  flags:8;	/* flags to indicate the type of reference */
+  uint32_t isym:24,		/* index into the symbol table */
+           flags:8;	/* flags to indicate the type of reference */
 };
 
 /*
@@ -1110,9 +1105,9 @@ struct twolevel_hints_command {
  * binary search or a directed linear search.
  */
 struct twolevel_hint {
-    uint32_t 
-	isub_image:8,	/* index into the sub images */
-	itoc:24;	/* index into the table of contents */
+  uint32_t 
+  isub_image:8,	/* index into the sub images */
+  itoc:24;	/* index into the table of contents */
 };
 
 /*
@@ -1484,4 +1479,4 @@ struct tlv_descriptor
 	unsigned long	offset;
 };
 
-#endif /* _MACHO_LOADER_H_ */
+#endif /* _MACH_O_TGT_LOADER_H_ */
