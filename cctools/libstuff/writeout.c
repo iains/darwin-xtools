@@ -226,7 +226,7 @@ uint32_t *throttle)
                         printf("time should have taken = %f usecs to kill %f\n",
                             time_should_have_took, usecs_to_kill);
 #endif
-                        usleep((u_int)usecs_to_kill);
+                        usleep((useconds_t)usecs_to_kill);
                         bytes_written = 0;
                         bytes_per_second = 0;
                         (void)gettimeofday(&start, &tz);
