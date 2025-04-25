@@ -4766,6 +4766,10 @@ void Options::checkForClassic(int argc, const char* argv[])
 
 }
 
+/* The classic linker is needed only for 32b kexts on powerpc and i386.
+   It is not buildable at present on 64b hosts.  */
+
+#if defined (HAVE_LD_CLASSIC)
 void Options::gotoClassicLinker(int argc, const char* argv[])
 {
 	argv[0] = "ld_classic";
@@ -4818,6 +4822,14 @@ void Options::gotoClassicLinker(int argc, const char* argv[])
 	exit(1);
 }
 
+#else
+
+void Options::gotoClassicLinker(int, const char*[]) {
+  fprintf(stderr, "ld_classic is not available\n");
+  exit(1);
+}
+
+#endif
 
 // Note, returned string buffer is own by this function.
 // It should not be freed
