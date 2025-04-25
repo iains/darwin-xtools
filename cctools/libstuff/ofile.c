@@ -4810,7 +4810,7 @@ check_dylinker_command:
 #endif
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO){
-		    ppc_thread_state_t *nrw_cpu;
+		    ppc_tgt_thread_state_t *nrw_cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -4845,7 +4845,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case PPC_THREAD_STATE:
-			    if(count != PPC_THREAD_STATE_COUNT){
+			    if(count != PPC_TGT_THREAD_STATE_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not PPC_THREAD_STATE_COUNT for "
 				    "flavor number %u which is a PPC_THREAD_"
@@ -4854,8 +4854,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    nrw_cpu = (ppc_thread_state_t *)state;
-			    if(state + sizeof(ppc_thread_state_t) >
+			    nrw_cpu = (ppc_tgt_thread_state_t *)state;
+			    if(state + sizeof(ppc_tgt_thread_state_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "PPC_THREAD_STATE in %s command %u extends"
@@ -4867,7 +4867,7 @@ check_dylinker_command:
 			    if(swapped)
 				swap_ppc_thread_state_t(nrw_cpu,
 							     host_byte_sex);
-			    state += sizeof(ppc_thread_state_t);
+			    state += sizeof(ppc_tgt_thread_state_t);
 			    break;
 			default:
 			    if(swapped){
@@ -4885,9 +4885,9 @@ check_dylinker_command:
 		    }
 		    break;
 		}
-#ifdef PPC_THREAD_STATE64_COUNT
+#ifdef PPC_TGT_THREAD_STATE64_COUNT
 	    	if(cputype == CPU_TYPE_POWERPC64){
-		    ppc_thread_state64_t *cpu;
+		    ppc_tgt_thread_state64_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -4922,7 +4922,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case PPC_THREAD_STATE64:
-			    if(count != PPC_THREAD_STATE64_COUNT){
+			    if(count != PPC_TGT_THREAD_STATE64_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not PPC_THREAD_STATE64_COUNT for "
 				    "flavor number %u which is a PPC_THREAD_"
@@ -4931,8 +4931,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    cpu = (ppc_thread_state64_t *)state;
-			    if(state + sizeof(ppc_thread_state64_t) >
+			    cpu = (ppc_tgt_thread_state64_t *)state;
+			    if(state + sizeof(ppc_tgt_thread_state64_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "PPC_THREAD_STATE64 in %s command %u "
@@ -4943,7 +4943,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_ppc_thread_state64_t(cpu, host_byte_sex);
-			    state += sizeof(ppc_thread_state64_t);
+			    state += sizeof(ppc_tgt_thread_state64_t);
 			    break;
 			default:
 			    if(swapped){
@@ -4961,7 +4961,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
-#endif /* PPC_THREAD_STATE64_COUNT */
+#endif /* PPC_TGT_THREAD_STATE64_COUNT */
 #if 0
 	    	if(cputype == CPU_TYPE_MC88000){
 		    m88k_thread_state_grf_t *cpu;
@@ -5200,11 +5200,11 @@ check_dylinker_command:
 		}
 #endif
 	    	if(cputype == CPU_TYPE_I386){
-		    i386_thread_state_t *cpu;
+		    i386_tgt_thread_state_t *cpu;
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
-		    struct i386_float_state *fpu;
-		    i386_exception_state_t *exc;
+		    i386_tgt_float_state_t *fpu;
+		    i386_tgt_exception_state_t *exc;
 #endif /* i386_THREAD_STATE == 1 */
 
 /* i386 thread states on older releases */
@@ -5254,7 +5254,7 @@ check_dylinker_command:
 #if i386_THREAD_STATE == -1
 			case 1:
 #endif /* i386_THREAD_STATE == -1 */
-			    if(count != i386_THREAD_STATE_COUNT){
+			    if(count != i386_TGT_THREAD_STATE_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not i386_THREAD_STATE_COUNT for flavor "
 				    "number %u which is a i386_THREAD_STATE "
@@ -5263,8 +5263,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    cpu = (i386_thread_state_t *)state;
-			    if(state + sizeof(i386_thread_state_t) >
+			    cpu = (i386_tgt_thread_state_t *)state;
+			    if(state + sizeof(i386_tgt_thread_state_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "i386_THREAD_STATE in %s command %u "
@@ -5275,12 +5275,12 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_i386_thread_state(cpu, host_byte_sex);
-			    state += sizeof(i386_thread_state_t);
+			    state += sizeof(i386_tgt_thread_state_t);
 			    break;
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
 			case i386_FLOAT_STATE:
-			    if(count != i386_FLOAT_STATE_COUNT){
+			    if(count != i386_TGT_FLOAT_STATE_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not i386_FLOAT_STATE_COUNT for flavor "
 				    "number %u which is a i386_FLOAT_STATE "
@@ -5289,8 +5289,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    fpu = (struct i386_float_state *)state;
-			    if(state + sizeof(struct i386_float_state) >
+			    fpu = (i386_tgt_float_state_t *)state;
+			    if(state + sizeof(i386_tgt_float_state_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "i386_FLOAT_STATE in %s command %u "
@@ -5301,7 +5301,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_i386_float_state(fpu, host_byte_sex);
-			    state += sizeof(struct i386_float_state);
+			    state += sizeof(i386_tgt_float_state_t);
 			    break;
 			case i386_EXCEPTION_STATE:
 			    if(count != I386_EXCEPTION_STATE_COUNT){
@@ -5314,8 +5314,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    exc = (i386_exception_state_t *)state;
-			    if(state + sizeof(i386_exception_state_t) >
+			    exc = (i386_tgt_exception_state_t *)state;
+			    if(state + sizeof(i386_tgt_exception_state_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "i386_EXCEPTION_STATE in %s command %u "
@@ -5326,7 +5326,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_i386_exception_state(exc,host_byte_sex);
-			    state += sizeof(i386_exception_state_t);
+			    state += sizeof(i386_tgt_exception_state_t);
 			    break;
 #endif /* i386_THREAD_STATE == 1 */
 
@@ -5426,7 +5426,7 @@ check_dylinker_command:
 		}
 #ifdef x86_THREAD_STATE64_COUNT
 	    	if(cputype == CPU_TYPE_X86_64){
-		    x86_thread_state64_t *cpu;
+		    x86_tgt_thread_state64_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -5461,7 +5461,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case x86_THREAD_STATE64:
-			    if(count != x86_THREAD_STATE64_COUNT){
+			    if(count != x86_TGT_THREAD_STATE64_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not x86_THREAD_STATE64_COUNT for "
 				    "flavor number %u which is a x86_THREAD_"
@@ -5470,8 +5470,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    cpu = (x86_thread_state64_t *)state;
-			    if(state + sizeof(x86_thread_state64_t) >
+			    cpu = (x86_tgt_thread_state64_t *)state;
+			    if(state + sizeof(x86_tgt_thread_state64_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "x86_THREAD_STATE64 in %s command %u "
@@ -5482,7 +5482,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_x86_thread_state64(cpu, host_byte_sex);
-			    state += sizeof(x86_thread_state64_t);
+			    state += sizeof(x86_tgt_thread_state64_t);
 			    break;
 			default:
 			    if(swapped){
@@ -5733,7 +5733,7 @@ check_dylinker_command:
 		}
 #endif
 	    	if(cputype == CPU_TYPE_ARM){
-		    arm_thread_state_t *cpu;
+		    arm_tgt_thread_state_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -5768,7 +5768,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case ARM_THREAD_STATE:
-			    if(count != ARM_THREAD_STATE_COUNT){
+			    if(count != ARM_TGT_THREAD_STATE_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not ARM_THREAD_STATE_COUNT for "
 				    "flavor number %u which is a ARM_THREAD_"
@@ -5777,8 +5777,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    cpu = (arm_thread_state_t *)state;
-			    if(state + sizeof(arm_thread_state_t) >
+			    cpu = (arm_tgt_thread_state_t *)state;
+			    if(state + sizeof(arm_tgt_thread_state_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "ARM_THREAD_STATE in %s command %u "
@@ -5789,7 +5789,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_arm_thread_state_t(cpu, host_byte_sex);
-			    state += sizeof(arm_thread_state_t);
+			    state += sizeof(arm_tgt_thread_state_t);
 			    break;
 			default:
 			    if(swapped){
@@ -5808,7 +5808,7 @@ check_dylinker_command:
 		    break;
 		}
 	    	if(cputype == CPU_TYPE_ARM64){
-		    arm_thread_state64_t *cpu;
+		    arm_tgt_thread_state64_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -5843,7 +5843,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case ARM_THREAD_STATE64:
-			    if(count != ARM_THREAD_STATE64_COUNT){
+			    if(count != ARM_TGT_THREAD_STATE64_COUNT){
 				Mach_O_error(ofile, "malformed object (count "
 				    "not ARM_THREAD_STATE64_COUNT for "
 				    "flavor number %u which is a ARM_THREAD_"
@@ -5852,8 +5852,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				goto return_bad;
 			    }
-			    cpu = (arm_thread_state64_t *)state;
-			    if(state + sizeof(arm_thread_state64_t) >
+			    cpu = (arm_tgt_thread_state64_t *)state;
+			    if(state + sizeof(arm_tgt_thread_state64_t) >
 			       (char *)ut + ut->cmdsize){
 				Mach_O_error(ofile, "malformed object ("
 				    "ARM_THREAD_STATE64 in %s command %u "
@@ -5864,7 +5864,7 @@ check_dylinker_command:
 			    }
 			    if(swapped)
 				swap_arm_thread_state64_t(cpu, host_byte_sex);
-			    state += sizeof(arm_thread_state64_t);
+			    state += sizeof(arm_tgt_thread_state64_t);
 			    break;
 			default:
 			    if(swapped){

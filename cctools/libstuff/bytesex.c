@@ -743,7 +743,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_ppc_thread_state_t(
-ppc_thread_state_t *cpu,
+ppc_tgt_thread_state_t *cpu,
 enum byte_sex target_byte_sex)
 {
 	cpu->srr0 = SWAP_INT(cpu->srr0);
@@ -791,7 +791,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_ppc_thread_state64_t(
-ppc_thread_state64_t *cpu,
+ppc_tgt_thread_state64_t *cpu,
 enum byte_sex target_byte_sex)
 {
 	cpu->srr0 = SWAP_LONG_LONG(cpu->srr0);
@@ -838,7 +838,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_ppc_float_state_t(
-ppc_float_state_t *fpu,
+ppc_tgt_float_state_t *fpu,
 enum byte_sex target_byte_sex)
 {
     uint32_t i;
@@ -857,7 +857,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_ppc_exception_state_t(
-ppc_exception_state_t *state,
+ppc_tgt_exception_state_t *state,
 enum byte_sex target_byte_sex)
 {
     uint32_t i;
@@ -1335,7 +1335,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_i386_thread_state(
-i386_thread_state_t *cpu,
+i386_tgt_thread_state_t *cpu,
 enum byte_sex target_byte_sex)
 {
 #ifdef __MWERKS__
@@ -1364,7 +1364,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_thread_state64(
-x86_thread_state64_t *cpu,
+x86_tgt_thread_state64_t *cpu,
 enum byte_sex target_byte_sex)
 {
 	cpu->rax = SWAP_LONG_LONG(cpu->rax);
@@ -1396,7 +1396,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_i386_float_state(
-struct i386_float_state *fpu,
+i386_tgt_float_state_t *fpu,
 enum byte_sex target_byte_sex)
 {
 #ifndef i386_EXCEPTION_STATE_COUNT
@@ -1531,7 +1531,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_i386_exception_state(
-i386_exception_state_t *exc,
+i386_tgt_exception_state_t *exc,
 enum byte_sex target_byte_sex)
 {
 	exc->trapno = SWAP_INT(exc->trapno);
@@ -1544,7 +1544,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_float_state64(
-x86_float_state64_t *fpu,
+x86_tgt_float_state64_t *fpu,
 enum byte_sex target_byte_sex)
 {
     struct swapped_fp_control {
@@ -1674,7 +1674,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_exception_state64(
-x86_exception_state64_t *exc,
+x86_tgt_exception_state64_t *exc,
 enum byte_sex target_byte_sex)
 {
 	exc->trapno = SWAP_INT(exc->trapno);
@@ -1685,7 +1685,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_debug_state32(
-x86_debug_state32_t *debug,
+x86_tgt_debug_state32_t *debug,
 enum byte_sex target_byte_sex)
 {
 	debug->dr0 = SWAP_INT(debug->dr0);
@@ -1701,7 +1701,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_debug_state64(
-x86_debug_state64_t *debug,
+x86_tgt_debug_state64_t *debug,
 enum byte_sex target_byte_sex)
 {
 	debug->dr0 = SWAP_LONG_LONG(debug->dr0);
@@ -1717,7 +1717,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_x86_state_hdr(
-struct x86_state_hdr *hdr,
+struct x86_tgt_state_hdr *hdr,
 enum byte_sex target_byte_sex)
 {
 	hdr->flavor = SWAP_INT(hdr->flavor);
@@ -2318,7 +2318,7 @@ enum byte_sex target_byte_sex)
 __private_extern__
 void
 swap_arm_thread_state_t(
-arm_thread_state_t *cpu,
+arm_tgt_thread_state_t *cpu,
 enum byte_sex target_byte_sex)
 {
     int i;
@@ -2333,7 +2333,7 @@ enum byte_sex target_byte_sex)
 
 void
 swap_arm_thread_state64_t(
-arm_thread_state64_t *cpu,
+arm_tgt_thread_state64_t *cpu,
 enum byte_sex target_byte_sex)
 {
     int i;

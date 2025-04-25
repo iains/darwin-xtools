@@ -429,10 +429,10 @@ check_dylinker_command:
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO ||
 		   cputype == CPU_TYPE_POWERPC64){
-		    ppc_thread_state_t *cpu;
-		    ppc_float_state_t *fpu;
-		    ppc_exception_state_t *except;
-		    ppc_thread_state64_t *cpu64;
+		    ppc_tgt_thread_state_t *cpu;
+		    ppc_tgt_float_state_t *fpu;
+		    ppc_tgt_exception_state_t *except;
+		    ppc_tgt_thread_state64_t *cpu64;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -443,7 +443,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case PPC_THREAD_STATE:
-			    if(count != PPC_THREAD_STATE_COUNT){
+			    if(count != PPC_TGT_THREAD_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not PPC_THREAD_STATE_COUNT for "
@@ -453,11 +453,11 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu = (ppc_thread_state_t *)state;
-			    state += sizeof(ppc_thread_state_t);
+			    cpu = (ppc_tgt_thread_state_t *)state;
+			    state += sizeof(ppc_tgt_thread_state_t);
 			    break;
 			case PPC_FLOAT_STATE:
-			    if(count != PPC_FLOAT_STATE_COUNT){
+			    if(count != PPC_TGT_FLOAT_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not PPC_FLOAT_STATE_COUNT for "
@@ -467,11 +467,11 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    fpu = (ppc_float_state_t *)state;
-			    state += sizeof(ppc_float_state_t);
+			    fpu = (ppc_tgt_float_state_t *)state;
+			    state += sizeof(ppc_tgt_float_state_t);
 			    break;
 			case PPC_EXCEPTION_STATE:
-			    if(count != PPC_EXCEPTION_STATE_COUNT){
+			    if(count != PPC_TGT_EXCEPTION_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not PPC_EXCEPTION_STATE_COUNT for "
@@ -481,11 +481,11 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    except = (ppc_exception_state_t *)state;
-			    state += sizeof(ppc_exception_state_t);
+			    except = (ppc_tgt_exception_state_t *)state;
+			    state += sizeof(ppc_tgt_exception_state_t);
 			    break;
 			case PPC_THREAD_STATE64:
-			    if(count != PPC_THREAD_STATE64_COUNT){
+			    if(count != PPC_TGT_THREAD_STATE64_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not PPC_THREAD_STATE64_COUNT for "
@@ -495,8 +495,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu64 = (ppc_thread_state64_t *)state;
-			    state += sizeof(ppc_thread_state64_t);
+			    cpu64 = (ppc_tgt_thread_state64_t *)state;
+			    state += sizeof(ppc_tgt_thread_state64_t);
 			    break;
 			default:
 			    error("in swap_object_headers(): malformed "
@@ -639,14 +639,14 @@ check_dylinker_command:
 		   || cputype == CPU_TYPE_X86_64
 #endif /* x86_THREAD_STATE64 */
 		   ){
-		    i386_thread_state_t *cpu;
+		    i386_tgt_thread_state_t *cpu;
 #ifdef x86_THREAD_STATE64
-		    x86_thread_state64_t *cpu64;
+		    x86_tgt_thread_state64_t *cpu64;
 #endif /* x86_THREAD_STATE64 */
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
-		    struct i386_float_state *fpu;
-		    i386_exception_state_t *exc;
+		    i386_tgt_float_state_t *fpu;
+		    i386_tgt_exception_state_t *exc;
 #endif /* i386_THREAD_STATE == 1 */
 
 /* i386 thread states on older releases */
@@ -673,7 +673,7 @@ check_dylinker_command:
 #if i386_THREAD_STATE == -1
 			case 1:
 #endif /* i386_THREAD_STATE == -1 */
-			    if(count != i386_THREAD_STATE_COUNT){
+			    if(count != i386_TGT_THREAD_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not i386_THREAD_STATE_COUNT for flavor "
@@ -683,13 +683,13 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu = (i386_thread_state_t *)state;
-			    state += sizeof(i386_thread_state_t);
+			    cpu = (i386_tgt_thread_state_t *)state;
+			    state += sizeof(i386_tgt_thread_state_t);
 			    break;
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
 			case i386_FLOAT_STATE:
-			    if(count != i386_FLOAT_STATE_COUNT){
+			    if(count != i386_TGT_FLOAT_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not i386_FLOAT_STATE_COUNT for flavor "
@@ -699,8 +699,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    fpu = (struct i386_float_state *)state;
-			    state += sizeof(struct i386_float_state);
+			    fpu = (i386_tgt_float_state_t *)state;
+			    state += sizeof(i386_tgt_float_state_t);
 			    break;
 			case i386_EXCEPTION_STATE:
 			    if(count != I386_EXCEPTION_STATE_COUNT){
@@ -714,8 +714,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    exc = (i386_exception_state_t *)state;
-			    state += sizeof(i386_exception_state_t);
+			    exc = (i386_tgt_exception_state_t *)state;
+			    state += sizeof(i386_tgt_exception_state_t);
 			    break;
 #endif /* i386_THREAD_STATE == 1 */
 
@@ -768,7 +768,7 @@ check_dylinker_command:
 #endif /* i386_THREAD_STATE == -1 */
 #ifdef x86_THREAD_STATE64
 			case x86_THREAD_STATE64:
-			    if(count != x86_THREAD_STATE64_COUNT){
+			    if(count != x86_TGT_THREAD_STATE64_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not x86_THREAD_STATE64_COUNT for "
@@ -779,8 +779,8 @@ check_dylinker_command:
 				    "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu64 = (x86_thread_state64_t *)state;
-			    state += sizeof(x86_thread_state64_t);
+			    cpu64 = (x86_tgt_thread_state64_t *)state;
+			    state += sizeof(x86_tgt_thread_state64_t);
 			    break;
 #endif /* x86_THREAD_STATE64 */
 			default:
@@ -911,7 +911,7 @@ check_dylinker_command:
 		}
 #endif
 	    	if(cputype == CPU_TYPE_ARM){
-		    arm_thread_state_t *cpu;
+		    arm_tgt_thread_state_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -922,7 +922,7 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case ARM_THREAD_STATE:
-			    if(count != ARM_THREAD_STATE_COUNT){
+			    if(count != ARM_TGT_THREAD_STATE_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not ARM_THREAD_STATE_COUNT for "
@@ -932,8 +932,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu = (arm_thread_state_t *)state;
-			    state += sizeof(arm_thread_state_t);
+			    cpu = (arm_tgt_thread_state_t *)state;
+			    state += sizeof(arm_tgt_thread_state_t);
 			    break;
 			default:
 			    error("in swap_object_headers(): malformed load "
@@ -948,7 +948,7 @@ check_dylinker_command:
 		    break;
 		}
 	    	if(cputype == CPU_TYPE_ARM64){
-		    arm_thread_state64_t *cpu;
+		    arm_tgt_thread_state64_t *cpu;
 
 		    nflavor = 0;
 		    p = (char *)ut + ut->cmdsize;
@@ -958,8 +958,8 @@ check_dylinker_command:
 			count = *((uint32_t *)state);
 			state += sizeof(uint32_t);
 			switch(flavor){
-			case ARM_THREAD_STATE:
-			    if(count != ARM_THREAD_STATE_COUNT){
+			case ARM_THREAD_STATE64:
+			    if(count != ARM_TGT_THREAD_STATE64_COUNT){
 				error("in swap_object_headers(): malformed "
 				    "load commands (count "
 				    "not ARM_THREAD_STATE_COUNT for "
@@ -969,8 +969,8 @@ check_dylinker_command:
 				    "LC_UNIXTHREAD" : "LC_THREAD", i);
 				return(FALSE);
 			    }
-			    cpu = (arm_thread_state64_t *)state;
-			    state += sizeof(arm_thread_state64_t);
+			    cpu = (arm_tgt_thread_state64_t *)state;
+			    state += sizeof(arm_tgt_thread_state64_t);
 			    break;
 			default:
 			    error("in swap_object_headers(): malformed load "
@@ -1366,10 +1366,10 @@ check_dylinker_command:
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO ||
 		   cputype == CPU_TYPE_POWERPC64){
-		    ppc_thread_state_t *cpu;
-		    ppc_thread_state64_t *cpu64;
-		    ppc_float_state_t *fpu;
-		    ppc_exception_state_t *except;
+		    ppc_tgt_thread_state_t *cpu;
+		    ppc_tgt_thread_state64_t *cpu64;
+		    ppc_tgt_float_state_t *fpu;
+		    ppc_tgt_exception_state_t *except;
 
 		    while(state < p){
 			flavor = *((uint32_t *)state);
@@ -1380,23 +1380,23 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case PPC_THREAD_STATE:
-			    cpu = (ppc_thread_state_t *)state;
+			    cpu = (ppc_tgt_thread_state_t *)state;
 			    swap_ppc_thread_state_t(cpu, target_byte_sex);
-			    state += sizeof(ppc_thread_state_t);
+			    state += sizeof(ppc_tgt_thread_state_t);
 			    break;
 			case PPC_THREAD_STATE64:
-			    cpu64 = (ppc_thread_state64_t *)state;
+			    cpu64 = (ppc_tgt_thread_state64_t *)state;
 			    swap_ppc_thread_state64_t(cpu64, target_byte_sex);
-			    state += sizeof(ppc_thread_state64_t);
+			    state += sizeof(ppc_tgt_thread_state64_t);
 			    break;
 			case PPC_FLOAT_STATE:
-			    fpu = (ppc_float_state_t *)state;
+			    fpu = (ppc_tgt_float_state_t *)state;
 			    swap_ppc_float_state_t(fpu, target_byte_sex);
-			    state += sizeof(ppc_float_state_t);
+			    state += sizeof(ppc_tgt_float_state_t);
 			case PPC_EXCEPTION_STATE:
-			    except = (ppc_exception_state_t *)state;
+			    except = (ppc_tgt_exception_state_t *)state;
 			    swap_ppc_exception_state_t(except, target_byte_sex);
-			    state += sizeof(ppc_exception_state_t);
+			    state += sizeof(ppc_tgt_exception_state_t);
 			    break;
 			}
 		    }
@@ -1471,14 +1471,14 @@ check_dylinker_command:
 		   || cputype == CPU_TYPE_X86_64
 #endif /* x86_THREAD_STATE64 */
 		   ){
-		    i386_thread_state_t *cpu;
+		    i386_tgt_thread_state_t *cpu;
 #ifdef x86_THREAD_STATE64
-		    x86_thread_state64_t *cpu64;
+		    x86_tgt_thread_state64_t *cpu64;
 #endif /* x86_THREAD_STATE64 */
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
-		    struct i386_float_state *fpu;
-		    i386_exception_state_t *exc;
+		    i386_tgt_float_state_t *fpu;
+		    i386_tgt_exception_state_t *exc;
 #endif /* i386_THREAD_STATE == 1 */
 
 /* i386 thread states on older releases */
@@ -1505,21 +1505,21 @@ check_dylinker_command:
 #if i386_THREAD_STATE == -1
 			case 1:
 #endif /* i386_THREAD_STATE == -1 */
-			    cpu = (i386_thread_state_t *)state;
+			    cpu = (i386_tgt_thread_state_t *)state;
 			    swap_i386_thread_state(cpu, target_byte_sex);
-			    state += sizeof(i386_thread_state_t);
+			    state += sizeof(i386_tgt_thread_state_t);
 			    break;
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
 			case i386_FLOAT_STATE:
-			    fpu = (struct i386_float_state *)state;
+			    fpu = (i386_tgt_float_state_t *)state;
 			    swap_i386_float_state(fpu, target_byte_sex);
-			    state += sizeof(struct i386_float_state);
+			    state += sizeof(i386_tgt_float_state_t);
 			    break;
 			case i386_EXCEPTION_STATE:
-			    exc = (i386_exception_state_t *)state;
+			    exc = (i386_tgt_exception_state_t *)state;
 			    swap_i386_exception_state(exc, target_byte_sex);
-			    state += sizeof(i386_exception_state_t);
+			    state += sizeof(i386_tgt_exception_state_t);
 			    break;
 #endif /* i386_THREAD_STATE == 1 */
 
@@ -1543,9 +1543,9 @@ check_dylinker_command:
 #endif /* i386_THREAD_STATE == -1 */
 #ifdef x86_THREAD_STATE64
 			case x86_THREAD_STATE64:
-			    cpu64 = (x86_thread_state64_t *)state;
+			    cpu64 = (x86_tgt_thread_state64_t *)state;
 			    swap_x86_thread_state64(cpu64, target_byte_sex);
-			    state += sizeof(x86_thread_state64_t);
+			    state += sizeof(x86_tgt_thread_state64_t);
 			    break;
 #endif /* x86_THREAD_STATE64 */
 			}
@@ -1617,7 +1617,7 @@ check_dylinker_command:
 		}
 #endif
 	    	if(cputype == CPU_TYPE_ARM){
-		    arm_thread_state_t *cpu;
+		    arm_tgt_thread_state_t *cpu;
 
 		    while(state < p){
 			flavor = *((uint32_t *)state);
@@ -1628,16 +1628,16 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case ARM_THREAD_STATE:
-			    cpu = (arm_thread_state_t *)state;
+			    cpu = (arm_tgt_thread_state_t *)state;
 			    swap_arm_thread_state_t(cpu, target_byte_sex);
-			    state += sizeof(arm_thread_state_t);
+			    state += sizeof(arm_tgt_thread_state_t);
 			    break;
 			}
 		    }
 		    break;
 		}
 	    	if(cputype == CPU_TYPE_ARM64){
-		    arm_thread_state64_t *cpu;
+		    arm_tgt_thread_state64_t *cpu;
 
 		    while(state < p){
 			flavor = *((uint32_t *)state);
@@ -1648,9 +1648,9 @@ check_dylinker_command:
 			state += sizeof(uint32_t);
 			switch(flavor){
 			case ARM_THREAD_STATE64:
-			    cpu = (arm_thread_state64_t *)state;
+			    cpu = (arm_tgt_thread_state64_t *)state;
 			    swap_arm_thread_state64_t(cpu, target_byte_sex);
-			    state += sizeof(arm_thread_state64_t);
+			    state += sizeof(arm_tgt_thread_state64_t);
 			    break;
 			}
 		    }

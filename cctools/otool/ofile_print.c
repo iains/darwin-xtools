@@ -246,11 +246,11 @@ static void print_cputype(
     cpu_subtype_t cpusubtype);
 
 #if i386_THREAD_STATE == 1
-#ifdef i386_EXCEPTION_STATE_COUNT
+#ifdef i386_TGT_EXCEPTION_STATE_COUNT
 static void print_mmst_reg(
-    struct mmst_reg *r);
+    tgt_mmst_reg_t *r);
 static void print_xmm_reg(
-    struct xmm_reg *r);
+    tgt_xmm_reg_t *r);
 #endif /* defined(i386_EXCEPTION_STATE_COUNT) */
 #endif /* i386_THREAD_STATE == 1 */
 
@@ -4219,10 +4219,10 @@ enum byte_sex thread_states_byte_sex)
 	if(cputype == CPU_TYPE_POWERPC ||
 	   cputype == CPU_TYPE_POWERPC64 ||
 	   cputype == CPU_TYPE_VEO){
-	    ppc_thread_state_t cpu;
-	    ppc_thread_state64_t cpu64;
-	    ppc_float_state_t fpu;
-	    ppc_exception_state_t except;
+	    ppc_tgt_thread_state_t cpu;
+	    ppc_tgt_thread_state64_t cpu64;
+	    ppc_tgt_float_state_t fpu;
+	    ppc_tgt_exception_state_t except;
 
 	    while(begin < end){
 		if(end - begin > (ptrdiff_t)sizeof(uint32_t)){
@@ -4249,20 +4249,20 @@ enum byte_sex thread_states_byte_sex)
 		switch(flavor){
 		case PPC_THREAD_STATE:
 		    printf("     flavor PPC_THREAD_STATE\n");
-		    if(count == PPC_THREAD_STATE_COUNT)
+		    if(count == PPC_TGT_THREAD_STATE_COUNT)
 			printf("      count PPC_THREAD_STATE_COUNT\n");
 		    else
 			printf("      count %u (not PPC_THREAD_STATE_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(ppc_thread_state_t)){
+		    if(left >= sizeof(ppc_tgt_thread_state_t)){
 		        memcpy((char *)&cpu, begin,
-			       sizeof(ppc_thread_state_t));
-		        begin += sizeof(ppc_thread_state_t);
+			       sizeof(ppc_tgt_thread_state_t));
+		        begin += sizeof(ppc_tgt_thread_state_t);
 		    }
 		    else{
 		        memset((char *)&cpu, '\0',
-			       sizeof(ppc_thread_state_t));
+			       sizeof(ppc_tgt_thread_state_t));
 		        memcpy((char *)&cpu, begin, left);
 		        begin += left;
 		    }
@@ -4294,20 +4294,20 @@ enum byte_sex thread_states_byte_sex)
 		    break;
 		case PPC_FLOAT_STATE:
 		    printf("      flavor PPC_FLOAT_STATE\n");
-		    if(count == PPC_FLOAT_STATE_COUNT)
+		    if(count == PPC_TGT_FLOAT_STATE_COUNT)
 			printf("      count PPC_FLOAT_STATE_COUNT\n");
 		    else
 			printf("      count %u (not PPC_FLOAT_STATE_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(ppc_float_state_t)){
+		    if(left >= sizeof(ppc_tgt_float_state_t)){
 		        memcpy((char *)&fpu, begin,
-			       sizeof(ppc_float_state_t));
-		        begin += sizeof(ppc_float_state_t);
+			       sizeof(ppc_tgt_float_state_t));
+		        begin += sizeof(ppc_tgt_float_state_t);
 		    }
 		    else{
 		        memset((char *)&fpu, '\0',
-			       sizeof(ppc_float_state_t));
+			       sizeof(ppc_tgt_float_state_t));
 		        memcpy((char *)&fpu, begin, left);
 		        begin += left;
 		    }
@@ -4337,20 +4337,20 @@ enum byte_sex thread_states_byte_sex)
 		    break;
 		case PPC_EXCEPTION_STATE:
 		    printf("      flavor PPC_EXCEPTION_STATE\n");
-		    if(count == PPC_EXCEPTION_STATE_COUNT)
+		    if(count == PPC_TGT_EXCEPTION_STATE_COUNT)
 			printf("      count PPC_EXCEPTION_STATE_COUNT\n");
 		    else
 			printf("      count %u (not PPC_EXCEPTION_STATE_COUNT"
 			       ")\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(ppc_exception_state_t)){
+		    if(left >= sizeof(ppc_tgt_exception_state_t)){
 		        memcpy((char *)&except, begin,
-			       sizeof(ppc_exception_state_t));
-		        begin += sizeof(ppc_exception_state_t);
+			       sizeof(ppc_tgt_exception_state_t));
+		        begin += sizeof(ppc_tgt_exception_state_t);
 		    }
 		    else{
 		        memset((char *)&except, '\0',
-			       sizeof(ppc_exception_state_t));
+			       sizeof(ppc_tgt_exception_state_t));
 		        memcpy((char *)&except, begin, left);
 		        begin += left;
 		    }
@@ -4369,20 +4369,20 @@ enum byte_sex thread_states_byte_sex)
 		    break;
 		case PPC_THREAD_STATE64:
 		    printf("     flavor PPC_THREAD_STATE64\n");
-		    if(count == PPC_THREAD_STATE64_COUNT)
+		    if(count == PPC_TGT_THREAD_STATE64_COUNT)
 			printf("      count PPC_THREAD_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not PPC_THREAD_STATE64_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(ppc_thread_state64_t)){
+		    if(left >= sizeof(ppc_tgt_thread_state64_t)){
 		        memcpy((char *)&cpu64, begin,
-			       sizeof(ppc_thread_state64_t));
-		        begin += sizeof(ppc_thread_state64_t);
+			       sizeof(ppc_tgt_thread_state64_t));
+		        begin += sizeof(ppc_tgt_thread_state64_t);
 		    }
 		    else{
 		        memset((char *)&cpu64, '\0',
-			       sizeof(ppc_thread_state64_t));
+			       sizeof(ppc_tgt_thread_state64_t));
 		        memcpy((char *)&cpu64, begin, left);
 		        begin += left;
 		    }
@@ -4805,28 +4805,28 @@ enum byte_sex thread_states_byte_sex)
 #endif
 	else if(cputype == CPU_TYPE_I386 ||
 	        cputype == CPU_TYPE_X86_64){
-	    i386_thread_state_t cpu;
+	    i386_tgt_thread_state_t cpu;
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
-#ifndef i386_EXCEPTION_STATE_COUNT
+#ifndef i386_TGT_EXCEPTION_STATE_COUNT
 	    char *fpu;
 	    uint32_t fpu_size;
 #else /* defined(i386_EXCEPTION_STATE_COUNT) */
-	    i386_float_state_t fpu;
+	    i386_tgt_float_state_t fpu;
 #endif /* defined(i386_EXCEPTION_STATE_COUNT) */
-	    i386_exception_state_t exc;
+	    i386_tgt_exception_state_t exc;
 	    uint32_t f, g;
 
 #ifdef x86_THREAD_STATE64
-	    x86_thread_state64_t cpu64;
-	    x86_float_state64_t fpu64;
-	    x86_exception_state64_t exc64;
-	    x86_debug_state64_t debug64;
-	    x86_debug_state32_t debug;
-	    struct x86_thread_state ts;
-	    struct x86_float_state fs;
-	    struct x86_exception_state es;
-	    struct x86_debug_state ds;
+	    x86_tgt_thread_state64_t cpu64;
+	    x86_tgt_float_state64_t fpu64;
+	    x86_tgt_exception_state64_t exc64;
+	    x86_tgt_debug_state64_t debug64;
+	    x86_tgt_debug_state32_t debug;
+	    x86_tgt_thread_state_t ts;
+	    x86_tgt_float_state_t fs;
+	    x86_tgt_exception_state_t es;
+	    x86_tgt_debug_state_t ds;
 #endif /* x86_THREAD_STATE64 */
 
 #endif /* i386_THREAD_STATE == 1 */
@@ -4864,20 +4864,20 @@ enum byte_sex thread_states_byte_sex)
 		switch(flavor){
 		case i386_THREAD_STATE:
 		    printf("     flavor i386_THREAD_STATE\n");
-		    if(count == i386_THREAD_STATE_COUNT)
+		    if(count == i386_TGT_THREAD_STATE_COUNT)
 			printf("      count i386_THREAD_STATE_COUNT\n");
 		    else
 			printf("      count %u (not i386_THREAD_STATE_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(i386_thread_state_t)){
+		    if(left >= sizeof(i386_tgt_thread_state_t)){
 		        memcpy((char *)&cpu, begin,
-			       sizeof(i386_thread_state_t));
-		        begin += sizeof(i386_thread_state_t);
+			       sizeof(i386_tgt_thread_state_t));
+		        begin += sizeof(i386_tgt_thread_state_t);
 		    }
 		    else{
 		        memset((char *)&cpu, '\0',
-			       sizeof(i386_thread_state_t));
+			       sizeof(i386_tgt_thread_state_t));
 		        memcpy((char *)&cpu, begin, left);
 		        begin += left;
 		    }
@@ -4900,17 +4900,17 @@ print_x86_thread_state32:
 #if i386_THREAD_STATE == 1
 		case i386_FLOAT_STATE:
 		    printf("     flavor i386_FLOAT_STATE\n");
-		    if(count == i386_FLOAT_STATE_COUNT)
+		    if(count == i386_TGT_FLOAT_STATE_COUNT)
 			printf("      count i386_FLOAT_STATE_COUNT\n");
 		    else
 			printf("      count %u (not i386_FLOAT_STATE_COUNT)\n",
 			       count);
 		    left = end - begin;
-#ifndef i386_EXCEPTION_STATE_COUNT
+#ifndef i386_TGT_EXCEPTION_STATE_COUNT
 		    fpu = begin;
-		    if(left >= sizeof(struct i386_float_state)){
-			fpu_size = sizeof(struct i386_float_state);
-		        begin += sizeof(struct i386_float_state);
+		    if(left >= sizeof(i386_tgt_float_state_t)){
+			fpu_size = sizeof(i386_tgt_float_state_t);
+		        begin += sizeof(i386_tgt_float_state_t);
 		    }
 		    else{
 			fpu_size = left;
@@ -4926,14 +4926,14 @@ print_x86_thread_state32:
 			printf("\n");
 		    }
 #else /* defined(i386_EXCEPTION_STATE_COUNT) */
-		    if(left >= sizeof(i386_float_state_t)){
+		    if(left >= sizeof(i386_tgt_float_state_t)){
 		        memcpy((char *)&fpu, begin,
-			       sizeof(i386_float_state_t));
-		        begin += sizeof(i386_float_state_t);
+			       sizeof(i386_tgt_float_state_t));
+		        begin += sizeof(i386_tgt_float_state_t);
 		    }
 		    else{
 		        memset((char *)&fpu, '\0',
-			       sizeof(i386_float_state_t));
+			       sizeof(i386_tgt_float_state_t));
 		        memcpy((char *)&fpu, begin, left);
 		        begin += left;
 		    }
@@ -5072,14 +5072,14 @@ print_x86_float_state32:
 			printf("      count %u (not I386_EXCEPTION_STATE_COUNT"
 			       ")\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(i386_exception_state_t)){
+		    if(left >= sizeof(i386_tgt_exception_state_t)){
 		        memcpy((char *)&exc, begin,
-			       sizeof(i386_exception_state_t));
-		        begin += sizeof(i386_exception_state_t);
+			       sizeof(i386_tgt_exception_state_t));
+		        begin += sizeof(i386_tgt_exception_state_t);
 		    }
 		    else{
 		        memset((char *)&exc, '\0',
-			       sizeof(i386_exception_state_t));
+			       sizeof(i386_tgt_exception_state_t));
 		        memcpy((char *)&exc, begin, left);
 		        begin += left;
 		    }
@@ -5095,20 +5095,20 @@ print_x86_exception_state32:
 #ifdef x86_THREAD_STATE64
 		case x86_DEBUG_STATE32:
 		    printf("     flavor x86_DEBUG_STATE32\n");
-		    if(count == x86_DEBUG_STATE32_COUNT)
+		    if(count == x86_TGT_DEBUG_STATE32_COUNT)
 			printf("      count x86_DEBUG_STATE32_COUNT\n");
 		    else
 			printf("      count %u (not x86_DEBUG_STATE32_COUNT"
 			       ")\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_debug_state32_t)){
+		    if(left >= sizeof(x86_tgt_debug_state32_t)){
 		        memcpy((char *)&debug, begin,
-			       sizeof(x86_debug_state32_t));
-		        begin += sizeof(x86_debug_state32_t);
+			       sizeof(x86_tgt_debug_state32_t));
+		        begin += sizeof(x86_tgt_debug_state32_t);
 		    }
 		    else{
 		        memset((char *)&debug, '\0',
-			       sizeof(x86_debug_state32_t));
+			       sizeof(x86_tgt_debug_state32_t));
 		        memcpy((char *)&debug, begin, left);
 		        begin += left;
 		    }
@@ -5125,20 +5125,20 @@ print_x86_debug_state32:
 
 		case x86_THREAD_STATE64:
 		    printf("     flavor x86_THREAD_STATE64\n");
-		    if(count == x86_THREAD_STATE64_COUNT)
+		    if(count == x86_TGT_THREAD_STATE64_COUNT)
 			printf("      count x86_THREAD_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not x86_THREAD_STATE64_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_thread_state64_t)){
+		    if(left >= sizeof(x86_tgt_thread_state64_t)){
 		        memcpy((char *)&cpu64, begin,
-			       sizeof(x86_thread_state64_t));
-		        begin += sizeof(x86_thread_state64_t);
+			       sizeof(x86_tgt_thread_state64_t));
+		        begin += sizeof(x86_tgt_thread_state64_t);
 		    }
 		    else{
 		        memset((char *)&cpu64, '\0',
-			       sizeof(x86_thread_state64_t));
+			       sizeof(x86_tgt_thread_state64_t));
 		        memcpy((char *)&cpu64, begin, left);
 		        begin += left;
 		    }
@@ -5163,20 +5163,20 @@ print_x86_thread_state64:
 
 		case x86_FLOAT_STATE64:
 		    printf("     flavor x86_FLOAT_STATE64\n");
-		    if(count == x86_FLOAT_STATE64_COUNT)
+		    if(count == x86_TGT_FLOAT_STATE64_COUNT)
 			printf("      count x86_FLOAT_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not x86_FLOAT_STATE64_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_float_state64_t)){
+		    if(left >= sizeof(x86_tgt_float_state64_t)){
 		        memcpy((char *)&fpu64, begin,
-			       sizeof(x86_float_state64_t));
-		        begin += sizeof(x86_float_state64_t);
+			       sizeof(x86_tgt_float_state64_t));
+		        begin += sizeof(x86_tgt_float_state64_t);
 		    }
 		    else{
 		        memset((char *)&fpu64, '\0',
-			       sizeof(x86_float_state64_t));
+			       sizeof(x86_tgt_float_state64_t));
 		        memcpy((char *)&fpu64, begin, left);
 		        begin += left;
 		    }
@@ -5322,20 +5322,20 @@ print_x86_float_state64:
 
 		case x86_EXCEPTION_STATE64:
 		    printf("     flavor x86_EXCEPTION_STATE64\n");
-		    if(count == x86_EXCEPTION_STATE64_COUNT)
+		    if(count == x86_TGT_EXCEPTION_STATE64_COUNT)
 			printf("      count x86_EXCEPTION_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not x86_EXCEPTION_STATE64_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_exception_state64_t)){
+		    if(left >= sizeof(x86_tgt_exception_state64_t)){
 		        memcpy((char *)&exc64, begin,
-			       sizeof(x86_exception_state64_t));
-		        begin += sizeof(x86_exception_state64_t);
+			       sizeof(x86_tgt_exception_state64_t));
+		        begin += sizeof(x86_tgt_exception_state64_t);
 		    }
 		    else{
 		        memset((char *)&exc64, '\0',
-			       sizeof(x86_exception_state64_t));
+			       sizeof(x86_tgt_exception_state64_t));
 		        memcpy((char *)&exc64, begin, left);
 		        begin += left;
 		    }
@@ -5349,20 +5349,20 @@ print_x86_exception_state64:
 
 		case x86_DEBUG_STATE64:
 		    printf("     flavor x86_DEBUG_STATE64\n");
-		    if(count == x86_DEBUG_STATE64_COUNT)
+		    if(count == x86_TGT_DEBUG_STATE64_COUNT)
 			printf("      count x86_DEBUG_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not x86_DEBUG_STATE64_COUNT"
 			       ")\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_debug_state64_t)){
+		    if(left >= sizeof(x86_tgt_debug_state64_t)){
 		        memcpy((char *)&debug64, begin,
-			       sizeof(x86_debug_state32_t));
-		        begin += sizeof(x86_debug_state32_t);
+			       sizeof(x86_tgt_debug_state32_t));
+		        begin += sizeof(x86_tgt_debug_state32_t);
 		    }
 		    else{
 		        memset((char *)&debug64, '\0',
-			       sizeof(x86_debug_state64_t));
+			       sizeof(x86_tgt_debug_state64_t));
 		        memcpy((char *)&debug64, begin, left);
 		        begin += left;
 		    }
@@ -5379,20 +5379,20 @@ print_x86_debug_state64:
 
 		case x86_THREAD_STATE:
 		    printf("     flavor x86_THREAD_STATE\n");
-		    if(count == x86_THREAD_STATE_COUNT)
+		    if(count == x86_TGT_THREAD_STATE_COUNT)
 			printf("      count x86_THREAD_STATE_COUNT\n");
 		    else
 			printf("      count %u (not x86_THREAD_STATE_COUNT)\n",
 			       count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_thread_state_t)){
+		    if(left >= sizeof(x86_tgt_thread_state_t)){
 		        memcpy((char *)&ts, begin,
-			       sizeof(x86_thread_state_t));
-		        begin += sizeof(x86_thread_state_t);
+			       sizeof(x86_tgt_thread_state_t));
+		        begin += sizeof(x86_tgt_thread_state_t);
 		    }
 		    else{
 		        memset((char *)&ts, '\0',
-			       sizeof(x86_thread_state_t));
+			       sizeof(x86_tgt_thread_state_t));
 		        memcpy((char *)&ts, begin, left);
 		        begin += left;
 		    }
@@ -5400,7 +5400,7 @@ print_x86_debug_state64:
 			swap_x86_state_hdr(&ts.tsh, host_byte_sex);
 		    if(ts.tsh.flavor == x86_THREAD_STATE32){
 			printf("\t    tsh.flavor x86_THREAD_STATE32 ");
-			if(ts.tsh.count == x86_THREAD_STATE32_COUNT)
+			if(ts.tsh.count == x86_TGT_THREAD_STATE32_COUNT)
 			    printf("tsh.count x86_THREAD_STATE32_COUNT\n");
 			else
 			    printf("tsh.count %d (not x86_THREAD_STATE32_"
@@ -5410,7 +5410,7 @@ print_x86_debug_state64:
 		    }
 		    else if(ts.tsh.flavor == x86_THREAD_STATE64){
 			printf("\t    tsh.flavor x86_THREAD_STATE64 ");
-			if(ts.tsh.count == x86_THREAD_STATE64_COUNT)
+			if(ts.tsh.count == x86_TGT_THREAD_STATE64_COUNT)
 			    printf("tsh.count x86_THREAD_STATE64_COUNT\n");
 			else
 			    printf("tsh.count %d (not x86_THREAD_STATE64_"
@@ -5426,20 +5426,20 @@ print_x86_debug_state64:
 
 		case x86_FLOAT_STATE:
 		    printf("     flavor x86_FLOAT_STATE\n");
-		    if(count == x86_FLOAT_STATE_COUNT)
+		    if(count == x86_TGT_FLOAT_STATE_COUNT)
 			printf("      count x86_FLOAT_STATE_COUNT\n");
 		    else
 			printf("      count %u (not x86_FLOAT_STATE_COUNT)\n",
 			       count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_float_state_t)){
+		    if(left >= sizeof(x86_tgt_float_state_t)){
 		        memcpy((char *)&fs, begin,
-			       sizeof(x86_float_state_t));
-		        begin += sizeof(x86_float_state_t);
+			       sizeof(x86_tgt_float_state_t));
+		        begin += sizeof(x86_tgt_float_state_t);
 		    }
 		    else{
 		        memset((char *)&fs, '\0',
-			       sizeof(x86_float_state_t));
+			       sizeof(x86_tgt_float_state_t));
 		        memcpy((char *)&fs, begin, left);
 		        begin += left;
 		    }
@@ -5447,7 +5447,7 @@ print_x86_debug_state64:
 			swap_x86_state_hdr(&fs.fsh, host_byte_sex);
 		    if(fs.fsh.flavor == x86_FLOAT_STATE32){
 			printf("\t    fsh.flavor x86_FLOAT_STATE32 ");
-			if(fs.fsh.count == x86_FLOAT_STATE32_COUNT)
+			if(fs.fsh.count == x86_TGT_FLOAT_STATE32_COUNT)
 			    printf("tsh.count x86_FLOAT_STATE32_COUNT\n");
 			else
 			    printf("tsh.count %d (not x86_FLOAT_STATE32_COUNT"
@@ -5457,7 +5457,7 @@ print_x86_debug_state64:
 		    }
 		    else if(fs.fsh.flavor == x86_FLOAT_STATE64){
 			printf("\t    fsh.flavor x86_FLOAT_STATE64 ");
-			if(fs.fsh.count == x86_FLOAT_STATE64_COUNT)
+			if(fs.fsh.count == x86_TGT_FLOAT_STATE64_COUNT)
 			    printf("tsh.count x86_FLOAT_STATE64_COUNT\n");
 			else
 			    printf("tsh.count %d (not x86_FLOAT_STATE64_COUNT"
@@ -5473,20 +5473,20 @@ print_x86_debug_state64:
 
 		case x86_EXCEPTION_STATE:
 		    printf("     flavor x86_EXCEPTION_STATE\n");
-		    if(count == x86_EXCEPTION_STATE_COUNT)
+		    if(count == x86_TGT_EXCEPTION_STATE_COUNT)
 			printf("      count x86_EXCEPTION_STATE_COUNT\n");
 		    else
 			printf("      count %u (not x86_EXCEPTION_STATE_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_exception_state_t)){
+		    if(left >= sizeof(x86_tgt_exception_state_t)){
 		        memcpy((char *)&es, begin,
-			       sizeof(x86_exception_state_t));
-		        begin += sizeof(x86_exception_state_t);
+			       sizeof(x86_tgt_exception_state_t));
+		        begin += sizeof(x86_tgt_exception_state_t);
 		    }
 		    else{
 		        memset((char *)&es, '\0',
-			       sizeof(x86_exception_state_t));
+			       sizeof(x86_tgt_exception_state_t));
 		        memcpy((char *)&es, begin, left);
 		        begin += left;
 		    }
@@ -5494,7 +5494,7 @@ print_x86_debug_state64:
 			swap_x86_state_hdr(&es.esh, host_byte_sex);
 		    if(es.esh.flavor == x86_EXCEPTION_STATE32){
 			printf("\t    esh.flavor x86_EXCEPTION_STATE32\n");
-			if(es.esh.count == x86_EXCEPTION_STATE32_COUNT)
+			if(es.esh.count == x86_TGT_EXCEPTION_STATE32_COUNT)
 			    printf("\t    esh.count x86_EXCEPTION_STATE32_"
 				   "COUNT\n");
 			else
@@ -5505,7 +5505,7 @@ print_x86_debug_state64:
 		    }
 		    else if(es.esh.flavor == x86_EXCEPTION_STATE64){
 			printf("\t    esh.flavor x86_EXCEPTION_STATE64\n");
-			if(es.esh.count == x86_EXCEPTION_STATE64_COUNT)
+			if(es.esh.count == x86_TGT_EXCEPTION_STATE64_COUNT)
 			    printf("\t    esh.count x86_EXCEPTION_STATE64_"
 				   "COUNT\n");
 			else
@@ -5522,20 +5522,20 @@ print_x86_debug_state64:
 
 		case x86_DEBUG_STATE:
 		    printf("     flavor x86_DEBUG_STATE\n");
-		    if(count == x86_DEBUG_STATE_COUNT)
-			printf("      count x86_DEBUG_STATE_COUNT\n");
+		    if(count == x86_TGT_DEBUG_STATE_COUNT)
+			printf("      count x86_TGT_DEBUG_STATE_COUNT\n");
 		    else
 			printf("      count %u (not x86_DEBUG_STATE_COUNT"
 			       "\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(x86_debug_state_t)){
+		    if(left >= sizeof(x86_tgt_debug_state_t)){
 		        memcpy((char *)&ds, begin,
-			       sizeof(x86_debug_state_t));
-		        begin += sizeof(x86_debug_state_t);
+			       sizeof(x86_tgt_debug_state_t));
+		        begin += sizeof(x86_tgt_debug_state_t);
 		    }
 		    else{
 		        memset((char *)&ds, '\0',
-			       sizeof(x86_debug_state_t));
+			       sizeof(x86_tgt_debug_state_t));
 		        memcpy((char *)&ds, begin, left);
 		        begin += left;
 		    }
@@ -5543,7 +5543,7 @@ print_x86_debug_state64:
 			swap_x86_state_hdr(&ds.dsh, host_byte_sex);
 		    if(ds.dsh.flavor == x86_DEBUG_STATE32){
 			printf("\t    dsh.flavor x86_DEBUG_STATE32\n");
-			if(ds.dsh.count == x86_DEBUG_STATE32_COUNT)
+			if(ds.dsh.count == x86_TGT_DEBUG_STATE32_COUNT)
 			    printf("\t    dsh.count x86_DEBUG_STATE32_COUNT\n");
 			else
 			    printf("\t    esh.count %d (not x86_DEBUG_STATE32_"
@@ -5553,7 +5553,7 @@ print_x86_debug_state64:
 		    }
 		    if(ds.dsh.flavor == x86_DEBUG_STATE64){
 			printf("\t    dsh.flavor x86_DEBUG_STATE64\n");
-			if(ds.dsh.count == x86_DEBUG_STATE64_COUNT)
+			if(ds.dsh.count == x86_TGT_DEBUG_STATE64_COUNT)
 			    printf("\t    dsh.count x86_DEBUG_STATE64_COUNT\n");
 			else
 			    printf("\t    esh.count %d (not x86_DEBUG_STATE64_"
@@ -5799,7 +5799,7 @@ print_x86_debug_state64:
 	    }
 	}
 	else if(cputype == CPU_TYPE_ARM){
-	    arm_thread_state_t cpu;
+	    arm_tgt_thread_state_t cpu;
 	    while(begin < end){
 		if(end - begin > (ptrdiff_t)sizeof(uint32_t)){
 		    memcpy((char *)&flavor, begin, sizeof(uint32_t));
@@ -5825,20 +5825,20 @@ print_x86_debug_state64:
 		switch(flavor){
 		case ARM_THREAD_STATE:
 		    printf("     flavor ARM_THREAD_STATE\n");
-		    if(count == ARM_THREAD_STATE_COUNT)
+		    if(count == ARM_TGT_THREAD_STATE_COUNT)
 			printf("      count ARM_THREAD_STATE_COUNT\n");
 		    else
 			printf("      count %u (not ARM_THREAD_STATE_"
 			       "COUNT)\n", count);
 		    left = end - begin;
-		    if(left >= sizeof(arm_thread_state_t)){
+		    if(left >= sizeof(arm_tgt_thread_state_t)){
 		        memcpy((char *)&cpu, begin,
-			       sizeof(arm_thread_state_t));
-		        begin += sizeof(arm_thread_state_t);
+			       sizeof(arm_tgt_thread_state_t));
+		        begin += sizeof(arm_tgt_thread_state_t);
 		    }
 		    else{
 		        memset((char *)&cpu, '\0',
-			       sizeof(arm_thread_state_t));
+			       sizeof(arm_tgt_thread_state_t));
 		        memcpy((char *)&cpu, begin, left);
 		        begin += left;
 		    }
@@ -5866,7 +5866,7 @@ print_x86_debug_state64:
 	    }
 	}
 	else if(cputype == CPU_TYPE_ARM64){
-	    arm_thread_state64_t cpu;
+	    arm_tgt_thread_state64_t cpu;
 	    while(begin < end){
 		if(end - begin > (ptrdiff_t)sizeof(uint32_t)){
 		    memcpy((char *)&flavor, begin, sizeof(uint32_t));
@@ -5897,20 +5897,20 @@ print_x86_debug_state64:
 			       ARM_THREAD_STATE64);
 		    else
 		        printf("     flavor ARM_THREAD_STATE64\n");
-		    if(count == ARM_THREAD_STATE64_COUNT)
+		    if(count == ARM_TGT_THREAD_STATE64_COUNT)
 			printf("      count ARM_THREAD_STATE64_COUNT\n");
 		    else
 			printf("      count %u (not ARM_THREAD_STATE64_"
-			       "COUNT %u)\n", count, ARM_THREAD_STATE64_COUNT);
+			       "COUNT %u)\n", count, ARM_TGT_THREAD_STATE64_COUNT);
 		    left = end - begin;
-		    if(left >= sizeof(arm_thread_state64_t)){
+		    if(left >= sizeof(arm_tgt_thread_state64_t)){
 		        memcpy((char *)&cpu, begin,
-			       sizeof(arm_thread_state64_t));
-		        begin += sizeof(arm_thread_state64_t);
+			       sizeof(arm_tgt_thread_state64_t));
+		        begin += sizeof(arm_tgt_thread_state64_t);
 		    }
 		    else{
 		        memset((char *)&cpu, '\0',
-			       sizeof(arm_thread_state64_t));
+			       sizeof(arm_tgt_thread_state64_t));
 		        memcpy((char *)&cpu, begin, left);
 		        begin += left;
 		    }
@@ -5982,12 +5982,12 @@ print_x86_debug_state64:
 
 /* current i386 thread states */
 #if i386_THREAD_STATE == 1
-#ifdef i386_EXCEPTION_STATE_COUNT
+#ifdef i386_TGT_EXCEPTION_STATE_COUNT
 
 static
 void
 print_mmst_reg(
-struct mmst_reg *r)
+tgt_mmst_reg_t *r)
 {
     uint32_t f;
 
@@ -6008,7 +6008,7 @@ struct mmst_reg *r)
 static
 void
 print_xmm_reg(
-struct xmm_reg *r)
+tgt_xmm_reg_t *r)
 {
     uint32_t f;
 

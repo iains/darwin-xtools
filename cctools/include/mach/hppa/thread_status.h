@@ -97,10 +97,10 @@ struct hp_pa_frame_thread_state {
 	uint32_t	ts_step_range_stop;
 
 	/* Generate an exception when OS assists with an alignment fault */
-	boolean_t	ts_alignment_trap_reflect;
+	boolean_tgt32_t	ts_alignment_trap_reflect;
 
 	/* Generate an exception when OS assists with an FP fault */
-	boolean_t	ts_execution_trap_reflect;
+	boolean_tgt32_t	ts_execution_trap_reflect;
 };
 
 /*

@@ -148,20 +148,20 @@ __private_extern__ struct routines_info output_routines_info = { {0} };
 /* cputype == CPU_TYPE_MC680x0, all cpusubtype's */
 static struct m68k_thread_state_regs mc680x0 = { {0} };
 /* cputype == CPU_TYPE_POWERPC, all cpusubtype's */
-static ppc_thread_state_t powerpc = { 0 };
+static ppc_tgt_thread_state_t powerpc = { 0 };
 /* cputype == CPU_TYPE_MC88000, all cpusubtype's */
 static m88k_thread_state_grf_t mc88000 = { 0 };
 /* cputype == CPU_TYPE_I860, all cpusubtype's */
 static struct i860_thread_state_regs i860 = { {0} };
 /* cputype == CPU_TYPE_I386, all cpusubtype's */
-static i386_thread_state_t intel386 = { 0 };
+static i386_tgt_thread_state_t intel386 = { 0 };
 /* cputype == CPU_TYPE_HPPA, all cpusubtypes */
 static struct hp_pa_frame_thread_state hppa_frame_state = { 0 };
 static struct hp_pa_integer_thread_state hppa_integer_state = { 0 };
 /* cputype == CPU_TYPE_SPARC, all subtypes */
 static struct sparc_thread_state_regs sparc_state = { {0} };
 /* cputype == CPU_TYPE_ARM, all subtypes */
-static arm_thread_state_t arm_state = { {0} };
+static arm_tgt_thread_state_t arm_state = { {0} };
 
 static void layout_segments(void);
 static unsigned long next_vmaddr(
@@ -1219,12 +1219,12 @@ layout_segments(void)
 	    if(arch_flag.cputype == CPU_TYPE_POWERPC ||
 		    arch_flag.cputype == CPU_TYPE_VEO){
 		output_thread_info.flavor = PPC_THREAD_STATE;
-		output_thread_info.count = PPC_THREAD_STATE_COUNT;
+		output_thread_info.count = PPC_TGT_THREAD_STATE_COUNT;
 		output_thread_info.entry_point = (int *)&(powerpc.srr0);
 		output_thread_info.stack_pointer = (int *)&(powerpc.r1);
 		output_thread_info.state = &powerpc;
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
-					    PPC_THREAD_STATE_COUNT;
+					    PPC_TGT_THREAD_STATE_COUNT;
 	    }
 #if 0
 	    else if(arch_flag.cputype == CPU_TYPE_MC88000){
@@ -1244,11 +1244,11 @@ layout_segments(void)
 		output_thread_info.state = &i860;
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
 					  I860_THREAD_STATE_REGS_COUNT;
-	    }
+	    }	
 #endif
 	    else if(arch_flag.cputype == CPU_TYPE_I386){
 		output_thread_info.flavor = i386_THREAD_STATE;
-		output_thread_info.count = i386_THREAD_STATE_COUNT;
+		output_thread_info.count = i386_TGT_THREAD_STATE_COUNT;
 		output_thread_info.entry_point = (int *)&(intel386.eip);
 		output_thread_info.stack_pointer = (int *)&(intel386.esp);
 		intel386.es = USER_DATA_SELECTOR;
@@ -1257,7 +1257,7 @@ layout_segments(void)
 		intel386.cs = USER_CODE_SELECTOR;
 		output_thread_info.state = &intel386;
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
-					    i386_THREAD_STATE_COUNT;
+					    i386_TGT_THREAD_STATE_COUNT;
 	    }
 #if 0
 	    else if(arch_flag.cputype == CPU_TYPE_HPPA){
@@ -1293,12 +1293,12 @@ layout_segments(void)
 #endif
 	    else if (arch_flag.cputype == CPU_TYPE_ARM) {
 	      output_thread_info.flavor = ARM_THREAD_STATE;
-	      output_thread_info.count = ARM_THREAD_STATE_COUNT;
+	      output_thread_info.count = ARM_TGT_THREAD_STATE_COUNT;
 	      output_thread_info.entry_point = (int *)&(arm_state.__pc);
 	      output_thread_info.stack_pointer = (int *)&(arm_state.__sp);
 	      output_thread_info.state = &arm_state;
 	      output_thread_info.thread_command.cmdsize += sizeof(long) *
-		ARM_THREAD_STATE_COUNT;
+		ARM_TGT_THREAD_STATE_COUNT;
 	    }
 	    else{
 		fatal("internal error: layout_segments() called with unknown "
