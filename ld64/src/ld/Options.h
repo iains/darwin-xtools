@@ -27,11 +27,12 @@
 
 
 #include <stdint.h>
-#include <mach/machine.h>
 
 #include <vector>
 #include <ext/hash_set>
 #include <ext/hash_map>
+
+#include "mach-o/cpu-types.h"
 
 #include "ld.hpp"
 #include "Snapshot.h"

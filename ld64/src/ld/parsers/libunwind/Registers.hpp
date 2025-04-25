@@ -32,7 +32,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <mach/i386/thread_status.h>
+
+/* Target thread status layouts.  */
+#include <mach-for-target/machine/thread_status.h>
 
 #include "InternalMacros.h"
 
@@ -78,13 +80,13 @@ public:
 	void			setEDI(uint32_t value)	{ fRegisters.__edi = value; }
 	
 private:
-	i386_thread_state_t  fRegisters;
+	i386_tgt_thread_state_t  fRegisters;
 };
 
 inline Registers_x86::Registers_x86(const void* registers)
 {
 	COMPILE_TIME_ASSERT( sizeof(Registers_x86) < sizeof(unw_context_t) );
-	fRegisters = *((i386_thread_state_t*)registers); 
+	fRegisters = *((i386_tgt_thread_state_t*)registers); 
 }
 
 inline Registers_x86::Registers_x86()
@@ -258,13 +260,13 @@ public:
 	uint64_t		getR15() const			{ return fRegisters.__r15; }
 	void			setR15(uint64_t value)	{ fRegisters.__r15 = value; }
 private:
-	x86_thread_state64_t fRegisters;
+	x86_tgt_thread_state64_t fRegisters;
 };
 
 inline Registers_x86_64::Registers_x86_64(const void* registers)
 {
 	COMPILE_TIME_ASSERT( sizeof(Registers_x86_64) < sizeof(unw_context_t) );
-	fRegisters = *((x86_thread_state64_t*)registers); 
+	fRegisters = *((x86_tgt_thread_state64_t*)registers); 
 }
 
 inline Registers_x86_64::Registers_x86_64()
