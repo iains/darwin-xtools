@@ -1200,6 +1200,7 @@ layout_segments(void)
 	    output_thread_info.thread_command.cmdsize =
 						sizeof(struct thread_command) +
 						2 * sizeof(long);
+#if 0
 	    if(arch_flag.cputype == CPU_TYPE_MC680x0){
 		output_thread_info.flavor = M68K_THREAD_STATE_REGS;
 		output_thread_info.count = M68K_THREAD_STATE_REGS_COUNT;
@@ -1209,7 +1210,9 @@ layout_segments(void)
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
 					    M68K_THREAD_STATE_REGS_COUNT;
 	    }
-	    else if(arch_flag.cputype == CPU_TYPE_POWERPC ||
+	    else
+#endif
+	    if(arch_flag.cputype == CPU_TYPE_POWERPC ||
 		    arch_flag.cputype == CPU_TYPE_VEO){
 		output_thread_info.flavor = PPC_THREAD_STATE;
 		output_thread_info.count = PPC_THREAD_STATE_COUNT;
@@ -1219,6 +1222,7 @@ layout_segments(void)
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
 					    PPC_THREAD_STATE_COUNT;
 	    }
+#if 0
 	    else if(arch_flag.cputype == CPU_TYPE_MC88000){
 		output_thread_info.flavor = M88K_THREAD_STATE_GRF;
 		output_thread_info.count = M88K_THREAD_STATE_GRF_COUNT;
@@ -1237,6 +1241,7 @@ layout_segments(void)
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
 					  I860_THREAD_STATE_REGS_COUNT;
 	    }
+#endif
 	    else if(arch_flag.cputype == CPU_TYPE_I386){
 		output_thread_info.flavor = i386_THREAD_STATE;
 		output_thread_info.count = i386_THREAD_STATE_COUNT;
@@ -1250,6 +1255,7 @@ layout_segments(void)
 		output_thread_info.thread_command.cmdsize += sizeof(long) *
 					    i386_THREAD_STATE_COUNT;
 	    }
+#if 0
 	    else if(arch_flag.cputype == CPU_TYPE_HPPA){
 		output_thread_info.flavor = HPPA_FRAME_THREAD_STATE;
 		output_thread_info.count = HPPA_FRAME_THREAD_STATE_COUNT;
@@ -1280,6 +1286,7 @@ layout_segments(void)
 	      output_thread_info.thread_command.cmdsize += sizeof(long) *
 		SPARC_THREAD_STATE_REGS_COUNT;
 	    }
+#endif
 	    else if (arch_flag.cputype == CPU_TYPE_ARM) {
 	      output_thread_info.flavor = ARM_THREAD_STATE;
 	      output_thread_info.count = ARM_THREAD_STATE_COUNT;

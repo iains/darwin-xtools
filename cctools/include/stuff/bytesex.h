@@ -179,6 +179,7 @@ __private_extern__ void swap_thread_command(
     struct thread_command *ut,
     enum byte_sex target_byte_sex);
 
+#if 0
 __private_extern__ void swap_m68k_thread_state_regs(
     struct m68k_thread_state_regs *cpu,
     enum byte_sex target_byte_sex);
@@ -190,6 +191,7 @@ __private_extern__ void swap_m68k_thread_state_68882(
 __private_extern__ void swap_m68k_thread_state_user_reg(
     struct m68k_thread_state_user_reg *user_reg,
     enum byte_sex target_byte_sex);
+#endif
 
 __private_extern__ void swap_ppc_thread_state_t(
     ppc_thread_state_t *cpu,
@@ -207,6 +209,7 @@ __private_extern__ void swap_ppc_exception_state_t(
     ppc_exception_state_t *state,
     enum byte_sex target_byte_sex);
 
+#if 0
 __private_extern__ void swap_m88k_thread_state_grf_t(
     m88k_thread_state_grf_t *cpu,
     enum byte_sex target_byte_sex);
@@ -226,6 +229,7 @@ __private_extern__ void swap_m88110_thread_state_impl_t(
 __private_extern__ void swap_i860_thread_state_regs(
     struct i860_thread_state_regs *cpu,
     enum byte_sex target_byte_sex);
+#endif
 
 __private_extern__ void swap_i386_thread_state(
     i386_thread_state_t *cpu,
@@ -283,6 +287,7 @@ __private_extern__ void swap_x86_debug_state64(
     enum byte_sex target_byte_sex);
 #endif /* x86_THREAD_STATE64 */
 
+#if 0
 __private_extern__ void swap_hppa_integer_thread_state(
     struct hp_pa_integer_thread_state *regs,
     enum byte_sex target_byte_order);
@@ -302,6 +307,7 @@ __private_extern__ void swap_sparc_thread_state_regs(
 __private_extern__ void swap_sparc_thread_state_fpu(
   struct sparc_thread_state_fpu *fpu,
   enum byte_sex target_byte_order);
+#endif
 
 __private_extern__ void swap_arm_thread_state_t(
     arm_thread_state_t *cpu,

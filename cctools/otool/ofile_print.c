@@ -399,6 +399,7 @@ print_arch(
 struct fat_arch *fat_arch)
 {
 	switch(fat_arch->cputype){
+#if 0
 	case CPU_TYPE_MC680x0:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_MC680x0_ALL:
@@ -424,6 +425,7 @@ struct fat_arch *fat_arch)
 		goto print_arch_unknown;
 	    }
 	    break;
+#endif
 	case CPU_TYPE_I386:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_I386_ALL:
@@ -469,6 +471,7 @@ struct fat_arch *fat_arch)
 		goto print_arch_unknown;
 	    }		
 	    break;
+#if 0
 	case CPU_TYPE_I860:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_I860_ALL:
@@ -479,6 +482,7 @@ struct fat_arch *fat_arch)
 		goto print_arch_unknown;
 	    }
 	    break;
+#endif
 	case CPU_TYPE_POWERPC:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_POWERPC_ALL:
@@ -536,6 +540,7 @@ struct fat_arch *fat_arch)
 		goto print_arch_unknown;
 	    }		
 	    break;
+#if 0
 	case CPU_TYPE_VEO:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_VEO_1:
@@ -573,6 +578,7 @@ struct fat_arch *fat_arch)
 		goto print_arch_unknown;
 	    }
 	    break;
+#endif
 	case CPU_TYPE_ARM:
 	    switch(fat_arch->cpusubtype & ~CPU_SUBTYPE_MASK){
 	    case CPU_SUBTYPE_ARM_ALL:
@@ -3797,7 +3803,7 @@ enum byte_sex thread_states_byte_sex)
 	i = 0;
 	host_byte_sex = get_host_byte_sex();
 	swapped = host_byte_sex != thread_states_byte_sex;
-
+#if 0
 	if(cputype == CPU_TYPE_MC680x0){
 	    struct m68k_thread_state_regs cpu;
 	    struct m68k_thread_state_68882 fpu;
@@ -4200,7 +4206,9 @@ enum byte_sex thread_states_byte_sex)
 		}
 	    }
 	}
-	else if(cputype == CPU_TYPE_POWERPC ||
+	else
+#endif
+	if(cputype == CPU_TYPE_POWERPC ||
 	   cputype == CPU_TYPE_POWERPC64 ||
 	   cputype == CPU_TYPE_VEO){
 	    ppc_thread_state_t cpu;
@@ -4405,6 +4413,7 @@ enum byte_sex thread_states_byte_sex)
 		}
 	    }
 	}
+#if 0
 	else if(cputype == CPU_TYPE_MC88000){
 	    m88k_thread_state_grf_t cpu;
 	    m88k_thread_state_xrf_t fpu;
@@ -4785,6 +4794,7 @@ enum byte_sex thread_states_byte_sex)
 		}
 	    }
 	}
+#endif
 	else if(cputype == CPU_TYPE_I386 ||
 	        cputype == CPU_TYPE_X86_64){
 	    i386_thread_state_t cpu;

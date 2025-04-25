@@ -372,7 +372,7 @@ check_dylinker_command:
 	    case LC_THREAD:
 		ut = (struct thread_command *)lc;
 		state = (char *)ut + sizeof(struct thread_command);
-
+#if 0
 	    	if(cputype == CPU_TYPE_MC680x0){
 		    struct m68k_thread_state_regs *cpu;
 		    struct m68k_thread_state_68882 *fpu;
@@ -442,6 +442,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO ||
 		   cputype == CPU_TYPE_POWERPC64){
@@ -527,6 +528,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#if 0
 	    	if(cputype == CPU_TYPE_MC88000){
 		    m88k_thread_state_grf_t *cpu;
 		    m88k_thread_state_xrf_t *fpu;
@@ -648,6 +650,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_I386
 #ifdef x86_THREAD_STATE64
 		   || cputype == CPU_TYPE_X86_64
@@ -810,6 +813,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#if 0
 	        if(cputype == CPU_TYPE_HPPA){
 		    struct hp_pa_integer_thread_state *cpu;
 		    struct hp_pa_frame_thread_state *frame;
@@ -922,6 +926,7 @@ check_dylinker_command:
 		  }
 		  break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_ARM){
 		    arm_thread_state_t *cpu;
 
@@ -1339,7 +1344,7 @@ check_dylinker_command:
 		state = (char *)ut + sizeof(struct thread_command);
 		p = (char *)ut + ut->cmdsize;
 		swap_thread_command(ut, target_byte_sex);
-
+#if 0
 	    	if(cputype == CPU_TYPE_MC680x0){
 		    struct m68k_thread_state_regs *cpu;
 		    struct m68k_thread_state_68882 *fpu;
@@ -1374,6 +1379,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO ||
 		   cputype == CPU_TYPE_POWERPC64){
@@ -1413,6 +1419,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#if 0
 	    	if(cputype == CPU_TYPE_MC88000){
 		    m88k_thread_state_grf_t *cpu;
 		    m88k_thread_state_xrf_t *fpu;
@@ -1475,6 +1482,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_I386
 #ifdef x86_THREAD_STATE64
 		   || cputype == CPU_TYPE_X86_64
@@ -1561,6 +1569,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#if 0
 	    	if(cputype == CPU_TYPE_HPPA){
 		    struct hp_pa_integer_thread_state *cpu;
 		    struct hp_pa_frame_thread_state *frame;
@@ -1623,6 +1632,7 @@ check_dylinker_command:
 		  }
 		  break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_ARM){
 		    arm_thread_state_t *cpu;
 

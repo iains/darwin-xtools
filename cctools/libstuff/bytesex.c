@@ -699,6 +699,7 @@ enum byte_sex target_byte_sex)
 	ut->cmdsize = SWAP_INT(ut->cmdsize);
 }
 
+#if 0
 __private_extern__
 void
 swap_m68k_thread_state_regs(
@@ -756,6 +757,7 @@ enum byte_sex target_byte_sex)
 #endif
 	user_reg->user_reg = SWAP_INT(user_reg->user_reg);
 }
+#endif
 
 __private_extern__
 void
@@ -891,7 +893,7 @@ enum byte_sex target_byte_sex)
 	for(i = 0; i < 4; i++)
 	    state->pad1[i] = SWAP_INT(state->pad1[i]);
 }
-
+#if 0
 __private_extern__
 void
 swap_m88k_thread_state_grf_t(
@@ -1347,6 +1349,7 @@ enum byte_sex target_byte_sex)
 	cpu->Mergelo32 = SWAP_INT(cpu->Mergelo32);
 	cpu->Mergehi32 = SWAP_INT(cpu->Mergehi32);
 }
+#endif
 
 __private_extern__
 void
@@ -2065,6 +2068,7 @@ enum byte_sex target_byte_sex)
 }
 #endif /* i386_THREAD_STATE == -1 */
 
+#if 0
 __private_extern__
 void
 swap_hppa_integer_thread_state(
@@ -2328,6 +2332,7 @@ enum byte_sex target_byte_sex)
 	    memcpy(&(fpu->fpu.Fpu_fsr), &sfsr, sizeof(struct swapped_fsr));
 	}
 }
+#endif
 
 __private_extern__
 void

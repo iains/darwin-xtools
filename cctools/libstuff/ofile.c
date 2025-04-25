@@ -4679,7 +4679,7 @@ check_dylinker_command:
 		if(swapped)
 		    swap_thread_command(ut, host_byte_sex);
 		state = (char *)ut + sizeof(struct thread_command);
-
+#if 0
 	    	if(cputype == CPU_TYPE_MC680x0){
 		    struct m68k_thread_state_regs *cpu;
 		    struct m68k_thread_state_68882 *fpu;
@@ -4807,6 +4807,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_POWERPC ||
 	    	   cputype == CPU_TYPE_VEO){
 		    ppc_thread_state_t *nrw_cpu;
@@ -4961,6 +4962,7 @@ check_dylinker_command:
 		    break;
 		}
 #endif /* PPC_THREAD_STATE64_COUNT */
+#if 0
 	    	if(cputype == CPU_TYPE_MC88000){
 		    m88k_thread_state_grf_t *cpu;
 		    m88k_thread_state_xrf_t *fpu;
@@ -5196,6 +5198,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_I386){
 		    i386_thread_state_t *cpu;
 /* current i386 thread states */
@@ -5498,6 +5501,7 @@ check_dylinker_command:
 		    break;
 		}
 #endif /* x86_THREAD_STATE64_COUNT */
+#if 0
 	    	if(cputype == CPU_TYPE_HPPA){
 		    struct hp_pa_integer_thread_state *cpu;
 		    struct hp_pa_frame_thread_state *frame;
@@ -5727,6 +5731,7 @@ check_dylinker_command:
 		    }
 		    break;
 		}
+#endif
 	    	if(cputype == CPU_TYPE_ARM){
 		    arm_thread_state_t *cpu;
 
