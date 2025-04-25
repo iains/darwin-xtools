@@ -24,33 +24,17 @@
  
 
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <sys/sysctl.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
-#include <assert.h>
+#include <string.h>
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <map>
+#include <cstdio>
 #include <set>
 #include <vector>
-#include <algorithm>
-#include <ext/hash_map>
-#include <ext/hash_set>
 
 #include "Options.h"
 
 #include "ld.hpp"
 #include "InputFiles.h"
 #include "SymbolTable.h"
-
-
 
 namespace ld {
 namespace tool {

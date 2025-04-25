@@ -29,17 +29,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/sysctl.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <limits.h>
 #include <unistd.h>
-#include <mach/mach_time.h>
-#include <mach/vm_statistics.h>
-#include <mach/mach_init.h>
-#include <mach/mach_host.h>
 #include <dlfcn.h>
-#include <mach-o/dyld.h>
+# include <sys/sysctl.h>
+# include <mach/mach_time.h>
+# include <mach/vm_statistics.h>
+# include <mach/mach_init.h>
+# include <mach/mach_host.h>
+# include <mach-o/dyld.h>
 
 #include <vector>
 #include <ext/hash_map>

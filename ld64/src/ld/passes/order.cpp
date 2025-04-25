@@ -24,11 +24,9 @@
 
 
 #include <stdint.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <mach/machine.h>
+#include <string.h>
 
+#include <cstdio>
 #include <algorithm> // std::remove_if std::sort
 #include <vector>
 #include <map>

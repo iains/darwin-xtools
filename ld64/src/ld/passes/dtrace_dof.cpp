@@ -24,11 +24,10 @@
 
 
 #include <stdint.h>
-#include <stdio.h>
-#include <math.h>
-#include <unistd.h>
+#include <string.h>
 #include <dlfcn.h>
 
+#include <cstdio>
 #include <vector>
 #include <map>
 #include <ext/hash_map>

@@ -42,10 +42,11 @@
 #ifndef _H_BLOB
 #define _H_BLOB
 
-#include "endian.h"
-#include "memutils.h"
 #include <errno.h>
 #include <cstdio>
+
+#include "endian.h"
+#include "memutils.h"
 
 namespace Security {
 

@@ -24,10 +24,8 @@
 
 
 #include <stdint.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
 
+#include <cstdio>
 #include <algorithm> // std::sort
 #include <vector>
 #include <map>

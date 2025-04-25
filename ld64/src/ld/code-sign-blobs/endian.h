@@ -28,9 +28,10 @@
 #ifndef _H_ENDIAN
 #define _H_ENDIAN
 
-#include <machine/endian.h>
+#include <arpa/inet.h> // hton* n*to
+
 #include <libkern/OSByteOrder.h>
-//#include <security_utilities/utilities.h>
+
 #include "memutils.h"
 
 namespace Security {

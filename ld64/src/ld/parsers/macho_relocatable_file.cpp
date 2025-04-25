@@ -50,8 +50,6 @@
 #include "ld.hpp"
 #include "macho_relocatable_file.h"
 
-
-
 extern void throwf(const char* format, ...) __attribute__ ((noreturn,format(printf, 1, 2)));
 extern void warning(const char* format, ...) __attribute__((format(printf, 1, 2)));
 

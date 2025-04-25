@@ -23,17 +23,19 @@
  */
 
 #include <stdint.h>
-#include <math.h>
 #include <unistd.h>
 #include <sys/param.h>
-#include <mach-o/ranlib.h>
-#include <ar.h>
 
+#include <cstdarg>
+#include <cstdio>
 #include <vector>
 #include <set>
 #include <map>
 #include <algorithm>
 #include <ext/hash_map>
+
+#include <ar.h>
+#include <mach-o/ranlib.h>
 
 #include "MachOFileAbstraction.hpp"
 #include "Architectures.hpp"

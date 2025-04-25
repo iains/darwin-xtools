@@ -27,23 +27,21 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <mach/vm_prot.h>
-#include <sys/sysctl.h>
-#include <mach-o/dyld.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
 #include <spawn.h>
 #include <cxxabi.h>
-#include <Availability.h>
 #include <ctype.h>
-
 #include <vector>
 #include <limits.h>
 #ifndef PATH_MAX
 #include <sys/syslimits.h>
 #endif
 
+# include <sys/sysctl.h>
+# include <mach-o/dyld.h>
+# include <Availability.h>
 #include "Options.h"
 #include "Architectures.hpp"
 #include "MachOFileAbstraction.hpp"

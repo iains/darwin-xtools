@@ -44,7 +44,6 @@
 #include "Registers.hpp"
 #include "DwarfParser.hpp"
 #include "InternalMacros.h"
-//#include "CompactUnwinder.hpp"
 
 #define EXTRACT_BITS(value, mask) \
 	( (value >> __builtin_ctz(mask)) & (((1 << __builtin_popcount(mask)))-1) )

@@ -25,17 +25,18 @@
 
 
 #include <stdint.h>
-#include <math.h>
+
 #include <unistd.h>
 #include <assert.h>
-#include <libkern/OSByteOrder.h>
 
+#include <cstdio>  // asprintf
 #include <algorithm>  // std::sort
 #include <vector>
 #include <set>
 #include <map>
 
 #include "Options.h"
+#include <libkern/OSByteOrder.h>
 #include "MachOFileAbstraction.hpp"
 #include "ld.hpp"
 

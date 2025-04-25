@@ -32,12 +32,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dlfcn.h>
-#include <mach-o/loader.h>
-#include <mach-o/getsect.h>
 #include <mach/i386/thread_status.h>
 
-#include "libunwind.h"
 #include "InternalMacros.h"
 
 namespace libunwind {

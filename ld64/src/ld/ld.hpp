@@ -27,7 +27,6 @@
 #define __LD_HPP__
 
 #include <stdint.h>
-#include <math.h>
 #include <unistd.h>
 #include <assert.h>
 #include <string.h> // strcmp.

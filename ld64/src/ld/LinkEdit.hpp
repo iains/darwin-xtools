@@ -25,12 +25,10 @@
 #ifndef __LINKEDIT_HPP__
 #define __LINKEDIT_HPP__
 
-#include <stdlib.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <math.h>
 
+#include <cstdio>
 #include <vector>
 
 #include "Options.h"

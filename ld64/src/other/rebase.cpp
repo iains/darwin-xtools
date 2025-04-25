@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <mach/mach.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -36,6 +35,8 @@
 #include <vector>
 #include <set>
 
+#include <mach/mach.h>
+#include <mach/mach_init.h>
 
 #include "MachOFileAbstraction.hpp"
 #include "Architectures.hpp"

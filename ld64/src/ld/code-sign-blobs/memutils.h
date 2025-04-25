@@ -29,9 +29,9 @@
 #define _H_MEMUTILS
 
 #include <cstddef>
-//#include <security_utilities/utilities.h>
 #include <sys/types.h>
 #include <stdlib.h>
+
 #include <algorithm>
 
 

@@ -24,14 +24,12 @@
 
 
 #include <stdint.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <unistd.h>
 
+#include <cstdio>
 #include <vector>
 #include <map>
 
+#include <libkern/OSByteOrder.h>
 #include "MachOFileAbstraction.hpp"
 #include "ld.hpp"
 #include "branch_shim.h"

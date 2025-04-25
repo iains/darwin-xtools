@@ -33,22 +33,7 @@
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
-#include <sys/sysctl.h>
-#include <sys/param.h>
 #include <sys/mount.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
-#include <mach/mach_time.h>
-#include <mach/vm_statistics.h>
-#include <mach/mach_init.h>
-#include <mach/mach_host.h>
-#include <uuid/uuid.h>
-#include <dlfcn.h>
-#include <mach-o/dyld.h>
-#include <mach-o/fat.h>
 
 #include <string>
 #include <map>
@@ -60,8 +45,11 @@
 #include <ext/hash_map>
 #include <ext/hash_set>
 
-#include <CommonCrypto/CommonDigest.h>
-#include <AvailabilityMacros.h>
+#include <uuid/uuid.h>
+
+# include <CommonCrypto/CommonDigest.h>
+# include <AvailabilityMacros.h>
+#include "maxpathlen.h"
 
 #include "MachOTrie.hpp"
 

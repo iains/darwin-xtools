@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
+
+#include <cstdio>
 #include <vector>
 
 /* Target Headers.  */

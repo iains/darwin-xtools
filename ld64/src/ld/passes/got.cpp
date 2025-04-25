@@ -24,10 +24,10 @@
 
 
 #include <stdint.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
+#include <string.h>
+#include <assert.h>
 
+#include <cstdio>
 #include <algorithm>  // std::sort
 #include <vector>
 #include <map>

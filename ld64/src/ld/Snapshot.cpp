@@ -6,18 +6,24 @@
 //  Copyright (c) 2011 Apple Inc. All rights reserved.
 //
 
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
+#include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
-#include <fcntl.h>
-#include <ctype.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <libgen.h>
-#include <time.h>
+#include <stdlib.h>
+#include <ctype.h>
 #ifdef __BLOCKS__
 #include <Block.h>
+#endif
+
+#include <cstdio>
+
+#ifndef ARG_MAX
+/* Set this to Posix value.  */
+# define ARG_MAX 4096
 #endif
 
 #include "Snapshot.h"

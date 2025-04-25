@@ -24,10 +24,6 @@
 
 
 #include <stdint.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <mach/machine.h>
 
 #include <algorithm> // std::remove_if
 #include <vector>

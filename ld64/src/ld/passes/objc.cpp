@@ -24,10 +24,8 @@
 
 
 #include <stdint.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <mach/machine.h>
+#include <string.h>
+#include <assert.h>
 
 #include <algorithm> // std::remove_if std::sort
 #include <vector>

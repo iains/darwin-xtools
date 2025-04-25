@@ -25,15 +25,12 @@
 #include <stdint.h>
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
-#include <stdio.h>
-#include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <libkern/OSByteOrder.h>
 
+#include <cstdio>
 #include <vector>
 #include <map>
 
+#include <libkern/OSByteOrder.h>
 #include "MachOFileAbstraction.hpp"
 #include "ld.hpp"
 #include "branch_island.h"

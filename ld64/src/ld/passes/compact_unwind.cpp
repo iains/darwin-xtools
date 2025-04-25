@@ -24,15 +24,14 @@
 
 
 #include <stdint.h>
-#include <stdio.h>
+#include <string.h>
 #include <math.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <mach/machine.h>
-#include <mach-o/compact_unwind_encoding.h>
 
+#include <cstdio>
 #include <vector>
 #include <map>
+
+#include <mach-o/compact_unwind_encoding.h>
 
 #include "ld.hpp"
 #include "compact_unwind.h"
