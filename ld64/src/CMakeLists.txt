@@ -3,6 +3,10 @@ if(XTOOLS_LTO_SUPPORT)
   set(LTO_SUPPORT_INFO "(with LLVM LTO support)")
 endif()
 
+if(CCTOOLS_LD_CLASSIC)
+  add_definitions(-DHAVE_LD_CLASSIC)
+endif()
+
 #include(cmake/config-ix.cmake)
 
 # We should figure these out somehow - but for now let's just set them to
