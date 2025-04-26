@@ -205,6 +205,17 @@ configure_file(${CMAKE_SOURCE_DIR}/host-includes/maxpathlen.h
 configure_file(${CMAKE_SOURCE_DIR}/host-includes/private-extern.h
                ${CMAKE_BINARY_DIR}/host-includes/private-extern.h
                COPYONLY)
+if(NOT APPLE)
+  configure_file(${CMAKE_SOURCE_DIR}/host-includes/assert_rtn.h
+                 ${CMAKE_BINARY_DIR}/host-includes/assert_rtn.h
+                 COPYONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/host-includes/openssl-shim.h
+                 ${CMAKE_BINARY_DIR}/host-includes/openssl-shim.h
+                 COPYONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/host-includes/strl.h
+                 ${CMAKE_BINARY_DIR}/host-includes/strl.h
+                 COPYONLY)
+endif()
 
 include(ExternalProject)
 if(NOT XTOOLS_HAS_UUID)
