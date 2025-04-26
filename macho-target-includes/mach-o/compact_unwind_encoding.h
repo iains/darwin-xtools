@@ -21,14 +21,11 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
- 
 
-#ifndef __COMPACT_UNWIND_ENCODING__
-#define __COMPACT_UNWIND_ENCODING__
+#ifndef _MACH_O_TGT___COMPACT_UNWIND_ENCODING__
+#define _MACH_O_TGT___COMPACT_UNWIND_ENCODING__
 
 #include <stdint.h>
-
-
 
 //
 // Compilers can emit standard Dwarf FDEs in the __TEXT,__eh_frame section 
@@ -422,7 +419,4 @@ struct unwind_info_compressed_second_level_page_header
 #define UNWIND_INFO_COMPRESSED_ENTRY_FUNC_OFFSET(entry)            (entry & 0x00FFFFFF)
 #define UNWIND_INFO_COMPRESSED_ENTRY_ENCODING_INDEX(entry)        ((entry >> 24) & 0xFF)
 
-
-
-#endif
-
+#endif /* _MACH_O_TGT___COMPACT_UNWIND_ENCODING__ */
