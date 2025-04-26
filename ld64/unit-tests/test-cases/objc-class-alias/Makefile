@@ -38,7 +38,7 @@ endif
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.m -Wl,-alias,${CLASS_NAME_FOO},_MagicName -framework Foundation -o test
+	${CC} ${LINKFLAGS} test.m -Wl,-alias,${CLASS_NAME_FOO},_MagicName -framework Foundation -o test
 	${DYLDINFO} -export test | grep ${CLASS_NAME_FOO} | awk '{ print $$1}' > foo.addr
 	${DYLDINFO} -export test | grep _MagicName | awk '{ print $$1}' > magic.addr
 	${PASS_IFF} diff foo.addr magic.addr 

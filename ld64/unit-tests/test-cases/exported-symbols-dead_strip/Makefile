@@ -33,7 +33,7 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${PASS_IFF_ERROR} ${CC} -dynamiclib foo.c -o libfoo.dylib -exported_symbols_list foo.exp -dead_strip 2>/dev/null
+	${PASS_IFF_ERROR} ${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib -exported_symbols_list foo.exp -dead_strip 2>/dev/null
 	
 clean:
-	rm libfoo.dylib
+	rm -f libfoo.dylib

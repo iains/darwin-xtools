@@ -23,21 +23,22 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
 #
 # Simple test for branch islands
 #
 
 run: all
 
-
 all:
 	# Verify that we fail if there is no valid place to insert branch islands.
-	#${CC} ${CCFLAGS} hello.c atomic_space.s extra.c -o hello ${ARCH_FLAGS} 2>&1 | grep "Unable to insert branch island. No insertion point available." | ${PASS_IFF_STDIN}
-
-	${CC} ${CCFLAGS} hello.c space.s extra.c -Os -o hello ${ARCH_FLAGS}
-	${PASS_IFF_GOOD_MACHO} hello
-
+	${CC} ${LINKFLAGS} hello.c atomic_space.s extra.c -o hello-${ARCH}  2>&1 | grep "Unable to insert branch island. No insertion point available." | ${PASS_IFF_STDIN}
+	${CC} ${LINKFLAGS} hello.c space.s extra.c -Os -o hello-${ARCH}
+	${FAIL_IF_BAD_MACHO} hello-${ARCH}
+ifneq (${EXECUTE_OK},)
+	./hello-${ARCH}
+else
+	${PASS_IFF} true
+endif
 
 clean:
-	rm  hello
+	rm  -f hello-*

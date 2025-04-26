@@ -11,7 +11,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.m -dynamiclib -framework Foundation -o libtest.dylib
+	${CC} ${LINKFLAGS} test.m -dynamiclib -framework Foundation -o libtest.dylib
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
 	
 clean:

@@ -33,12 +33,12 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.m -c -o foo.o 
-	${CC} ${CCFLAGS} bar.m -c -o bar.o 
-	libtool -static bar.o foo.o -o libfoo.a
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} main.m libfoo.a -o main -framework Foundation -dead_strip -Wl,-unexported_symbols_list,main.nexp 2>main.log
-	grep Foobar main.log | ${FAIL_IF_EMPTY}
+	${CC} ${CCFLAGS} foo.m -c -o foo-${ARCH}.o 
+	${CC} ${CCFLAGS} bar.m -c -o bar-${ARCH}.o 
+	libtool -static bar-${ARCH}.o foo-${ARCH}.o -o libfoo-${ARCH}.a
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} main.m libfoo-${ARCH}.a -o main-${ARCH} -framework Foundation -dead_strip -Wl,-unexported_symbols_list,main.nexp 2>main-${ARCH}.log
+	grep Foobar main-${ARCH}.log | ${FAIL_IF_EMPTY}
 	${PASS_IFF_SUCCESS} true
 	
 clean:
-	rm -rf foo.o bar.o libfoo.a main.log
+	rm -rf *.o *.a main-*.log

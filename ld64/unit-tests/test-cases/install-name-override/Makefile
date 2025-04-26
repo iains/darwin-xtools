@@ -21,29 +21,28 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.6
 include ${TESTROOT}/include/common.makefile
-
 
 #
 # verify $ld$install_name$osXX$/new/path overides install_name
 # 
 
-FORCE_MIN_OS_VERSION = -mmacosx-version-min=10.5
+FORCE_MIN_OS_VERSION = -mmacosx-version-min=10.4
 
 ifeq ($(FILEARCH),arm)
 	FORCE_MIN_OS_VERSION = -miphoneos-version-min=4.0
 endif
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/local/lib/libfoo.dylib
-	otool -L libfoo.dylib | grep /usr/local/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o main
-	otool -L main | grep /usr/local/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} main.c libfoo.dylib -o mainAlt ${FORCE_MIN_OS_VERSION}
-	otool -L mainAlt | grep /usr/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib -install_name /usr/local/lib/libfoo.dylib
+	${OTOOL} -L libfoo.dylib | grep /usr/local/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o main
+	${OTOOL} -L main | grep /usr/local/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c libfoo.dylib -o mainAlt ${FORCE_MIN_OS_VERSION}
+	${OTOOL} -L mainAlt | grep /usr/lib/libfoo.dylib | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
 
 clean:

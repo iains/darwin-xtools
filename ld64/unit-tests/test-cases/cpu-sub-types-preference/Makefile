@@ -27,7 +27,7 @@ include ${TESTROOT}/include/common.makefile
 # Validate cpu subtype preference
 #
 
-test: test-${ARCH}
+all: test-${ARCH}
 
 test-ppc64:
 	${PASS_IFF} true
@@ -42,55 +42,55 @@ test-armv6: test-arm
 test-armv7: test-arm
 
 test-arm:
-	clang foo.c -arch armv4t -c -DAAA=1 -o foo4.o
-	clang foo.c -arch armv5 -c -DBBB=1 -o foo5.o
-	clang foo.c -arch armv6 -c -DCCC=1 -o foo6.o
-	clang foo.c -arch armv7 -c -DDDD=1 -o foo7.o
-	lipo foo4.o foo5.o foo6.o foo7.o -create -output foo.o
+	${CC} foo.c -arch armv4t -c -DAAA=1 -o foo4.o
+	${CC} foo.c -arch armv5 -c -DBBB=1 -o foo5.o
+	${CC} foo.c -arch armv6 -c -DCCC=1 -o foo6.o
+	${CC} foo.c -arch armv7 -c -DDDD=1 -o foo7.o
+	${LIPO} foo4.o foo5.o foo6.o foo7.o -create -output foo.o
 	
 	# check -arch armv4t pulls out V4 slice
 	${LD} -r -arch armv4t foo.o -o fooa.o
-	otool -hv fooa.o | grep V4T | ${FAIL_IF_EMPTY}
-	nm fooa.o | grep _aaa | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv fooa.o | grep V4T | ${FAIL_IF_EMPTY}
+	${NM} fooa.o | grep _aaa | ${FAIL_IF_EMPTY}
 
 	# check -arch armv5 pulls out V5 slice
 	${LD} -r -arch armv5 foo.o -o foob.o
-	otool -hv foob.o | grep V5 | ${FAIL_IF_EMPTY}
-	nm foob.o | grep _bbb | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv foob.o | grep V5 | ${FAIL_IF_EMPTY}
+	${NM} foob.o | grep _bbb | ${FAIL_IF_EMPTY}
 
 	# check -arch armv6 pulls out V6 slice
 	${LD} -r -arch armv6 foo.o -o fooc.o
-	otool -hv fooc.o | grep V6 | ${FAIL_IF_EMPTY}
-	nm fooc.o | grep _ccc | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv fooc.o | grep V6 | ${FAIL_IF_EMPTY}
+	${NM} fooc.o | grep _ccc | ${FAIL_IF_EMPTY}
 
 	# check -arch armv7 pulls out V7 slice
 	${LD} -r -arch armv7 foo.o -o fooc.o
-	otool -hv fooc.o | grep V7 | ${FAIL_IF_EMPTY}
-	nm fooc.o | grep _ddd | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv fooc.o | grep V7 | ${FAIL_IF_EMPTY}
+	${NM} fooc.o | grep _ddd | ${FAIL_IF_EMPTY}
 
 	${PASS_IFF} true
 
 
 test-ppc:
-	gcc foo.c -arch ppc750 -c -DAAA=1 -o foog3.o
-	gcc foo.c -arch ppc7400 -c -DBBB=1 -o foog4.o
-	gcc foo.c -arch ppc970 -c -DCCC=1 -o foog5.o
-	lipo foog3.o foog4.o foog5.o -create -output foo.o
+	${CC} foo.c -arch ppc750 -c -DAAA=1 -o foog3.o
+	${CC} foo.c -arch ppc7400 -c -DBBB=1 -o foog4.o
+	${CC} foo.c -arch ppc970 -c -DCCC=1 -o foog5.o
+	${LIPO} foog3.o foog4.o foog5.o -create -output foo.o
 	
 	# check -arch ppc750 pulls out g3 slice
 	${LD} -r -arch ppc750 foo.o -o fooa.o
-	otool -hv fooa.o | grep ppc750 | ${FAIL_IF_EMPTY}
-	nm fooa.o | grep _aaa | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv fooa.o | grep ppc750 | ${FAIL_IF_EMPTY}
+	${NM} fooa.o | grep _aaa | ${FAIL_IF_EMPTY}
 
 	# check -arch ppc7400 pulls out g4 slice
 	${LD} -r -arch ppc7400 foo.o -o foob.o
-	otool -hv foob.o | grep ppc7400 | ${FAIL_IF_EMPTY}
-	nm foob.o | grep _bbb | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv foob.o | grep ppc7400 | ${FAIL_IF_EMPTY}
+	${NM} foob.o | grep _bbb | ${FAIL_IF_EMPTY}
 
 	# check -arch ppc970 pulls out g5 slice
 	${LD} -r -arch ppc970 foo.o -o fooc.o
-	otool -hv fooc.o | grep ppc970 | ${FAIL_IF_EMPTY}
-	nm fooc.o | grep _ccc | ${FAIL_IF_EMPTY}
+	${OTOOL} -hv fooc.o | grep ppc970 | ${FAIL_IF_EMPTY}
+	${NM} fooc.o | grep _ccc | ${FAIL_IF_EMPTY}
 
 	${PASS_IFF} true
 

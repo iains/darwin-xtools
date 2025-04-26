@@ -31,8 +31,8 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
-	libtool -static foo.o -o libfoo.a
-	${FAIL_IF_ERROR} ${CC} ${CCFLAGS}  bar.c -dynamiclib  -Os libfoo.a -dead_strip -o libbar.dylib -init _foo 
+	${LIBTOOL} -static foo.o -o libfoo.a
+	${FAIL_IF_ERROR} ${CC} ${LINKFLAGS}  bar.c -dynamiclib  -Os libfoo.a -dead_strip -o libbar.dylib -init _foo 
 	${PASS_IFF_GOOD_MACHO} libbar.dylib
 
 clean:

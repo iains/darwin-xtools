@@ -31,7 +31,7 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
-	libtool -static foo.o -o libfoo.a
+	${LIBTOOL} -static foo.o -o libfoo.a
 	rm -rf trace_ars
 	export LD_TRACE_ARCHIVES=1 && export LD_TRACE_FILE=trace_ars && ${CC} ${CCFLAGS} main.c libfoo.a -o main
 	grep 'libfoo.a' trace_ars | ${FAIL_IF_EMPTY}
@@ -39,7 +39,7 @@ all:
 	grep 'libfoo.a' trace_ars2 | ${FAIL_IF_EMPTY}
 	export LD_TRACE_ARCHIVES=1 && export LD_TRACE_FILE=trace_ars3 && ${CC} ${CCFLAGS} main.c libfoo.a -o main -all_load
 	grep 'libfoo.a' trace_ars3 | ${FAIL_IF_EMPTY}
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
 	rm -rf trace_dylibs
 	export LD_TRACE_DYLIBS=1 && export LD_TRACE_FILE=trace_dylibs && ${CC} ${CCFLAGS} main.c libfoo.dylib -o main
 	grep 'libfoo.dylib' trace_dylibs | ${FAIL_IF_EMPTY}

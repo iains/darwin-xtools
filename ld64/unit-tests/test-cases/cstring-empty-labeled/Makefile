@@ -28,11 +28,10 @@ include ${TESTROOT}/include/common.makefile
 #
 #
 
-
 run: all
 
 all:
-	${CC} ${CCFLAGS} -c foo.s -o foo.o
+	${CC} ${LINKFLAGS} -c foo.s -o foo.o
 	${LD} -arch ${ARCH} -r foo.o -o foo-r.o
 	${LD} -arch ${ARCH} -r foo-r.o -o foo-r2.o
 	${OBJECTDUMP} foo-r.o > foo-r.dump
@@ -40,4 +39,4 @@ all:
 	${PASS_IFF} diff foo-r.dump foo-r2.dump
 
 clean:
-	rm  foo.o foo-r.o foo-r2.o foo.dump foo-r.dump foo-r2.dump
+	rm -f foo.o foo-r.o foo-r2.o foo.dump foo-r.dump foo-r2.dump

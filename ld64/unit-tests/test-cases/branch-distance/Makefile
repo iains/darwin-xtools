@@ -23,8 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-
-
 #
 # test thumb2 branch ranges
 #

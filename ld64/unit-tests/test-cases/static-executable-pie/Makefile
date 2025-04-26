@@ -37,11 +37,11 @@ endif
 
 all:
 	${CC} ${CCFLAGS} test.c -c -o test.o
-	${CC} ${CCFLAGS} test.o -static -Wl,-pie -o test -e _entry  -nostdlib -Wl,-new_linker
-	otool -rv test | grep __DATA | wc -l | grep ${RELOC_COUNT} | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} test.o -static -Wl,-pie -o test -e _entry  -nostdlib -Wl,-new_linker
+	${OTOOL} -rv test | grep __DATA | wc -l | grep ${RELOC_COUNT} | ${FAIL_IF_EMPTY}
 	# verify trying to use absolute addressing fails
 	${CC} ${CCFLAGS} -static bad.c -c -o bad.o
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} test.o bad.o -static -Wl,-pie -o test.bad -e _entry -nostdlib -Wl,-new_linker 2>/dev/null
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} test.o bad.o -static -Wl,-pie -o test.bad -e _entry -nostdlib -Wl,-new_linker 2>/dev/null
 	${PASS_IFF_GOOD_MACHO} test
 
 clean:

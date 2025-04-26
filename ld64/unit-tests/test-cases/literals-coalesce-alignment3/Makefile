@@ -23,8 +23,6 @@
 TESTROOT = ../..
 include ${TESTROOT}/include/common.makefile
 
-#LD=ld64
-
 #
 # The point of this test is to verify that when two cstrings
 # are coalesced that the one with greater alignment is used.
@@ -33,10 +31,10 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${ASMFLAGS} cstring-align-0.s -c -o cstring-align-0-${ARCH}.o
+	${AS} -arch ${ARCH} cstring-align-0.s -o cstring-align-0-${ARCH}.o
 	${FAIL_IF_BAD_OBJ} cstring-align-0-${ARCH}.o
 
-	${CC} ${ASMFLAGS} cstring-align-3.s -c -o cstring-align-3-${ARCH}.o
+	${AS} -arch ${ARCH} cstring-align-3.s -o cstring-align-3-${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -align -only cstring=hello cstring-align-3-${ARCH}.o > align-3
 
 	${LD} -arch ${ARCH} -r cstring-align-0-${ARCH}.o cstring-align-3-${ARCH}.o -o cstring-r-${ARCH}.o

@@ -45,16 +45,15 @@ all-x86_64: all-true
 all-true:
 	${PASS_IFF} true
 
-
 hasnl:
 	${CC} ${CCFLAGS} -c foo.c -o foo.o
 	${CC} ${CCFLAGS} -c other.c -o other.o
 	${LD} -r -arch ${ARCH} foo.o other.o -o fooall.o -exported_symbol _foo
 	# make sure there  are two indirect symbols: _foo and LOCAL
-	otool -Iv fooall.o | grep "4 entries" | ${FAIL_IF_EMPTY}
-	otool -Iv fooall.o | grep _foo   | ${FAIL_IF_EMPTY}
-	otool -Iv fooall.o | grep _tent  | ${FAIL_IF_EMPTY}
-	otool -Iv fooall.o | grep _other | ${FAIL_IF_STDIN}
+	${OTOOL} -Iv fooall.o | grep "4 entries" | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv fooall.o | grep _foo   | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv fooall.o | grep _tent  | ${FAIL_IF_EMPTY}
+	${OTOOL} -Iv fooall.o | grep _other | ${FAIL_IF_STDIN}
 	${OBJECTDUMP} fooall.o | grep name: | grep 'non-lazy-pointer-to:_foo' | ${FAIL_IF_EMPTY} 
 	${OBJECTDUMP} fooall.o | grep name: | grep 'non-lazy-pointer-to-local:_other' | ${FAIL_IF_EMPTY}
 	${OBJECTDUMP} fooall.o | grep name: | grep 'non-lazy-pointer-to:_tent' | ${FAIL_IF_EMPTY}

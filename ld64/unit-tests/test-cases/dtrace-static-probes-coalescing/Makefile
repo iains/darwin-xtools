@@ -31,8 +31,8 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all: simp coal
-	otool -lv coal | grep -A3 __dof_Number | grep size > coal-dof-size
-	otool -lv simp | grep -A3 __dof_Number | grep size > simp-dof-size
+	${OTOOL} -lv coal | grep -A3 __dof_Number | grep size > coal-dof-size
+	${OTOOL} -lv simp | grep -A3 __dof_Number | grep size > simp-dof-size
 	${PASS_IFF_SUCCESS} diff coal-dof-size simp-dof-size
 
 Number.h:	Number.d
@@ -48,10 +48,10 @@ c.o : a.cxx Number.h header.h
 	${CXX} ${CXXFLAGS} -c -DFUNC=c a.cxx -o c.o
 
 coal : a.o b.o c.o
-	${CXX} -dynamiclib a.o b.o c.o -o coal
+	${CXX} ${LINKFLAGS} -dynamiclib a.o b.o c.o -o coal
 	
 simp : x.cxx Number.h
-	${CXX} -dynamiclib x.cxx -o simp
+	${CXX} ${LINKFLAGS} -dynamiclib x.cxx -o simp
 
 
 

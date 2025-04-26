@@ -34,13 +34,13 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all: 
-	${CXX} ${CCXXFLAGS} -gdwarf-2 foo.cxx -c -o foo.o -mdynamic-no-pic
-	${CXX} ${CCXXFLAGS} -gdwarf-2 bar.cxx -c -o bar.o  -mdynamic-no-pic
+	${CXX} ${CXXFLAGS} -gdwarf-2 foo.cxx -c -o foo.o -mdynamic-no-pic
+	${CXX} ${CXXFLAGS} -gdwarf-2 bar.cxx -c -o bar.o  -mdynamic-no-pic
 	${LD} -r -arch ${ARCH} foo.o bar.o -o foobar.o
-	${CXX} ${CCXXFLAGS} -gdwarf-2 main.cxx -c -o main.o -mdynamic-no-pic
-	${CXX} ${CCXXFLAGS} foobar.o main.o -o main
+	${CXX} ${CXXFLAGS} -gdwarf-2 main.cxx -c -o main.o -mdynamic-no-pic
+	${CXX} ${CXXLINKFLAGS} foobar.o main.o -o main
 	${FAIL_IF_BAD_MACHO} main
-	nm -ap main | ./stabs-filter.pl > main.stabs
+	${NM} -ap main | ./stabs-filter.pl > main.stabs
 	${PASS_IFF} diff main.stabs expected-stabs
 	
 

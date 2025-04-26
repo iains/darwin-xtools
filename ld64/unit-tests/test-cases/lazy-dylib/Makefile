@@ -33,11 +33,11 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
-	${CC} ${CCFLAGS} main.c -Wl,-lazy_library,libfoo.dylib -o main
-	${CC} ${CCFLAGS} main.c -lazy-lfoo -L. -o main
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} bad.c -Wl,-lazy_library,libfoo.dylib -o bad  2> fail.log
-	${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} bad2.c -Wl,-lazy_library,libfoo.dylib -o bad2  2> fail.log
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo.dylib
+	${CC} ${LINKFLAGS} main.c -Wl,-lazy_library,libfoo.dylib -o main
+	${CC} ${LINKFLAGS} main.c -lazy-lfoo -L. -o main
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} bad.c -Wl,-lazy_library,libfoo.dylib -o bad  2> fail.log
+	${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} bad2.c -Wl,-lazy_library,libfoo.dylib -o bad2  2> fail.log
 	
 	${PASS_IFF_GOOD_MACHO} main
 

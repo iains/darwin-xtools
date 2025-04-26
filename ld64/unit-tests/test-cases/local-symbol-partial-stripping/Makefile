@@ -32,44 +32,43 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c foo.c -o main
+	${CC} ${LINKFLAGS} main.c foo.c -o main
 	${FAIL_IF_BAD_MACHO} main
-	nm -j main > main.nm
+	${NM} -j main > main.nm
 	# build stripping a.list
-	${CC} ${CCFLAGS} main.c foo.c -Wl,-non_global_symbols_strip_list,a.list -o main-a
+	${CC} ${LINKFLAGS} main.c foo.c -Wl,-non_global_symbols_strip_list,a.list -o main-a
 	${FAIL_IF_BAD_MACHO} main-a
-	nm -j main-a > main-a.nm
+	${NM} -j main-a > main-a.nm
 	diff main.nm main-a.nm | egrep '<|>' > a.diff
 	diff a.diff a.expect | ${FAIL_IF_STDIN}
 	# build but strip at .o file level a.list
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${LD} -r -arch ${ARCH} main.o foo.o -o all-a.o -non_global_symbols_strip_list a.list
-	${CC} ${CCFLAGS} all-a.o -Wl,-non_global_symbols_strip_list,a.list -o main-a
+	${CC} ${LINKFLAGS} all-a.o -Wl,-non_global_symbols_strip_list,a.list -o main-a
 	${FAIL_IF_BAD_MACHO} main-a
-	nm -j main-a > main-a.nm
+	${NM} -j main-a > main-a.nm
 	diff main.nm main-a.nm | egrep '<|>' > a.diff
 	diff a.diff a.expect | ${FAIL_IF_STDIN}
 	# build stripping b.list
-	${CC} ${CCFLAGS} main.c foo.c -Wl,-non_global_symbols_strip_list,b.list -o main-b
+	${CC} ${LINKFLAGS} main.c foo.c -Wl,-non_global_symbols_strip_list,b.list -o main-b
 	${FAIL_IF_BAD_MACHO} main-b
-	nm -j main-b > main-b.nm
+	${NM} -j main-b > main-b.nm
 	diff main.nm main-b.nm | egrep '<|>' > b.diff
 	diff b.diff b.expect | ${FAIL_IF_STDIN}
 	# build but strip at .o file level b.list
 	${CC} ${CCFLAGS} main.c -c -o main.o
 	${CC} ${CCFLAGS} foo.c -c -o foo.o
 	${LD} -r -arch ${ARCH} main.o foo.o -o all-b.o -non_global_symbols_strip_list b.list
-	${CC} ${CCFLAGS} all-b.o -Wl,-non_global_symbols_strip_list,b.list -o main-b
+	${CC} ${LINKFLAGS} all-b.o -Wl,-non_global_symbols_strip_list,b.list -o main-b
 	${FAIL_IF_BAD_MACHO} main-b
-	nm -j main-b > main-b.nm
+	${NM} -j main-b > main-b.nm
 	diff main.nm main-b.nm | egrep '<|>' > b.diff
 	diff b.diff b.expect | ${FAIL_IF_STDIN}
 	# build stripping c.list
-	${CC} ${CCFLAGS} main.c foo.c -Wl,-non_global_symbols_no_strip_list,c.list -o main-c
-	nm -m main-c | grep non-external | grep -v my | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} main.c foo.c -Wl,-non_global_symbols_no_strip_list,c.list -o main-c
+	${NM} -m main-c | grep non-external | grep -v my | ${FAIL_IF_STDIN}
 	${PASS_IFF_GOOD_MACHO} main-c
-	
-	
+
 clean:
 	rm -rf main main.nm main-a main-a.nm a.diff main-b main-b.nm b.diff main-c all-a.o all-b.o foo.o main.o

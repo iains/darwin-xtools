@@ -31,10 +31,10 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c -dead_strip -o main-${ARCH}
+	${CC} ${LINKFLAGS} main.c -dead_strip -o main-${ARCH}
 	${FAIL_IF_BAD_MACHO} main-${ARCH}
-	nm -j main-${ARCH} | grep _bar | ${FAIL_IF_STDIN}
-	nm -j main-${ARCH} | grep _foo | ${PASS_IFF_STDIN}
+	${NM} -j main-${ARCH} | grep _bar | ${FAIL_IF_STDIN}
+	${NM} -j main-${ARCH} | grep _foo | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf main-*

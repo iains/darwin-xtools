@@ -32,9 +32,9 @@ run: all
 
 all:
 	${CC} ${CCFLAGS} baz.c -c -o baz.o
-	libtool -static baz.o -o libbaz.a
-	${CC} ${CCFLAGS} main.c foo.c libbaz.a -dead_strip -o main
-	nm -j main | grep _hidden | wc -l | grep 1 | ${FAIL_IF_EMPTY}
+	${LIBTOOL} -static baz.o -o libbaz.a
+	${CC} ${LINKFLAGS} main.c foo.c libbaz.a -dead_strip -o main
+	${NM} -j main | grep _hidden | wc -l | grep 1 | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

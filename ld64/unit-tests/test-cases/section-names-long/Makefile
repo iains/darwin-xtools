@@ -29,13 +29,13 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all:
-	${CC} ${CCFLAGS} main.c a.s c.s b.s -o main
-	nm -m main | grep __aaaaaaaaaaaaaa | grep __TEXT | grep _at | ${FAIL_IF_EMPTY}
-	nm -m main | grep __bbbbbbbbbbbbbb | grep __TEXT | grep _bt | ${FAIL_IF_EMPTY}
-	nm -m main | grep __cccccccccccccc | grep __TEXT | grep _ct | ${FAIL_IF_EMPTY}
-	nm -m main | grep __aaaaaaaaaaaaaa | grep __DATA | grep _ad | ${FAIL_IF_EMPTY}
-	nm -m main | grep __bbbbbbbbbbbbbb | grep __DATA | grep _bd | ${FAIL_IF_EMPTY}
-	nm -m main | grep __cccccccccccccc | grep __DATA | grep _cd | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c a.s c.s b.s -o main
+	${NM} -m main | grep __aaaaaaaaaaaaaa | grep __TEXT | grep _at | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep __bbbbbbbbbbbbbb | grep __TEXT | grep _bt | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep __cccccccccccccc | grep __TEXT | grep _ct | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep __aaaaaaaaaaaaaa | grep __DATA | grep _ad | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep __bbbbbbbbbbbbbb | grep __DATA | grep _bd | ${FAIL_IF_EMPTY}
+	${NM} -m main | grep __cccccccccccccc | grep __DATA | grep _cd | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 	
 clean:

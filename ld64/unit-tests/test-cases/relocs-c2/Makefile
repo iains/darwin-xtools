@@ -34,11 +34,15 @@ include ${TESTROOT}/include/common.makefile
 # Currently for ppc64 the .o's alternate! in content
 #
 
+# but it cannot work as things stand, since -r reorders the sections so that
+# all the ones from the same segment are together .. but the compiler emits
+# __eh_frames and __compact_unwind out of order.  We suppress EH...
+
 
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -c -o test.${ARCH}.o
+	${CC} ${CCFLAGS} test.c -c -o test.${ARCH}.o  -fno-unwind-tables -fno-asynchronous-unwind-tables
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_content test.${ARCH}.o > test.${ARCH}.o.dump
 	#grep "plus" test.${ARCH}.o.dump | ${FAIL_IF_STDIN}
 

@@ -34,12 +34,11 @@ run: all
 all:
 	${CC} ${CCFLAGS} -gdwarf-2 main.c -c -o main1.o
 	${CC} ${CCFLAGS} -gdwarf-2 main.c -c -o main2.o
-	${CC} ${CCFLAGS} main1.o -o main1
-	${CC} ${CCFLAGS} main2.o -o main2
-	otool -lv main1 | grep -A3 UUID > main1.uuid
-	otool -lv main2 | grep -A3 UUID > main2.uuid
+	${CC} ${LINKFLAGS} main1.o -o main1
+	${CC} ${LINKFLAGS} main2.o -o main2
+	${OTOOL} -lv main1 | grep -A3 UUID > main1.uuid
+	${OTOOL} -lv main2 | grep -A3 UUID > main2.uuid
 	${PASS_IFF} diff main1.uuid main2.uuid
-	
 
 clean:
 	rm -rf main1.o main2.o main1 main2 main1.uuid main2.uuid

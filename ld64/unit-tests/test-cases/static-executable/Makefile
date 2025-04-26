@@ -28,7 +28,7 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all:
-	${CC} ${CCFLAGS} test.c -static -o test -e _entry -nostdlib -Wl,-new_linker
+	${CC} ${LINKFLAGS} test.c -static -o test -e _entry -nostdlib -Wl,-new_linker
 	${PASS_IFF_GOOD_MACHO} test
 
 clean:

@@ -14,8 +14,8 @@ endif
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c zero.s -o main -pagezero_size 0 -segaddr __TEXT $(SEG_ADDR) -segaddr __MYZEROPAGE 0
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${LINKFLAGS} main.c zero.s -o main-${ARCH} -pagezero_size 0 -segaddr __TEXT $(SEG_ADDR) -segaddr __MYZEROPAGE 0
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -f main
+	rm -f main-${ARCH}

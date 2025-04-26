@@ -34,13 +34,13 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} -arch ${ARCH} -c -Wa,-n empty.s -o empty.o
+	${AS} -arch ${ARCH} -n empty.s -o empty.o
 	${LD} -r empty.o -x -o empty2.o
-	otool -lv empty2.o | egrep 'vmsize 0x0[0]+$$' | ${FAIL_IF_EMPTY}
-	otool -lv empty2.o | grep 'filesize 0' | ${FAIL_IF_EMPTY}
-	otool -lv empty2.o | grep 'nsyms 0' | ${FAIL_IF_EMPTY}
-	otool -lv empty2.o | grep 'symoff 0' | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv empty2.o | egrep 'vmsize 0x0[0]+$$' | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv empty2.o | grep 'filesize 0' | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv empty2.o | grep 'nsyms 0' | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv empty2.o | grep 'symoff 0' | ${FAIL_IF_EMPTY}
 	${PASS_IFF} true
 	
 clean:
-	rm empty.o empty2.o
+	rm -f empty.o empty2.o

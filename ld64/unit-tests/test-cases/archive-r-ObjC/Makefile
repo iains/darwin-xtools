@@ -31,22 +31,22 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.m -c -o foo.o 
-	${LD} -r -arch ${ARCH} foo.o -o foo-r.o
-	${CC} ${CCFLAGS} bar.c -c -o bar.o 
-	${LD} -r -arch ${ARCH} bar.o -o bar-r.o
-	${CC} ${CCFLAGS} baz.m -c -o baz.o 
-	${LD} -r -arch ${ARCH} baz.o -o baz-r.o
-	${CC} ${CCFLAGS} cat.m -c -o cat.o 
-	${LD} -r -arch ${ARCH} cat.o -o cat-r.o
-	libtool -static foo-r.o bar-r.o baz-r.o cat-r.o -o liball.a
-	${CC} ${CCFLAGS} main.c liball.a -o main -ObjC -framework Foundation -framework CoreFoundation
-	${FAIL_IF_BAD_MACHO} main
-	nm main | grep "_bar" | ${FAIL_IF_STDIN}
-	nm main | grep "_Foo" | ${FAIL_IF_EMPTY}
-	nm main | grep "_Baz" | ${FAIL_IF_EMPTY}
-	nm main | grep "_mycatfunc" | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${CCFLAGS} foo.m -c -o foo-${ARCH}.o 
+	${LD} -r -arch ${ARCH} foo-${ARCH}.o -o foo-r-${ARCH}.o
+	${CC} ${CCFLAGS} bar.c -c -o bar-${ARCH}.o 
+	${LD} -r -arch ${ARCH} bar-${ARCH}.o -o bar-r-${ARCH}.o
+	${CC} ${CCFLAGS} baz.m -c -o baz-${ARCH}.o 
+	${LD} -r -arch ${ARCH} baz-${ARCH}.o -o baz-r-${ARCH}.o
+	${CC} ${CCFLAGS} cat.m -c -o cat-${ARCH}.o 
+	${LD} -r -arch ${ARCH} cat-${ARCH}.o -o cat-r-${ARCH}.o
+	${LIBTOOL} -static foo-r-${ARCH}.o bar-r-${ARCH}.o baz-r-${ARCH}.o cat-r-${ARCH}.o -o liball-${ARCH}.a
+	${CC} ${LINKFLAGS} main.c liball-${ARCH}.a -o main-${ARCH} -ObjC -framework Foundation -framework CoreFoundation
+	${FAIL_IF_BAD_MACHO} main-${ARCH}
+	${NM} main-${ARCH} | grep "_bar" | ${FAIL_IF_STDIN}
+	${NM} main-${ARCH} | grep "_Foo" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_Baz" | ${FAIL_IF_EMPTY}
+	${NM} main-${ARCH} | grep "_mycatfunc" | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 
 clean:
-	rm -rf main *.o *.a
+	rm -rf main-* *.o *.a

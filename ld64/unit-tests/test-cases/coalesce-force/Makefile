@@ -21,25 +21,24 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS=10.6
 include ${TESTROOT}/include/common.makefile
 
 #
-# Test -force_symbols_coalesce_list
+# Test -force_symbols_coalesce_list (does not seem to be a documented user
+# command, does not seem to work on 10.5 or for ppc* )
 #
-
 
 run: all
 
 all:	
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo.dylib 
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo.dylib 
 	${DYLDINFO} -weak_bind libfoo.dylib | grep _foo1 | ${FAIL_IF_STDIN}
 	${DYLDINFO} -weak_bind libfoo.dylib | grep _wildcheck | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} -dynamiclib foo.c -o libfoo2.dylib -Wl,-force_symbols_coalesce_list,foo.exp
+	${CC} ${LINKFLAGS} -dynamiclib foo.c -o libfoo2.dylib -Wl,-force_symbols_coalesce_list,foo.exp
 	${DYLDINFO} -weak_bind libfoo2.dylib | grep _foo1 | ${FAIL_IF_EMPTY}
 	${DYLDINFO} -weak_bind libfoo2.dylib | grep _wildcheck | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo2.dylib
-
-
 		
 clean:
 	rm -rf libfoo.dylib  libfoo2.dylib

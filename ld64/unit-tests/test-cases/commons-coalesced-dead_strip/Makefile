@@ -35,7 +35,7 @@ all:
 	${CC} ${CCFLAGS} a.c -c -o a.o
 	${CC} ${CCFLAGS} b.c -c -o b.o
 	${CC} ${CCFLAGS} c.c -c -o c.o
-	${CC} -arch ${ARCH} -dynamiclib a.o b.o c.o -o libabc.dylib -dead_strip
+	${CC} ${LINKFLAGS} -dynamiclib a.o b.o c.o -o libabc.dylib -dead_strip
 	${PASS_IFF_GOOD_MACHO} libabc.dylib
 
 clean:

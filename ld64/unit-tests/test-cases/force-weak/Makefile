@@ -30,9 +30,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c test.c -dynamiclib -o libtest.dylib -Wl,-force_symbols_weak_list,weak.exp
-	otool -Iv libtest.dylib | grep _foo | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} foo.c test.c -dynamiclib -o libtest.dylib -Wl,-force_symbols_weak_list,weak.exp
+	${OTOOL} -Iv libtest.dylib | grep _foo | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libtest.dylib
 
 clean:
-	rm  libtest.dylib
+	rm -f libtest.dylib

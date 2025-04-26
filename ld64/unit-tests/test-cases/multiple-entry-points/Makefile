@@ -34,7 +34,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${ASMFLAGS} test.s -c -o test.${ARCH}.o
+	${AS} -arch ${ARCH} test.s -o test.${ARCH}.o
 	${FAIL_IF_ERROR} ${OBJECTDUMP} -no_sort test.${ARCH}.o > test.${ARCH}.o.dump
 
 	${LD} -arch ${ARCH} -r -keep_private_externs test.${ARCH}.o -o test-r.${ARCH}.o

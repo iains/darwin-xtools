@@ -32,26 +32,26 @@ run: all
 
 all:	
 	${CC} ${CCFLAGS} main.c -c -o main.o
-	nm -m main.o | grep _func1 | grep -v weak    >/dev/null
-	nm -m main.o | grep _func2 | grep    weak    >/dev/null
-	nm -m main.o | grep _func3 | grep -v weak    >/dev/null 
-	nm -m main.o | grep _func4 | grep    weak    >/dev/null
-	nm -m main.o | grep _data1 | grep -v weak    >/dev/null
-	nm -m main.o | grep _data2 | grep    weak    >/dev/null
-	nm -m main.o | grep _data3 | grep -v weak    >/dev/null
-	nm -m main.o | grep _data4 | grep    weak    >/dev/null
-	nm -m main.o | grep _data5 | grep -v weak    >/dev/null
-	nm -m main.o | grep _data6 | grep    weak    >/dev/null
+	${NM} -m main.o | grep _func1 | grep -v weak    >/dev/null
+	${NM} -m main.o | grep _func2 | grep    weak    >/dev/null
+	${NM} -m main.o | grep _func3 | grep -v weak    >/dev/null 
+	${NM} -m main.o | grep _func4 | grep    weak    >/dev/null
+	${NM} -m main.o | grep _data1 | grep -v weak    >/dev/null
+	${NM} -m main.o | grep _data2 | grep    weak    >/dev/null
+	${NM} -m main.o | grep _data3 | grep -v weak    >/dev/null
+	${NM} -m main.o | grep _data4 | grep    weak    >/dev/null
+	${NM} -m main.o | grep _data5 | grep -v weak    >/dev/null
+	${NM} -m main.o | grep _data6 | grep    weak    >/dev/null
 
 	${LD} -r -arch ${ARCH} main.o -o main-r.o 
-	nm -m main-r.o | grep _func1 | grep -v weak    >/dev/null
-	nm -m main-r.o | grep _func2 | grep    weak    >/dev/null
-	nm -m main-r.o | grep _func3 | grep -v weak    >/dev/null 
-	nm -m main-r.o | grep _func4 | grep    weak    >/dev/null
-	nm -m main-r.o | grep _data1 | grep -v weak    >/dev/null
-	nm -m main-r.o | grep _data2 | grep    weak    >/dev/null
-	nm -m main-r.o | grep _data3 | grep -v weak    >/dev/null
-	nm -m main-r.o | grep _data4 | grep    weak    >/dev/null
+	${NM} -m main-r.o | grep _func1 | grep -v weak    >/dev/null
+	${NM} -m main-r.o | grep _func2 | grep    weak    >/dev/null
+	${NM} -m main-r.o | grep _func3 | grep -v weak    >/dev/null 
+	${NM} -m main-r.o | grep _func4 | grep    weak    >/dev/null
+	${NM} -m main-r.o | grep _data1 | grep -v weak    >/dev/null
+	${NM} -m main-r.o | grep _data2 | grep    weak    >/dev/null
+	${NM} -m main-r.o | grep _data3 | grep -v weak    >/dev/null
+	${NM} -m main-r.o | grep _data4 | grep    weak    >/dev/null
 	${PASS_IFF} true
 	
 clean:

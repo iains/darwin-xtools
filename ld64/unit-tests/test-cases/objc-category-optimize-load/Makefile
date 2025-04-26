@@ -29,13 +29,15 @@ include ${TESTROOT}/include/common.makefile
 OPTIONS = 
 
 ifeq ($(ARCH),i386)
-	OPTIONS = -mios-simulator-version-min=6.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/
+#	OPTIONS = -mios-simulator-version-min=6.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/
 endif
 
 all:	all-${ARCH}
 
-all-ppc:
-	${PASS_IFF} true
+all-ppc: all-rest
+all-ppc64: all-rest
+
+#	${PASS_IFF} true
 
 all-i386: all-rest
 all-x86_64: all-rest
@@ -44,10 +46,9 @@ all-armv7: all-rest
 
 all-rest:
 	# check optimzation of category methods
-	${CC} ${CCFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m  -framework Foundation -o libfoo.dylib
-	size -l libfoo.dylib | grep "__objc_catlist:" | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} ${OPTIONS} -dynamiclib foo.m cat1.m  -framework Foundation -o libfoo.dylib
+	${SIZE} -l libfoo.dylib | grep "__objc_catlist:" | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} libfoo.dylib
-	
-	
+
 clean:
 	rm -rf libfoo.dylib

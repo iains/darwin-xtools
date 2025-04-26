@@ -28,17 +28,17 @@ include ${TESTROOT}/include/common.makefile
 # proeduces good "debug notes".
 #
 
-run: 
+all: 
 	${CC} ${CCFLAGS} -gdwarf-2 foo.c -c -o foo.o
 	${FAIL_IF_BAD_OBJ} foo.o
 	${CC} ${CCFLAGS} -gdwarf-2 bar.c -c -o bar.o
 	${FAIL_IF_BAD_OBJ} bar.o
 	${CC} ${CCFLAGS} -gdwarf-2 baz.c -c -o baz.o
 	${FAIL_IF_BAD_OBJ} baz.o
-	libtool -static bar.o baz.o foo.o -o liball.a
-	${CC} ${CCFLAGS} liball.a -all_load -dynamiclib -o liball.dylib -nodefaultlibs -lSystem
+	${LIBTOOL} -static bar.o baz.o foo.o -o liball.a
+	${CC} ${LINKFLAGS} liball.a -all_load -dynamiclib -o liball.dylib -nodefaultlibs -lSystem
 	${FAIL_IF_BAD_MACHO} liball.dylib
-	nm -fap liball.dylib | ./stabs-filter.pl > liball.dylib.stabs
+	${NM} -fap liball.dylib | ./stabs-filter.pl > liball.dylib.stabs
 	${PASS_IFF} diff liball.dylib.stabs expected-stabs
 
 clean:

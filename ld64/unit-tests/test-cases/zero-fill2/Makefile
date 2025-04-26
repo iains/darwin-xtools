@@ -31,7 +31,7 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -o test 
+	${CC} ${LINKFLAGS} test.c -o test 
 	${PASS_IFF_GOOD_MACHO} test
 
 clean:

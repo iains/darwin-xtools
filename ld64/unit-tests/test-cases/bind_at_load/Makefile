@@ -30,12 +30,12 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} foo.c -dynamiclib -o libfoo.dylib
-	${CC} ${CCFLAGS} bar.c -dynamiclib -o libbar.dylib
-	${CC} ${CCFLAGS} main.c libfoo.dylib libbar.dylib -o main -Wl,-bind_at_load
-	${DYLDINFO} -lazy_bind main | grep "no compressed lazy binding info" | ${FAIL_IF_EMPTY}
-	${DYLDINFO} -bind main | grep _bar | ${FAIL_IF_EMPTY}
-	${PASS_IFF_GOOD_MACHO} main
+	${CC} ${LINKFLAGS} foo.c -dynamiclib -o libfoo-${ARCH}.dylib
+	${CC} ${LINKFLAGS} bar.c -dynamiclib -o libbar-${ARCH}.dylib
+	${CC} ${LINKFLAGS} main.c libfoo-${ARCH}.dylib libbar-${ARCH}.dylib -o main-${ARCH} -Wl,-bind_at_load
+	${DYLDINFO} -lazy_bind main-${ARCH} | grep "no compressed lazy binding info" | ${FAIL_IF_EMPTY}
+	${DYLDINFO} -bind main-${ARCH} | grep _bar | ${FAIL_IF_EMPTY}
+	${PASS_IFF_GOOD_MACHO} main-${ARCH}
 	
 clean:
-	rm -f libfoo.dylib  libbar.dylib main
+	rm -f *.dylib main-*

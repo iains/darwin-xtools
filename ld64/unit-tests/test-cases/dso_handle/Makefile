@@ -11,13 +11,13 @@ SHELL = bash # use bash shell so we can redirect just stderr
 run: all
 
 all:
-	${CC} ${CCFLAGS} test.c -o test
-	${FAIL_IF_BAD_MACHO} test
-	${CC} ${CCFLAGS} test.c -DDSO_DEF=1 -o test-def 2>warnings.txt
-	${FAIL_IF_BAD_MACHO} test-def
-	${CC} ${CCFLAGS} test.c -DDSO_TENT=1 -o test-tent -Wl,-w
-	${PASS_IFF_GOOD_MACHO} test-tent
+	${CC} ${LINKFLAGS} test.c -o test-${ARCH}
+	${FAIL_IF_BAD_MACHO} test-${ARCH}
+	${CC} ${LINKFLAGS} test.c -DDSO_DEF=1 -o test-def-${ARCH} 2>warnings.txt
+	${FAIL_IF_BAD_MACHO} test-def-${ARCH}
+	${CC} ${LINKFLAGS} test.c -DDSO_TENT=1 -o test-tent-${ARCH} -Wl,-w
+	${PASS_IFF_GOOD_MACHO} test-tent-${ARCH}
 
 
 clean:
-	rm -f test test-def test-tent warnings.txt
+	rm -f test-${ARCH} test-def-${ARCH} test-tent-${ARCH} warnings.txt

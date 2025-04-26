@@ -50,21 +50,21 @@ run: all
 
 
 all:
-	${FAIL_IF_ERROR} $(CXX) main.cxx -arch ${ARCH} -o main
+	${FAIL_IF_ERROR} ${CXX} ${CXXFLAGS}  main.cxx -o main
 	${FAIL_IF_BAD_MACHO} main
-	${FAIL_IF_ERROR} nm -j main >main-no-strip.nm
-	${FAIL_IF_ERROR} strip main
+	${FAIL_IF_ERROR} ${NM} -j main >main-no-strip.nm
+	${FAIL_IF_ERROR} ${STRIP} main
 	${FAIL_IF_BAD_MACHO} main
-	${FAIL_IF_ERROR} $(CXX) main.cxx -arch ${ARCH} -s -o main
+	${FAIL_IF_ERROR} ${CXX} ${CXXLINKFLAGS} main.cxx -s -o main
 	${PASS_IFF_GOOD_MACHO} main
 
 	# Make sure there are no symbols in the stripped file that aren't
 	# in the unstripped
-	nm -j main | comm -23 - main-no-strip.nm | ${FAIL_IF_STDIN}
+	${NM} -j main | comm -23 - main-no-strip.nm | ${FAIL_IF_STDIN}
 
 	# Now make sure that all the __Z symbols exist
-	strip_cnt=`nm -j main | comm -12 - main-no-strip.nm | grep -c __Z`; \
-	nostrip_cnt=`nm -j main|grep -c __Z`; \ 
+	strip_cnt=`${NM} -j main | comm -12 - main-no-strip.nm | grep -c __Z`; \
+	nostrip_cnt=`${NM} -j main | grep -c __Z`; \
 	[ x"$$strip_cnt" = x"$$nostrip_cnt" ]
 	@echo PASS $$UNIT_TEST_NAME
 clean:

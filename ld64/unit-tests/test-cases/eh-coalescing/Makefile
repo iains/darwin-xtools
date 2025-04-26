@@ -37,14 +37,14 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CXX} ${CCXXFLAGS} foo.cxx -c -o foo.o
-	${CXX} ${CCXXFLAGS} foo2.cxx -c -o foo2.o
-	${CXX} ${CCXXFLAGS} bar.cxx -c -o bar.o -fno-exceptions
-	${CXX} ${CCXXFLAGS} -dynamiclib foo.o foo2.o bar.o -o libfoobar.dylib -Wl,-map,libfoobar.map
+	${CXX} ${CXXFLAGS} foo.cxx -c -o foo.o
+	${CXX} ${CXXFLAGS} foo2.cxx -c -o foo2.o
+	${CXX} ${CXXFLAGS} bar.cxx -c -o bar.o -fno-exceptions
+	${CXX} ${CXXLINKFLAGS} -dynamiclib foo.o foo2.o bar.o -o libfoobar.dylib -Wl,-map,libfoobar.map
 	# verify .eh symbol is missing or is from bar.o (file 3)
 	grep '\[  2\] __Z4funcv.eh' libfoobar.map | ${FAIL_IF_STDIN}
 	# verify no LSDA
-	size -l libfoobar.dylib | grep __gcc_except_tab | ${PASS_IFF_EMPTY}
+	${SIZE} -l libfoobar.dylib | grep __gcc_except_tab | ${PASS_IFF_EMPTY}
 
 clean:
-	rm  foo.o foo2.o bar.o  libfoobar.map  libfoobar.dylib
+	rm  -f foo.o foo2.o bar.o  libfoobar.map  libfoobar.dylib

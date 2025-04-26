@@ -27,7 +27,7 @@ include ${TESTROOT}/include/common.makefile
 # Check that ld can remove non-lazy pointers for x86_64
 #
 
-all: all-${FILEARCH}
+all: all-${ARCH}
 
 all-arm: all-true
 
@@ -41,10 +41,10 @@ all-true:
 	${PASS_IFF} true
 
 all-x86_64:
-	${CC} ${CCFLAGS} foo.c bar.c -dynamiclib -o libfoobar.dylib 
-	otool -Iv libfoobar.dylib  | grep 0x | grep _ | ${FAIL_IF_STDIN}
-	${CC} ${CCFLAGS} foo.c bar.c -dynamiclib -o libfoobar.dylib -flat_namespace
-	otool -Iv libfoobar.dylib  | grep 0x | ${PASS_IFF_STDIN}
+	${CC} ${LINKFLAGS} foo.c bar.c -dynamiclib -o libfoobar.dylib 
+	${OTOOL} -Iv libfoobar.dylib  | grep 0x | grep _ | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} foo.c bar.c -dynamiclib -o libfoobar.dylib -flat_namespace
+	${OTOOL} -Iv libfoobar.dylib  | grep 0x | ${PASS_IFF_STDIN}
 
 clean:
 	rm -rf libfoobar.dylib

@@ -1,14 +1,15 @@
 #include <stdio.h>
 
-extern void foo();
+extern int foo();
 
 int main()
 {
-	fprintf(stdout, "hello\n");
-  foo();
-	return 0;
+  fprintf(stdout, "hello\n");
+  return foo() - 42;
 }
 
-void back()
+int back()
 {
+  fprintf(stdout, "back\n");
+  return 42;
 }

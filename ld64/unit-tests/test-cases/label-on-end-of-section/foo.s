@@ -8,7 +8,7 @@ _end:
 # _var is a pointer to the end of the __MY/__data section
 	.data
 _var:
-#if __x86_64__
+#if __LP64__
 	.quad _end
 #else
 	.long _end

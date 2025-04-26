@@ -45,24 +45,24 @@ all:
 	ls *.o > filelist
 
 	# missing fifo
-	(LD_PIPELINE_FIFO=bad_fifo ; export LD_PIPELINE_FIFO ; ${CC} ${CCFLAGS} -filelist filelist -o partial ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
+	(LD_PIPELINE_FIFO=bad_fifo ; export LD_PIPELINE_FIFO ; ${CC} ${LINKFLAGS} -filelist filelist -o partial ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
 
 	# partial file list passed via pipe
 	head -1 filelist > pipelineFile
-	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${CCFLAGS} -filelist filelist -o partial ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
+	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${LINKFLAGS} -filelist filelist -o partial ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
 	${FAIL_IFF} ${MACHOCHECK} partial 2>&1 > /dev/null
 
 	# bogus file passed via pipe
 	echo "bogus_file.o" > pipelineFile
-	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${FAIL_IF_SUCCESS} ${CC} ${CCFLAGS} -filelist filelist -o bogus ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
+	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${FAIL_IF_SUCCESS} ${CC} ${LINKFLAGS} -filelist filelist -o bogus ; exit 0) 2>&1 | ${PASS_IFF_STDIN}
 	${FAIL_IFF} ${MACHOCHECK} bogus 2>&1 > /dev/null
 
 	# success cases - check different orderings of files
 	sort < filelist > pipelineFile
-	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${CCFLAGS} -filelist filelist -o normal)
+	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${LINKFLAGS} -filelist filelist -o normal)
 	${FAIL_IF_BAD_MACHO} normal
 	sort -r < filelist > pipelineFile
-	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${CCFLAGS} -filelist filelist -o reverse)
+	(LD_PIPELINE_FIFO=pipelineFile ; export LD_PIPELINE_FIFO ; ${CC} ${LINKFLAGS} -filelist filelist -o reverse)
 	${FAIL_IF_BAD_MACHO} reverse
 
 	# verify that the same binary was generated using both forward and reverse ordering

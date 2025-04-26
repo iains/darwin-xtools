@@ -28,13 +28,13 @@ include ${TESTROOT}/include/common.makefile
 #
 
 all:
-	${CC} ${CCFLAGS} main.c -static -c
-	${CC} ${CCFLAGS} abs.s -static -c
-	${LD} -arch ${ARCH} -static main.o abs.o -e _main -o main -new_linker -macosx_version_min 10.6
-	${LD} -arch ${ARCH} -static -r main.o abs.o -o all.o -new_linker 
-	nm -m all.o | grep _myAbs | grep absolute | ${FAIL_IF_EMPTY}
-	${LD} -arch ${ARCH} -static all.o -e _main -o main2 -new_linker -macosx_version_min 10.6
-	${PASS_IFF_GOOD_MACHO} main2
-	
+	${CC} ${CCFLAGS} main.c -static -c -o main-${ARCH}.o
+	${CC} ${CCFLAGS} abs.s -static -c -o abs-${ARCH}.o
+	${LD} -arch ${ARCH} -static main-${ARCH}.o abs-${ARCH}.o -e _main -o main-${ARCH} -new_linker ${LD_NEW_LINKEDIT}
+	${LD} -arch ${ARCH} -static -r main-${ARCH}.o abs-${ARCH}.o -o all-${ARCH}.o -new_linker
+	${NM} -m all-${ARCH}.o | grep _myAbs | grep absolute | ${FAIL_IF_EMPTY}
+	${LD} -arch ${ARCH} -static all-${ARCH}.o -e _main -o main2-${ARCH} -new_linker ${LD_NEW_LINKEDIT}
+	${PASS_IFF_GOOD_MACHO} main2-${ARCH}
+
 clean:
-	rm -rf main.o abs.o all.o main main2
+	rm -rf *.o main-* main2-*

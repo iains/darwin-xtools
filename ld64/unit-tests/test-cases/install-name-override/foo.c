@@ -18,8 +18,8 @@ int foo()
 				
 	INSTALL_NAME_10_4(/usr/lib/libfoo.dylib)
 #else
-	#define INSTALL_NAME_10_5(sym) \
-                 extern const char install_name_10_5 __asm("$ld$install_name$os10.5$" #sym ); const char install_name_10_5 = 0;
+	#define INSTALL_NAME_10_4(sym) \
+                 extern const char install_name_10_4 __asm("\"$ld$install_name$os10.4$" #sym "\""); const char install_name_10_4 = 0;
 				
-	INSTALL_NAME_10_5(/usr/lib/libfoo.dylib)
+	INSTALL_NAME_10_4(/usr/lib/libfoo.dylib)
 #endif

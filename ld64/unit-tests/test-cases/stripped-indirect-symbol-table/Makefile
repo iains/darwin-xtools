@@ -41,14 +41,14 @@ all:
 	${CC} ${CCFLAGS} c.c -c -o c.o
 	${CC} ${CCFLAGS} func.c -c -o func.o
 	${LD} -arch ${ARCH} -r a.o b.o c.o -o most.o
-	strip -x -R strip.list most.o -o most.stripped.o
-	${CC} ${CCFLAGS} most.stripped.o func.o -dynamiclib -o dylib1
+	${STRIP} -x -R strip.list most.o -o most.stripped.o
+	${CC} ${LINKFLAGS} most.stripped.o func.o -dynamiclib -o dylib1
 	${LD} -arch ${ARCH} -r most.stripped.o func.o -o all.o
-	${CC} ${CCFLAGS} all.o  -dynamiclib -o dylib2	
-	otool -X -s ${POINTER_SEGMENT} ${POINTER_SECTION} dylib1 >dylib1.pointers
-	otool -X -s ${POINTER_SEGMENT} ${POINTER_SECTION} dylib2 >dylib2.pointers
-	size -l dylib1 | grep __IMPORT | ${FAIL_IF_STDIN}
-	size -l dylib2 | grep __IMPORT | ${FAIL_IF_STDIN}
+	${CC} ${LINKFLAGS} all.o  -dynamiclib -o dylib2	
+	${OTOOL} -X -s ${POINTER_SEGMENT} ${POINTER_SECTION} dylib1 >dylib1.pointers
+	${OTOOL} -X -s ${POINTER_SEGMENT} ${POINTER_SECTION} dylib2 >dylib2.pointers
+	${SIZE} -l dylib1 | grep __IMPORT | ${FAIL_IF_STDIN}
+	${SIZE} -l dylib2 | grep __IMPORT | ${FAIL_IF_STDIN}
 	${PASS_IFF} diff dylib1.pointers dylib2.pointers
 
 clean:

@@ -21,6 +21,7 @@
 # @APPLE_LICENSE_HEADER_END@
 ##
 TESTROOT = ../..
+MINOS = 10.7
 include ${TESTROOT}/include/common.makefile
 
 #
@@ -30,9 +31,9 @@ include ${TESTROOT}/include/common.makefile
 run: all
 
 all:
-	${CC} ${CCFLAGS} main.c get.s -o main
-	otool -lv main | grep S_THREAD_LOCAL_VARIABLES | ${FAIL_IF_EMPTY}
-	otool -lv main | grep S_THREAD_LOCAL_REGULAR | ${FAIL_IF_EMPTY}
+	${CC} ${LINKFLAGS} main.c get.s -o main
+	${OTOOL} -lv main | grep S_THREAD_LOCAL_VARIABLES | ${FAIL_IF_EMPTY}
+	${OTOOL} -lv main | grep S_THREAD_LOCAL_REGULAR | ${FAIL_IF_EMPTY}
 	${PASS_IFF_GOOD_MACHO} main
 
 clean:

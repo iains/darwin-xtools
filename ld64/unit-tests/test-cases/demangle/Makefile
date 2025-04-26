@@ -39,7 +39,6 @@ all:
 	grep __ZN3Foo4doitEv main1.fail | ${FAIL_IF_EMPTY}
 	${FAIL_IF_SUCCESS} ${LD} -arch ${ARCH} -dylib main.o ${LD_SYSROOT} ${LD_NEW_LINKEDIT} -lSystem -demangle -o main 2>main2.fail
 	grep 'Foo::doit()' main2.fail | ${PASS_IFF_STDIN}
-	
 
 clean:
 	rm -f main.o main1.fail main2.fail main
