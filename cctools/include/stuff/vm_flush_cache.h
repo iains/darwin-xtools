@@ -20,6 +20,7 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+#if __APPLE__
 #if defined(__MWERKS__) && !defined(__private_extern__)
 #define __private_extern__ __declspec(private_extern)
 #endif
@@ -29,3 +30,4 @@ __private_extern__ kern_return_t vm_flush_cache(
     mach_port_t target_task,
     vm_address_t address,
     vm_size_t size);
+#endif

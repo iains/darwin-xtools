@@ -167,7 +167,9 @@ opened:
 		/* Locking seems to not be working */
 		case ENOTSUP:
 		case EHOSTUNREACH:
+#if __APPLE__
 		case EBADRPC:
+#endif
 		default:
 			/* Filesystem does not support locking */
 			break;
@@ -318,7 +320,11 @@ put_arobj(CF *cfp, struct stat *sb)
 		 * things for exact binary equality.
 		 */
 		if (getenv("ZERO_AR_DATE") == NULL)
+#if __APPLE__
 			tv_sec = (long int)sb->st_mtimespec.tv_sec;
+#else
+			tv_sec = (long int)sb->st_mtim.tv_sec;
+#endif
 		else
 			tv_sec = (long int)0;
 

@@ -39,7 +39,10 @@
 #include "stuff/dylib_table.h"
 
 #include "maxpathlen.h"
+#if __APPLE__
 # include <mach/mach.h>
+#endif
+
 /* This may change to "/MacOSX/System" someday */
 #define SYSTEM_LIBRARY "/System/Library"
 

@@ -32,8 +32,10 @@
 #include "stuff/arch.h"
 #include "stuff/bytesex.h"
 
+#if __APPLE__
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+#endif
 
 /*
  * The array of all currently know architecture flags (terminated with an entry

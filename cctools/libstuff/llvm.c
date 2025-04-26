@@ -11,7 +11,11 @@
 #include "stuff/llvm.h"
 #include "maxpathlen.h"
 
+#if __APPLE__
 # include <mach-o/dyld.h>
+#else
+# include "stuff/nsgetexecutablepath.h"
+#endif
 
 /*
  * The disassembler API is currently exported from libLTO.dylib.  Eventually we
@@ -55,10 +59,7 @@ LLVMSymbolLookupCallback SymbolLookUp)
 	    /*
 	     * Construct the prefix to this executable assuming it is in a bin
 	     * directory relative to a lib directory of the matching lto library
-	     * and first try to load that.  If not then fall back to trying
-	     * "/Applications/Xcode.app/Contents/Developer/Toolchains/
-	     * XcodeDefault.xctoolchain/usr/lib/" LIB_LLVM.
-	     */
+	     * and first try to load that.  */
 	    bufsize = MAXPATHLEN;
 	    p = buf;
 	    i = _NSGetExecutablePath(p, &bufsize);
@@ -73,6 +74,11 @@ LLVMSymbolLookupCallback SymbolLookUp)
 	    llvm_path = makestr(prefix, "../lib/" LIB_LLVM, NULL);
 
 	    llvm_handle = dlopen(llvm_path, RTLD_NOW);
+#if __APPLE__
+	    /* If not then fall back to trying
+	     * "/Applications/Xcode.app/Contents/Developer/Toolchains/
+	     * XcodeDefault.xctoolchain/usr/lib/" LIB_LLVM.
+	     */
 	    if(llvm_handle == NULL){
 		free(llvm_path);
 		llvm_path = NULL;
@@ -81,6 +87,7 @@ LLVMSymbolLookupCallback SymbolLookUp)
 				     "xctoolchain/usr/lib/" LIB_LLVM,
 				     RTLD_NOW);
 	    }
+#endif
 	    if(llvm_handle == NULL)
 		return(0);
 

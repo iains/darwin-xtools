@@ -213,6 +213,13 @@ char *argv[])
     uint32_t j, page_number;
     char *endp;
     struct arch_flag a;
+    uint32_t page_size;
+#if __APPLE__
+    page_size = vm_page_size;
+#else
+    /* FIXME: this is wrong for aarch64 on macOS11+. */
+    page_size = 4096;
+#endif
 
 	progname = argv[0];
 	if(argc < 3)
@@ -259,11 +266,11 @@ char *argv[])
 
 	if(strcmp(argv[start], "-a") == 0){
 	    if(arch_flag == NULL)
-		page_number = (ofile.file_size + vm_page_size - 1) /
-			      vm_page_size;
+		page_number = (ofile.file_size + page_size - 1) /
+			      page_size;
 	    else
-		page_number = (arch_size + vm_page_size - 1) /
-			      vm_page_size;
+		page_number = (arch_size + page_size - 1) /
+			      page_size;
 	    for(j = 0; j < page_number; j++){
 		print_parts_for_page(j);
 	    }
@@ -1171,9 +1178,15 @@ uint32_t page_number)
     enum bool printed;
     enum bool sections, sections64;
     const char *arch_name;
-
-	offset = page_number * vm_page_size;
-	size = vm_page_size;
+    uint32_t page_size;
+#if __APPLE__
+    page_size = vm_page_size;
+#else
+    /* FIXME: this is wrong for aarch64 on macOS11+. */
+    page_size = 4096;
+#endif
+	offset = page_number * page_size;
+	size = page_size;
 	low_addr = 0;
 	high_addr = 0;
 
@@ -1181,8 +1194,8 @@ uint32_t page_number)
 	    if(offset > ofile.file_size){
 		printf("File has no page %u (file has only %u pages)\n",
 		       page_number, (uint32_t)((ofile.file_size +
-					        vm_page_size -1) /
-					      vm_page_size));
+					        page_size -1) /
+					      page_size));
 	        return;
 	    }
 	}
@@ -1191,8 +1204,8 @@ uint32_t page_number)
 		printf("File for architecture %s has no page %u (has only %u "
 		       "pages)\n", arch_flag->name,
 		       page_number, (uint32_t)((arch_size +
-					        vm_page_size -1) /
-					      vm_page_size));
+					        page_size -1) /
+					      page_size));
 	        return;
 	    }
 	}

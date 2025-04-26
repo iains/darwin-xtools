@@ -20,8 +20,12 @@
 #include "stuff/execute.h"
 #include "allocate.h"
 
+#if __APPLE__
 # include <mach/mach.h>
 # include <mach-o/dyld.h>
+#else
+# include "stuff/nsgetexecutablepath.h"
+#endif
 #include "maxpathlen.h"
 
 /* used by error calls (exported) */

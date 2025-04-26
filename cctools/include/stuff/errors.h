@@ -58,6 +58,7 @@ extern void system_error(
     __attribute__ ((format (printf, 1, 2)))
 #endif
     __attribute__((visibility("hidden")));
+
 extern void fatal(
     const char *format, ...)
 #ifdef __GNUC__
@@ -70,6 +71,8 @@ extern void system_fatal(
     __attribute__ ((format (printf, 1, 2)))
 #endif
     __attribute__((visibility("hidden")));
+
+#if __APPLE__
 #include "mach/mach.h"
 extern void my_mach_error(
     kern_return_t r,
@@ -78,6 +81,7 @@ extern void my_mach_error(
     __attribute__ ((format (printf, 2, 3)))
 #endif
     __attribute__((visibility("hidden")));
+
 extern void mach_fatal(
     kern_return_t r,
     char *format, ...)
@@ -85,3 +89,4 @@ extern void mach_fatal(
     __attribute__ ((format (printf, 2, 3)))
 #endif
     __attribute__((visibility("hidden")));
+#endif

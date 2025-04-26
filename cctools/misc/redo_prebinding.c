@@ -9880,6 +9880,7 @@ const char *format, ...)
 }
 #endif /* defined(LIBRARY_API) */
 
+#if __APPLE__
 #include <sys/attr.h>
 /*
  * Structure defining what's returned from getattrlist.  It returns all the
@@ -9964,3 +9965,10 @@ char *filename)
 
 	return(FALSE);
 }
+#else
+static enum bool
+has_resource_fork(char *filename)
+{
+  return FALSE;
+}
+#endif

@@ -34,6 +34,9 @@
 #include "allocate.h"
 #include "stuff/errors.h"
 #include "stuff/execute.h"
+#if !__APPLE__
+#include "stuff/nsgetexecutablepath.h"
+#endif
 
 /*
  * execute() does an execvp using the argv passed to it.  If the parameter

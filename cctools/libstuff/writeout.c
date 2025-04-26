@@ -47,8 +47,10 @@
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
 
+#if __APPLE__
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+#endif
 #include "stuff/errors.h"
 
 static void copy_new_symbol_info(
@@ -135,13 +137,11 @@ uint32_t *throttle)
 #else
     time_t timep[2];
 #endif
-    mach_port_t my_mach_host_self;
     char *file, *p;
     uint32_t file_size;
     time_t toc_time;
     enum bool seen_archive;
-    kern_return_t r;
-   
+
 	seen_archive = FALSE;
 	toc_time = time(0);
 
@@ -180,14 +180,15 @@ uint32_t *throttle)
             struct timezone tz;
             uint32_t bytes_written, bytes_per_second, write_size;
             double time_used, time_should_have_took, usecs_to_kill;
-            static struct host_sched_info info = { 0 };
-            unsigned int count;
-            kern_return_t r;
-
             p = file;
             bytes_written = 0;
             bytes_per_second = 0;
+#if __APPLE__
+            static struct host_sched_info info = { 0 };
+            unsigned int count;
             count = HOST_SCHED_INFO_COUNT;
+            kern_return_t r;
+            mach_port_t my_mach_host_self;
             my_mach_host_self = mach_host_self();
             if((r = host_info(my_mach_host_self, HOST_SCHED_INFO, (host_info_t)
                             (&info), &count)) != KERN_SUCCESS){
@@ -195,6 +196,7 @@ uint32_t *throttle)
                 my_mach_error(r, "can't get host sched info");
             }
             mach_port_deallocate(mach_task_self(), my_mach_host_self);
+#endif
             if(gettimeofday(&start, &tz) == -1)
                 goto no_throttle;
 #undef THROTTLE_DEBUG
@@ -278,11 +280,19 @@ no_throttle:
 	    }
 	}
 cleanup:
+#if __APPLE__
+	{
+	kern_return_t r;
+
 	if((r = vm_deallocate(mach_task_self(), (vm_address_t)file,
 			      file_size)) != KERN_SUCCESS){
 	    my_mach_error(r, "can't vm_deallocate() buffer for output file");
 	    return;
 	}
+	}
+#else
+	return;
+#endif
 }
 
 
@@ -316,7 +326,6 @@ enum bool *seen_archive)
     uint32_t i32;
     enum byte_sex target_byte_sex, host_byte_sex;
     char *file, *p;
-    kern_return_t r;
     struct fat_header *fat_header;
     struct fat_arch *fat_arch;
     struct dysymtab_command dyst;
@@ -395,15 +404,17 @@ enum bool *seen_archive)
 	    }
 	}
 
+#if __APPLE__
 	/*
 	 * This buffer is vm_allocate'ed to make sure all holes are filled with
 	 * zero bytes.
 	 */
+	kern_return_t r;
 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&file,
 			    file_size, TRUE)) != KERN_SUCCESS)
 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
 		       "size %u", filename, file_size);
-
+#endif
 	/*
 	 * If there is more than one architecture then fill in the fat file
 	 * header and the fat_arch structures in the buffer.

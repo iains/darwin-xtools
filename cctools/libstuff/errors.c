@@ -112,6 +112,7 @@ const char *format,
 	errors++;
 }
 
+#if __APPLE__
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 
@@ -134,4 +135,5 @@ char *format,
 	va_end(ap);
 	errors++;
 }
+#endif /* __APPLE__ */
 #endif /* !defined(RLD) */

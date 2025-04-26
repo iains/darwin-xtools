@@ -45,7 +45,10 @@
 #include "stuff/guess_short_name.h"
 #include "stuff/macosx_deployment_target.h"
 
+#if __APPLE__
 #include <mach/mach.h>
+#endif
+
 /* used by error routines as the name of the program */
 char *progname = NULL;
 

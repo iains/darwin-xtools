@@ -102,7 +102,10 @@
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
 
+#if __APPLE__
 #include <mach/mach.h> /* first so to get rid of a precomp warning */
+#endif
+
 /* used by error routines as the name of the program */
 char *progname = NULL;
 

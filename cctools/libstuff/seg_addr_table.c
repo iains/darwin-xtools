@@ -31,7 +31,10 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#if __APPLE__
 # include <mach/mach.h>
+#endif
+
 #include "stuff/bool.h"
 #include "stuff/errors.h"
 #include "allocate.h"

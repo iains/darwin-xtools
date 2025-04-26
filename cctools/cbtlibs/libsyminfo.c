@@ -139,7 +139,9 @@ static struct symbol *select_symbols(
  * ugly but effective.
  */
 struct selectedSymbolListInfo {
+#if __APPLE__
     vm_size_t mappedFileSize;
+#endif
     void *mappedFile;
     char *cachedFileName;
     int byteSex;
@@ -156,7 +158,6 @@ char *fileName)
 {
     SymInfoList rList;
     struct cmd_flags cmd_flags = { 0 };
-    kern_return_t r;
 
 	/* Allocate return value and point the global pointer self at it */
 	rList = malloc(sizeof(_SymInfoList));
@@ -181,12 +182,15 @@ char *fileName)
 		      nm,	/* processor */
 		      &cmd_flags); /* cookie */
 
+#if __APPLE__
 	/* Clean up */
+    kern_return_t r;
 	if((r = vm_deallocate(mach_task_self(), (vm_address_t)gInfo->mappedFile,
 			  (vm_size_t)gInfo->mappedFileSize)) != KERN_SUCCESS){
 	    my_mach_error(r, "Can't vm_deallocate mapped memory for file: "
 		   "%s",fileName);
 	}
+#endif
 	free(gInfo->cachedFileName);
 	return(rList);
 }
@@ -592,8 +596,9 @@ void *cookie)
 	
 	/* Store all this info so that it can be cleaned up later */
 	gInfo->mappedFile = ofile->file_addr;
+#if __APPLE__
 	gInfo->mappedFileSize = ofile->file_size;
-
+#endif
 	/* Reallocate the array of SymInfoSymbol export structs in self */
 	self->exports = reallocate(self->exports,
 				   sizeof(SymInfoSymbol *) * self->nExports);

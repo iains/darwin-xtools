@@ -89,8 +89,11 @@
 #define RELOC_PAIR		ARM_RELOC_PAIR
 #endif
 
+#if __APPLE__
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+#endif
+
 /*
  * These variables are set by layout_symbols() to organize the symbol table and
  * string table in order the dynamic linker expects.  They are then used in
@@ -163,7 +166,6 @@ char *out_file_name)
 
     uint32_t output_size;
     char *output_addr;
-    kern_return_t r;
 
     enum byte_sex host_byte_sex;
     uint32_t reloff, nrelocs;
@@ -390,11 +392,17 @@ char *out_file_name)
 	 * Create the buffer to copy the parts of the output file into.
 	 */
 	output_size = offset;
+#if __APPLE__
+    kern_return_t r;
 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&output_addr,
 			    output_size, TRUE)) != KERN_SUCCESS)
 	    as_fatal("can't vm_allocate() buffer for output file of size %u",
 		     output_size);
-
+#else
+	if ((output_addr = calloc (output_size, 1)) == NULL)
+	   as_fatal("can't calloc() buffer for output file of size %u",
+		    output_size);
+#endif
 	/* put the headers in the output file's buffer */
 	host_byte_sex = get_host_byte_sex();
 	offset = 0;

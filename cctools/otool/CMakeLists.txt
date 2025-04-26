@@ -39,6 +39,9 @@ target_link_libraries(otool stuff)
 if(XTOOLS_NEEDS_STRLIB)
   target_link_libraries(otool strlib)
 endif()
+if(NOT APPLE)
+  target_link_libraries(otool dl)
+endif()
 set_target_properties(otool PROPERTIES LINKER_LANGUAGE CXX)
 
 # Prefer to build tools without deps on installed dylibs.

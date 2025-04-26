@@ -51,8 +51,11 @@
 #include "stuff/errors.h"
 #include "stuff/rnd.h"
 
+#if __APPLE__
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+#endif
+
 /* These variables are set from the command line arguments */
 __private_extern__
 char *progname = NULL;	/* name of the program for error messages (argv[0]) */
@@ -507,9 +510,13 @@ replace_sections(void)
     struct stat stat_buf;
     int outfd, sectfd;
     char *sect_addr;
+#if __APPLE__
     vm_address_t pad_addr;
-    uint32_t size;
     kern_return_t r;
+#else
+    unsigned char *pad_addr;
+#endif
+    uint32_t size;
 
 	errors = 0;
 
@@ -895,10 +902,14 @@ replace_sections(void)
 	if((outfd = open(output, O_CREAT | O_WRONLY | O_TRUNC ,input_mode)) 
 	   == -1)
 	    system_fatal("can't create output file: %s", output);
-
+#if __APPLE__
 	if((r = vm_allocate(mach_task_self(), &pad_addr, pagesize, 1)) !=
 	   KERN_SUCCESS)
 	    mach_fatal(r, "vm_allocate() failed");
+#else
+	if ((pad_addr = calloc (pagesize, 1)) == NULL)
+	    system_fatal ("calloc failed for padding");
+#endif
 
 	k = 0;
 	for(i = 0; i < nsegs; i++){
@@ -929,11 +940,13 @@ replace_sections(void)
 				system_error("can't close file: %s to replace "
 					 "section (%s,%s) with", rp->filename,
 					 rp->segname, rp->sectname);
+#if __APPLE__
 			    if((r = vm_deallocate(mach_task_self(),
 						  (vm_address_t)sect_addr,
 						  rp->size)) != KERN_SUCCESS)
 				mach_fatal(r, "Can't deallocate memory for "
 				   "mapped file: %s", rp->filename);
+#endif
 			}
 			else{
 			    /* write the original section */
@@ -984,11 +997,13 @@ replace_sections(void)
 				system_error("can't close file: %s to replace "
 					 "section (%s,%s) with", rp->filename,
 					 rp->segname, rp->sectname);
+#if __APPLE__
 			    if((r = vm_deallocate(mach_task_self(),
 						  (vm_address_t)sect_addr,
 						  rp->size)) != KERN_SUCCESS)
 				mach_fatal(r, "Can't deallocate memory for "
 				   "mapped file: %s", rp->filename);
+#endif
 			}
 			else{
 			    /* write the original section */

@@ -67,6 +67,7 @@ const char *format,
 	exit(1);
 }
 
+# if __APPLE__
 
 #  include <mach/mach.h>
 #  include <mach/mach_error.h>
@@ -90,4 +91,5 @@ char *format,
 	va_end(ap);
 	exit(1);
 }
+# endif
 #endif /* !defined(RLD) */

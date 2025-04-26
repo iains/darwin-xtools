@@ -69,7 +69,10 @@
 #include "stuff/errors.h"
 #include "stuff/lto.h"
 
+#if __APPLE__
 #include <mach/mach.h>
+#endif
+
 /* The maximum section alignment allowed to be specified, as a power of two */
 #define MAXSECTALIGN		15 /* 2**15 or 0x8000 */
 

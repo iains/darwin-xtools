@@ -29,8 +29,10 @@
 #include "allocate.h"
 #include "stuff/arch.h"
 
+#if __APPLE__
 #include <mach/mach.h>
 #include "stuff/openstep_mach.h"
+#endif
 
 /*
  * get_arch_from_host() gets the architecture from the host this is running on
@@ -46,15 +48,18 @@ get_arch_from_host(
 struct arch_flag *family_arch_flag,
 struct arch_flag *specific_arch_flag)
 {
+  if(family_arch_flag != NULL)
+    memset(family_arch_flag, '\0', sizeof(struct arch_flag));
+  if(specific_arch_flag != NULL)
+    memset(specific_arch_flag, '\0', sizeof(struct arch_flag));
+#if !__APPLE__
+  return 0;
+#else
     struct host_basic_info host_basic_info;
     unsigned int count;
     kern_return_t r;
     mach_port_t my_mach_host_self;
 
-	if(family_arch_flag != NULL)
-	    memset(family_arch_flag, '\0', sizeof(struct arch_flag));
-	if(specific_arch_flag != NULL)
-	    memset(specific_arch_flag, '\0', sizeof(struct arch_flag));
 
 	count = HOST_BASIC_INFO_COUNT;
 	my_mach_host_self = mach_host_self();
@@ -522,5 +527,6 @@ struct arch_flag *specific_arch_flag)
 	    break;
 	}
 	return(0);
+#endif
 }
 #endif /* !defined(RLD) */

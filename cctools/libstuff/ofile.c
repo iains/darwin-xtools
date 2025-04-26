@@ -75,8 +75,11 @@
 #include "stuff/ofile.h"
 #include "stuff/print.h"
 
+#if __APPLE__
 # include <mach/mach.h>
 # include "stuff/openstep_mach.h"
+#endif
+
 #ifdef OTOOL
 #undef ALIGNMENT_CHECKS
 #include "otool.h"
@@ -1401,15 +1404,19 @@ void
 ofile_unmap(
 struct ofile *ofile)
 {
-    kern_return_t r;
 
 	if(ofile->file_addr != NULL){
+#if __APPLE__
+	    kern_return_t r;
 	    if((r = vm_deallocate(mach_task_self(),
 				 (vm_address_t)ofile->file_addr,
 				 (vm_size_t)ofile->file_size)) != KERN_SUCCESS){
 		my_mach_error(r, "Can't vm_deallocate mapped memory for file: "
 			      "%s", ofile->file_name);
 	    }
+#else
+	    error("ofile_unmap() cannot unmap file %s\n", ofile->file_name);
+#endif
 	}
 	if(ofile->file_name != NULL)
 	    free(ofile->file_name);

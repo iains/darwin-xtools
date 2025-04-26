@@ -59,6 +59,7 @@
 #include "stuff/lto.h"
 #endif /* LTO_SUPPORT */
 
+#if __APPLE__
 # include <mach/mach.h>
 # include <mach/mach_init.h>
 # include "stuff/openstep_mach.h"
@@ -67,7 +68,7 @@
 # else
 #  include <servers/bootstrap.h>
 # endif
-
+#endif
 #include "maxpathlen.h"
 
 /*
@@ -2252,7 +2253,6 @@ struct ofile *ofile)
     uint64_t library_size, offset;
     enum byte_sex target_byte_sex;
     char *library, *p, *flush_start;
-    kern_return_t r;
     struct arch *arch;
     struct fat_header *fat_header;
     struct fat_arch *fat_arch;
@@ -2460,11 +2460,17 @@ struct ofile *ofile)
 	    library_size = SARMAG;
 	    if(same_toc == FALSE)
 		library_size += archs[0].toc_size;
+#if __APPLE__
+    kern_return_t r;
 	    if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
 				library_size, TRUE)) != KERN_SUCCESS)
 		mach_fatal(r, "can't vm_allocate() buffer for output file: %s "
 			   "of size %llu", output, library_size);
-
+#else
+            if ((library = calloc (library_size, 1)) == NULL)
+		system_fatal("can't calloc buffer for output file: %s "
+			   "of size %" PRIu64, output, library_size);
+#endif
 
 	    /* put in the archive magic string in the buffer */
 	    p = library;
@@ -2496,11 +2502,19 @@ fail_to_update_toc_in_place:
 	 * This buffer is vm_allocate'ed to make sure all holes are filled with
 	 * zero bytes.
 	 */
+#if __APPLE__
+	{
+	kern_return_t r;
 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
 			    library_size, TRUE)) != KERN_SUCCESS)
 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
 		       "size %llu", output, library_size);
-
+	}
+#else
+	if ((library = calloc (library_size, 1)) == NULL)
+	   system_fatal("can't calloc buffer for output file: %s of size %" PRIu64,
+			 output, library_size);
+#endif
 	/*
 	 * Create the output file.  The unlink() is done to handle the problem
 	 * when the outputfile is not writable but the directory allows the
@@ -2762,11 +2776,16 @@ update_toc_ar_dates:
 			 output);
 	    return;
 	}
+#if __APPLE__
+	kern_return_t r;
 	if((r = vm_deallocate(mach_task_self(), (vm_address_t)library,
 			      library_size)) != KERN_SUCCESS){
 	    my_mach_error(r, "can't vm_deallocate() buffer for output file");
 	    return;
 	}
+#else
+	free (library);
+#endif
 }
 
 /*
@@ -2870,7 +2889,6 @@ uint64_t size)
 { 
     uint64_t write_offset, write_size, host_pagesize;
     struct block **p, *block, *before, *after;
-    kern_return_t r;
 
 	host_pagesize = 0x2000;
 
@@ -3073,9 +3091,12 @@ uint64_t size)
 	    if(write(fd, library + write_offset, write_size) !=
 	       (int)write_size)
 		system_fatal("can't write to output file");
+#if __APPLE__
+	    kern_return_t r;
 	    if((r = vm_deallocate(mach_task_self(), (vm_address_t)(library +
 				  write_offset), write_size)) != KERN_SUCCESS)
 		mach_fatal(r, "can't vm_deallocate() buffer for output file");
+#endif
 	}
 #ifdef DEBUG
 	else{
@@ -3097,7 +3118,6 @@ int fd)
 { 
     struct block *block;
     uint64_t write_offset, write_size;
-    kern_return_t r;
 
 #ifdef DEBUG
 	/* The compiler "warning: `write_offset' may be used uninitialized in */
@@ -3137,9 +3157,12 @@ int fd)
 	    if(write(fd, library + write_offset, write_size) !=
 	       (int)write_size)
 		system_fatal("can't write to output file");
+#if __APPLE__
+	    kern_return_t r;
 	    if((r = vm_deallocate(mach_task_self(), (vm_address_t)(library +
 				  write_offset), write_size)) != KERN_SUCCESS)
 		mach_fatal(r, "can't vm_deallocate() buffer for output file");
+#endif
 	}
 	output_blocks = NULL;
 }

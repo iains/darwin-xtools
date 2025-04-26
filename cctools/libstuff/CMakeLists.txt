@@ -5,6 +5,14 @@ else()
   set(COFF_BYTESEX)
 endif()
 
+if (APPLE)
+  set(NSEXECPATH)
+  set(STRMODE)
+else()
+  set(NSEXECPATH nsgetexecutablepath.c)
+  set(STRMODE strmode.c)
+endif()
+
 set(LIBSTUFF_SOURCES
    allocate.c
    errors.c
@@ -44,6 +52,8 @@ set(LIBSTUFF_SOURCES
    llvm.c
    ${COFF_BYTESEX}
    ${CMAKE_BINARY_DIR}/cctools/cctools_version.c
+   ${NSEXECPATH}
+   ${STRMODE}
    )
 #   paths_relative_to_exe.c
 

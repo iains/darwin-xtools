@@ -25,7 +25,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#if __APPLE__
 # include <sys/sysctl.h>
+#endif
+
 #include "stuff/errors.h"
 #include "allocate.h"
 #include "stuff/macosx_deployment_target.h"
@@ -65,9 +68,6 @@ struct macosx_deployment_target *value)
 {
     uint32_t ten, major, minor;
     char *p, *q, *endp;
-    char osversion[32];
-    size_t osversion_len;
-    static int osversion_name[2];
 
 	/*
 	 * Pick up the Mac OS X deployment target set by the command line
@@ -106,11 +106,22 @@ struct macosx_deployment_target *value)
 	    strcpy(value->name, p);
 	    return;
 	}
-
+#if !__APPLE__
 use_default:
+	value->major = 5;
+	value->minor = 8;
+	value->name = allocate(strlen("10.5.8") + 1);
+	strcpy(value->name, "10.5.8");
+	return;
+#else
+use_default:
+    {
 	/*
 	 * The default value is the version of the running OS.
 	 */
+	char osversion[32];
+	size_t osversion_len;
+	static int osversion_name[2];
 	osversion_name[0] = CTL_KERN;
 	osversion_name[1] = KERN_OSRELEASE;
 	osversion_len = sizeof(osversion) - 1;
@@ -162,5 +173,7 @@ warn_if_bad_user_values:
 		warning("unknown MACOSX_DEPLOYMENT_TARGET environment "
 			"variable value: %s ignored (using %s)", p,value->name);
 	}
+    }
+#endif
 }
 #endif /* !defined(RLD) */

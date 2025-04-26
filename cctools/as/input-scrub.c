@@ -388,6 +388,7 @@ char *filename)
   fprintf (stderr,"as:file(%s) %s! ",
 	   filename, gripe
 	   );
+#if __APPLE__
   if (errno > sys_nerr)
     {
       fprintf (stderr, "Unknown error #%d.", errno);
@@ -396,6 +397,10 @@ char *filename)
     {
       fprintf (stderr, "%s.", sys_errlist [errno]);
     }
+#else
+  perror ("");
+#endif
+
   (void)putc('\n', stderr);
   errno = 0;			/* After reporting, clear it. */
   if (input_file_is_open())	/* RMS says don't mention line # if not needed. */
