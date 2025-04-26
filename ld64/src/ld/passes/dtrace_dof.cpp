@@ -32,6 +32,10 @@
 #include <map>
 #include <ext/hash_map>
 
+#if !__APPLE__
+#include "strl.h"
+#endif
+
 #include "ld.hpp"
 #include "MachOFileAbstraction.hpp"
 #include "dtrace_dof.h"

@@ -33,6 +33,10 @@
 #include <ext/hash_map>
 #include <ext/hash_set>
 
+#if __APPLE__
+#else
+# include "strl.h"
+#endif
 
 #include "Options.h"
 

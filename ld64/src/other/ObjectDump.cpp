@@ -33,6 +33,11 @@
 
 #include <cstdarg>
 #include <cstdio>
+#if !__APPLE__
+# include "strl.h"
+# include "assert_rtn.h"
+#endif
+
 #include "MachOFileAbstraction.hpp"
 #include "parsers/macho_relocatable_file.h"
 #if LTO_SUPPORT

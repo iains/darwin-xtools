@@ -32,8 +32,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#if __APPLE__
 #include <dlfcn.h>
 #include <mach-o/dyld_priv.h>
+#endif
 
 #include "FileAbstraction.hpp"
 #include "libunwind.h"
@@ -252,7 +255,7 @@ LocalAddressSpace::getEncodedP(pint_t& addr, pint_t end, uint8_t encoding)
 
 inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_t& dwarfStart, pint_t& dwarfLen, pint_t& compactStart)
 {
-#if 0
+#if __APPLE__
 	dyld_unwind_sections info;
 	if ( _dyld_find_unwind_sections((void*)addr, &info) ) {
 		mh				= (pint_t)info.mh;
@@ -268,6 +271,7 @@ inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_
 
 inline bool	LocalAddressSpace::findFunctionName(pint_t addr, char* buf, size_t bufLen, unw_word_t* offset)
 {
+#if __APPLE__
 	dl_info dyldInfo;
 	if ( dladdr((void*)addr, &dyldInfo) ) {
 		if ( dyldInfo.dli_sname != NULL ) {
@@ -276,6 +280,7 @@ inline bool	LocalAddressSpace::findFunctionName(pint_t addr, char* buf, size_t b
 			return true;
 		}
 	}
+#endif
 	return false;
 }
 

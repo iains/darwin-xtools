@@ -55,6 +55,10 @@ if(XTOOLS_LTO_SUPPORT)
 endif()
 add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_DBL}")
 
+
 add_executable(ld ${LD64_SOURCES})
+if(NOT APPLE)
+target_link_libraries(ld crypto ssl uuid dl)
+endif()
 
 install(TARGETS ld DESTINATION bin)

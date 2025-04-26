@@ -47,8 +47,17 @@
 
 #include <uuid/uuid.h>
 
+#if __APPLE__
 # include <CommonCrypto/CommonDigest.h>
 # include <AvailabilityMacros.h>
+#else
+# if __has_include (<sys/statfs.h>)
+#  include <sys/statfs.h>
+# endif
+# include <openssl/md5.h>
+# include "openssl-shim.h"
+# include "strl.h"
+#endif
 #include "maxpathlen.h"
 
 #include "MachOTrie.hpp"
@@ -2775,6 +2784,8 @@ void OutputFile::writeOutputFile(ld::Internal& state)
 		if (stat_buf.st_mode & S_IFREG) {
 			outputIsRegularFile = true;
 			// <rdar://problem/12264302> Don't use mmap on non-hfs volumes
+			outputIsMappableFile = false;
+#if __APPLE__
 			struct statfs fsInfo;
 			if ( statfs(_options.outputFilePath(), &fsInfo) != -1 ) {
 				if ( strcmp(fsInfo.f_fstypename, "hfs") == 0) {
@@ -2782,9 +2793,7 @@ void OutputFile::writeOutputFile(ld::Internal& state)
 					outputIsMappableFile = true;
 				}
 			}
-			else {
-				outputIsMappableFile = false;
-			}
+#endif
 		} 
 		else {
 			outputIsRegularFile = false;
@@ -2799,12 +2808,14 @@ void OutputFile::writeOutputFile(ld::Internal& state)
 		char* end = strrchr(dirPath, '/');
 		if ( end != NULL ) {
 			end[1] = '\0';
+#if __APPLE__
 			struct statfs fsInfo;
 			if ( statfs(dirPath, &fsInfo) != -1 ) {
 				if ( strcmp(fsInfo.f_fstypename, "hfs") == 0) {
 					outputIsMappableFile = true;
 				}
 			}
+#endif
 		}
 	}
 	

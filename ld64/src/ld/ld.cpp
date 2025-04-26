@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <execinfo.h>
 
+#if __APPLE__
 # include <sys/sysctl.h>
 # include <mach/mach_time.h>
 # include <mach/vm_statistics.h>
@@ -33,6 +34,13 @@
 # include <mach/mach_host.h>
 # include <mach-o/dyld.h>
 # include <AvailabilityMacros.h>
+#else
+# if __has_include (<sys/time.h>)
+#  include <sys/time.h> // gettimeofday.
+# else
+#  include <time.h> // gettimeofday.
+# endif
+#endif
 
 #include <cstdio>
 #include <string>
@@ -84,8 +92,10 @@ struct PerformanceStatistics {
 	uint64_t						startPasses;
 	uint64_t						startOutput;
 	uint64_t						startDone;
+#if __APPLE__
 	vm_statistics_data_t			vmStart;
 	vm_statistics_data_t			vmEnd;
+#endif
 };
 
 
@@ -560,12 +570,16 @@ void InternalState::sortSections(bool useQuick)
 	//	fprintf(stderr, "final section %p %s/%s\n", (*it), (*it)->segmentName(), (*it)->sectionName());
 	//}
 
+#if __APPLE__
 	// Once we've applied branch islands, we must ensure that sections in the __TEXT segment that compare
 	// equal are stably ordered.
 	if (useQuick)
+#endif
 	  qsort(&sections[0], sections.size(), sizeof(FinalSection*), &InternalState::FinalSection::sectionComparer);
+#if __APPLE__
 	else
 	  mergesort(&sections[0], sections.size(), sizeof(FinalSection*), &InternalState::FinalSection::sectionComparer);
+#endif
 	//fprintf(stderr, "SORTED final sections:\n");
 	//for (std::vector<ld::Internal::FinalSection*>::iterator it = sections.begin(); it != sections.end(); ++it) {
 	//	fprintf(stderr, "final section %p %s/%s\n", (*it), (*it)->segmentName(), (*it)->sectionName());
@@ -905,15 +919,32 @@ static char* commatize(uint64_t in, char* out)
 	return result;
 }
 
+static uint64_t
+get_tool_time () {
+#if __APPLE__
+  return mach_absolute_time();
+#else
+  struct timeval tv;
+  if (gettimeofday(&tv,NULL))
+    return 0;
+  return ((uint64_t)tv.tv_sec * 1000000ULL) + (uint64_t)tv.tv_usec;
+#endif
+}
+
 static void printTime(const char* msg, uint64_t partTime, uint64_t totalTime)
 {
 	static uint64_t sUnitsPerSecond = 0;
+#if __APPLE__
 	if ( sUnitsPerSecond == 0 ) {
 		struct mach_timebase_info timeBaseInfo;
 		if ( mach_timebase_info(&timeBaseInfo) != KERN_SUCCESS )
       return;
     sUnitsPerSecond = 1000000000ULL * timeBaseInfo.denom / timeBaseInfo.numer;
 	}
+#else
+	if ( sUnitsPerSecond == 0 )
+		sUnitsPerSecond = 1000000ULL;
+#endif
 	if ( partTime < sUnitsPerSecond ) {
 		uint32_t milliSecondsTimeTen = (partTime*10000)/sUnitsPerSecond;
 		uint32_t milliSeconds = milliSecondsTimeTen/10;
@@ -930,7 +961,7 @@ static void printTime(const char* msg, uint64_t partTime, uint64_t totalTime)
 	}
 }
 
-
+#if __APPLE__
 static void getVMInfo(vm_statistics_data_t& info)
 {
 	mach_msg_type_number_t count = sizeof(vm_statistics_data_t) / sizeof(natural_t);
@@ -940,8 +971,7 @@ static void getVMInfo(vm_statistics_data_t& info)
 		bzero(&info, sizeof(vm_statistics_data_t));
 	}
 }
-
-
+#endif
 
 static const char* sOverridePathlibLTO = NULL;
 
@@ -967,7 +997,7 @@ int main(int argc, const char* argv[])
 	bool archInferred = false;
 	try {
 		PerformanceStatistics statistics;
-		statistics.startTool = mach_absolute_time();
+		statistics.startTool = get_tool_time();
 		
 		// create object to track command line arguments
 		Options options(argc, argv);
@@ -976,9 +1006,11 @@ int main(int argc, const char* argv[])
 		// allow libLTO to be overridden by command line -lto_library
 		sOverridePathlibLTO = options.overridePathlibLTO();
 		
+#if __APPLE__
 		// gather vm stats
 		if ( options.printStatistics() )
 			getVMInfo(statistics.vmStart);
+#endif
 
 		// update strings for error messages
 		showArch = options.printArchPrefix();
@@ -986,23 +1018,23 @@ int main(int argc, const char* argv[])
 		archInferred = (options.architecture() == 0);
 		
 		// open and parse input files
-		statistics.startInputFileProcessing = mach_absolute_time();
+		statistics.startInputFileProcessing = get_tool_time();
 		ld::tool::InputFiles inputFiles(options, &archName);
 		
 		// load and resolve all references
-		statistics.startResolver = mach_absolute_time();
+		statistics.startResolver = get_tool_time();
 		ld::tool::Resolver resolver(options, inputFiles, state);
 		resolver.resolve();
         
 		// add dylibs used
-		statistics.startDylibs = mach_absolute_time();
+		statistics.startDylibs = get_tool_time();
 		inputFiles.dylibs(state);
 	
 		// do initial section sorting so passes have rough idea of the layout
 		state.sortSections(/* useQuick */true);
 
 		// run passes
-		statistics.startPasses = mach_absolute_time();
+		statistics.startPasses = get_tool_time();
 		ld::passes::objc::doPass(options, state);
 		ld::passes::stubs::doPass(options, state);
 		ld::passes::huge::doPass(options, state);
@@ -1026,15 +1058,17 @@ int main(int argc, const char* argv[])
 		state.sortSections(/* useQuick */false);
 
 		// write output file
-		statistics.startOutput = mach_absolute_time();
+		statistics.startOutput = get_tool_time();
 		ld::tool::OutputFile out(options);
 		out.write(state);
-		statistics.startDone = mach_absolute_time();
+		statistics.startDone = get_tool_time();
 		
 		// print statistics
 		//mach_o::relocatable::printCounts();
 		if ( options.printStatistics() ) {
+#if __APPLE__
 			getVMInfo(statistics.vmEnd);
+#endif
 			uint64_t totalTime = statistics.startDone - statistics.startTool;
 			printTime("ld total time", totalTime, totalTime);
 			printTime(" option parsing time", statistics.startInputFileProcessing  -	statistics.startTool,				totalTime);
@@ -1043,10 +1077,12 @@ int main(int argc, const char* argv[])
 			printTime(" build atom list", statistics.startPasses				 -	statistics.startDylibs,				totalTime);
 			printTime(" passess", statistics.startOutput				 -	statistics.startPasses,				totalTime);
 			printTime(" write output", statistics.startDone				 -	statistics.startOutput,				totalTime);
+#if __APPLE__
 			fprintf(stderr, "pageins=%u, pageouts=%u, faults=%u\n", 
 								statistics.vmEnd.pageins-statistics.vmStart.pageins,
 								statistics.vmEnd.pageouts-statistics.vmStart.pageouts, 
 								statistics.vmEnd.faults-statistics.vmStart.faults);
+#endif
 			char temp[40];
 			fprintf(stderr, "processed %3u object files,  totaling %15s bytes\n", inputFiles._totalObjectLoaded, commatize(inputFiles._totalObjectSize, temp));
 			fprintf(stderr, "processed %3u archive files, totaling %15s bytes\n", inputFiles._totalArchivesLoaded, commatize(inputFiles._totalArchiveSize, temp));
@@ -1073,7 +1109,9 @@ int main(int argc, const char* argv[])
 }
 
 
-#ifndef NDEBUG
+#ifdef __cplusplus
+extern "C" {
+#endif
 // implement assert() function to print out a backtrace before aborting
 void __assert_rtn(const char* func, const char* file, int line, const char* failedexpr)
 {
@@ -1104,6 +1142,8 @@ void __assert_rtn(const char* func, const char* file, int line, const char* fail
     fprintf(stderr, "A linker snapshot was created at:\n\t%s\n", snapshot->rootDir());
 	fprintf(stderr, "ld: Assertion failed: (%s), function %s, file %s, line %d.\n", failedexpr, func, file, line);
 	exit(1);
+}
+#ifdef __cplusplus
 }
 #endif
 

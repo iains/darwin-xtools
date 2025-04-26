@@ -39,9 +39,14 @@
 #include <sys/syslimits.h>
 #endif
 
+#if __APPLE__
 # include <sys/sysctl.h>
 # include <mach-o/dyld.h>
 # include <Availability.h>
+#else
+# include "strl.h"
+#endif
+
 #include "Options.h"
 #include "Architectures.hpp"
 #include "MachOFileAbstraction.hpp"
@@ -4134,6 +4139,7 @@ void Options::reconfigureDefaults()
 		if ( getenv("RC_ProjectName") && getenv("MACOSX_DEPLOYMENT_TARGET") ) {
 			fSDKVersion = fMacVersionMin;
 		}
+#if __APPLE__
 		else {
 			int mib[2] = { CTL_KERN, KERN_OSRELEASE };
 			char kernVersStr[100];
@@ -4144,6 +4150,7 @@ void Options::reconfigureDefaults()
 				fSDKVersion = 0x000A0000 + (minor << 8);
 			}
 		}
+#endif
 	}
 	
 	// allow trie based absolute symbols if targeting new enough OS

@@ -35,6 +35,7 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#if __APPLE__
 # include <sys/sysctl.h>
 # include <mach/mach_time.h>
 # include <mach/vm_statistics.h>
@@ -42,6 +43,9 @@
 # include <mach/mach_host.h>
 # include <mach-o/dyld.h>
 # include <AvailabilityMacros.h>
+#else
+# include "maxpathlen.h"
+#endif
 
 #include <mach-o/fat.h>
 
@@ -56,7 +60,22 @@
 #include <ext/hash_map>
 #include <ext/hash_set>
 
+#if __APPLE__
 # include <libkern/OSAtomic.h>
+#else
+
+inline void
+OSAtomicIncrement32 (volatile int32_t *p) {
+   __sync_fetch_and_add (p, 1);
+}
+
+inline int64_t
+OSAtomicAdd64(int64_t theAmount, volatile int64_t *theValue) {
+   __sync_fetch_and_add (theValue, theAmount);
+   return *theValue; 
+}
+
+#endif
 
 #include "Options.h"
 
@@ -822,7 +841,7 @@ InputFiles::InputFiles(Options& opts, const char** archName)
 		// command line missing -arch, so guess arch
 		inferArchitecture(opts, archName);
 	}
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 	pthread_mutex_init(&_parseLock, NULL);
 	pthread_cond_init(&_parseWorkReady, NULL);
 	pthread_cond_init(&_newFileAvailable, NULL);
@@ -832,7 +851,7 @@ InputFiles::InputFiles(Options& opts, const char** archName)
 		throw "no object files specified";
 
 	_inputFiles.reserve(files.size());
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 	unsigned int inputFileSlot = 0;
 	_availableInputFiles = 0;
 	_parseCursor = 0;
@@ -840,7 +859,7 @@ InputFiles::InputFiles(Options& opts, const char** archName)
 	Options::FileInfo* entry;
 	for (std::vector<Options::FileInfo>::const_iterator it = files.begin(); it != files.end(); ++it) {
 		entry = (Options::FileInfo*)&(*it);
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 		// Assign input file slots to all the FileInfos.
 		// Also chain all FileInfos into one big list to set up for worker threads to do parsing.
 		entry->inputFileSlot = inputFileSlot;
@@ -855,7 +874,7 @@ InputFiles::InputFiles(Options& opts, const char** archName)
 #endif
 	}
 	
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 	_remainingInputFiles = files.size();
 	
 	// initialize info for parsing input files on worker threads
@@ -886,7 +905,7 @@ InputFiles::InputFiles(Options& opts, const char** archName)
 }
 
 
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 void InputFiles::startThread(void (*threadFunc)(InputFiles *)) const {
 	pthread_t thread;
 	pthread_attr_t attr;
@@ -1033,7 +1052,7 @@ ld::File* InputFiles::addDylib(ld::dylib::File* reader, const Options::FileInfo&
 }
 
 
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 // Called during pipelined linking to listen for available input files.
 // Available files are enqueued for parsing.
 void InputFiles::waitForInputFiles()
@@ -1099,7 +1118,7 @@ void InputFiles::forEachInitialAtom(ld::File::AtomHandler& handler, ld::Internal
 	size_t fileIndex;
 	for (fileIndex=0; fileIndex<_inputFiles.size(); fileIndex++) {
 		ld::File *file;
-#if HAVE_PTHREADS
+#if HAVE_PTHREADS && __APPLE__
 		pthread_mutex_lock(&_parseLock);
 		
 		// this loop waits for the needed file to be ready (parsed by worker thread)

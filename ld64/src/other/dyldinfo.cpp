@@ -31,6 +31,10 @@
 #include <unistd.h>
 #include <errno.h>
 
+#if !__APPLE__
+# include "strl.h"
+#endif
+
 #include <vector>
 #include <set>
 #include <ext/hash_set>

@@ -45,7 +45,7 @@ include_directories("${CMAKE_BINARY_DIR}/ld64")
 # If we re-use components (e.g. libprunetrie) we need the libc++ stuff to
 # match up.
 
-set(LD64_CXX_FLAGS)
+set(LD64_CXX_FLAGS -D__DARWIN_UNIX03=1)
 if(XTOOLS_C_HAS_FNOCOMMON_FLAG)
      set(LD64_CXX_FLAGS "-fno-common")
 endif()

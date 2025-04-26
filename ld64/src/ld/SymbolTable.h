@@ -34,12 +34,14 @@
 #include <limits.h>
 #include <unistd.h>
 #include <dlfcn.h>
+#if __APPLE__
 # include <sys/sysctl.h>
 # include <mach/mach_time.h>
 # include <mach/vm_statistics.h>
 # include <mach/mach_init.h>
 # include <mach/mach_host.h>
 # include <mach-o/dyld.h>
+#endif
 
 #include <vector>
 #include <ext/hash_map>
