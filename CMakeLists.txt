@@ -228,11 +228,28 @@ if(NOT XTOOLS_HAS_UUID)
     set (XTOOLS_HAS_UUID 1)
   endif()
 endif()
+
+if(NOT XTOOLS_HAS_SSL_MD5 AND NOT APPLE)
+  message(STATUS "*Top Level* need to build openssl for ${triple} with config ${openssl_config}")
+  ExternalProject_Add(openssl
+                      PREFIX ${CMAKE_BINARY_DIR}/openssl
+                        URL ${CMAKE_SOURCE_DIR}/archs/openssl-1.1.1l.tar.gz
+                        CONFIGURE_COMMAND
+                        ${CMAKE_BINARY_DIR}/openssl/src/openssl/Configure
+                        --prefix=${CMAKE_BINARY_DIR}/openssl no-shared ${openssl_config}
+                        AR=${AR_FOR_TARGET} RANLIB=${RANLIB_FOR_TARGET}
+                        CC=${CMAKE_C_COMPILER} > conf.txt
+                        BUILD_COMMAND make > bld.txt 2>&1
+                        INSTALL_COMMAND make install > ins.txt 2>&1)
+    include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/openssl/include")
+    link_directories("${CMAKE_BINARY_DIR}/openssl/lib")
+endif()
+
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)
 endif()
-
+ 
 set(XTOOLS_HAS_LIBPRUNETRIE)
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/src/other/PruneTrie.cpp)
   # We need to do this here, because cctools and ld items both want it.

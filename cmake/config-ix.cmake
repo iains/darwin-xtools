@@ -68,3 +68,8 @@ if(NOT APPLE)
 set(CMAKE_REQUIRED_LIBRARIES "uuid")
 endif()
 check_function_exists(uuid_generate_random XTOOLS_HAS_UUID)
+
+if(NOT APPLE)
+set(CMAKE_REQUIRED_LIBRARIES "crypto;ssl")
+check_function_exists(MD5_Init XTOOLS_HAS_SSL_MD5)
+endif()
