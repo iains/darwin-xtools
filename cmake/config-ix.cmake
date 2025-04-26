@@ -63,3 +63,8 @@ if (FALSE)
   set(CMAKE_REQUIRED_LIBRARIES "xar")
   check_function_exists(xar_extract_tobuffersz XTOOLS_HAS_MODERNXAR)
 endif()
+
+if(NOT APPLE)
+set(CMAKE_REQUIRED_LIBRARIES "uuid")
+endif()
+check_function_exists(uuid_generate_random XTOOLS_HAS_UUID)

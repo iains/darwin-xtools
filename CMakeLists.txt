@@ -205,6 +205,29 @@ configure_file(${CMAKE_SOURCE_DIR}/host-includes/maxpathlen.h
 configure_file(${CMAKE_SOURCE_DIR}/host-includes/private-extern.h
                ${CMAKE_BINARY_DIR}/host-includes/private-extern.h
                COPYONLY)
+
+include(ExternalProject)
+if(NOT XTOOLS_HAS_UUID)
+  if(APPLE)
+    message(STATUS "*Top Level* bad news ... we did not find uuid")
+  else()
+    message(STATUS "*Top Level* need to build uuid for ${triple}")
+    ExternalProject_Add(libuuid
+                        PREFIX ${CMAKE_BINARY_DIR}/libuuid
+                        URL ${CMAKE_SOURCE_DIR}/archs/libuuid.tar.gz
+                        CONFIGURE_COMMAND
+                        ${CMAKE_BINARY_DIR}/libuuid/src/libuuid/configure
+                        --prefix=${CMAKE_BINARY_DIR}/libuuid
+                        --host=${triple} --disable-all-programs
+                        --disable-shared --enable-libuuid
+                        AR=${AR_FOR_TARGET} RANLIB=${RANLIB_FOR_TARGET} > conf.txt
+                        BUILD_COMMAND make > bld.txt 2>&1
+                        INSTALL_COMMAND make install > ins.txt 2>&1)
+    include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/libuuid/include")
+    link_directories("${CMAKE_BINARY_DIR}/libuuid/lib")
+    set (XTOOLS_HAS_UUID 1)
+  endif()
+endif()
 # Evaluate first so that we find out about libprunetrie.
 if( EXISTS ${CMAKE_SOURCE_DIR}/ld64/CMakeLists.txt )
   add_subdirectory(ld64)
