@@ -29,7 +29,12 @@
 #include <stdbool.h>
 
 #include <mach-o/loader.h>
+#ifdef __APPLE__
 #include <Availability.h>
+#else
+#define __OSX_AVAILABLE_STARTING(A,B)
+#define __OSX_AVAILABLE_BUT_DEPRECATED(A,B,C,D)
+#endif
 
 #if __cplusplus
 extern "C" {

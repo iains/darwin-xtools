@@ -25,7 +25,6 @@
 #define _MACH_O_DYLD_PRIV_H_
 
 #include <stdbool.h>
-#include <Availability.h>
 #include <mach-o/dyld.h>
 #include <mach-o/dyld_images.h>
 
