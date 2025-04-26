@@ -639,7 +639,7 @@ void File<A>::addSymbol(const char* name, bool weakDef, bool tlv, pint_t address
 						return;
 					}
 					else if ( strncmp(symAction, "install_name$", 13) == 0 ) {
-						_dylibInstallPath = symName;
+						_dylibInstallPath = strdup(symName);
 						_installPathOverride = true;
 						// <rdar://problem/14448206> CoreGraphics redirects to ApplicationServices, but with wrong compat version
 						if ( strcmp(_dylibInstallPath, "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices") == 0 )
