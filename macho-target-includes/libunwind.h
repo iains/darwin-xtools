@@ -35,7 +35,11 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <Availability.h>
+#if __APPLE__
+# include <Availability.h>
+#else
+# define __OSX_AVAILABLE_STARTING(__X,__Y)
+#endif
 
 /* error codes */
 enum {
