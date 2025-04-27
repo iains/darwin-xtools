@@ -1,4 +1,4 @@
-# Darwin Xtools 0.7.0 r0
+# Darwin Xtools 0.7.0r0
 
 ## Overview
 
@@ -18,7 +18,7 @@ The sub-projects are
  * dyld ; actually only used for headers
  * several stub libraries used when support is needed on older systems.
 
-## Support for 'legacy' MacOSX versions - 0.7.0-pre-release-0
+## Support for 'legacy' MacOSX versions - 0.7.0r0
 
 This is a special release specifically supporting MacOSX 10.5 through 10.8 where the system C++ runtime is C++98.
 
@@ -117,7 +117,11 @@ You can also run the same tests using the Apple tools on the system:
 
 ## Changes
 
-0.7.0 p0
+0.7.0r0 April 2025
+
+Initial release, this has one additional bug-fix to ld64 in addition to the prelease fixes (a fix to a memory management issue that caused install-name-overrides to fail).
+
+0.7.0p0
 
 Initial release of this legacy support.
 
