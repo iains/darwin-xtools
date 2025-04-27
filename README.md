@@ -1,6 +1,12 @@
-# Darwin Xtools 0.7.0 r0
+# Linux Xtools 0.7.0r0
 
 ## Overview
+
+This is a Linux port of the Darwin Xtools; this edition should be suitable for building cross-compilers to powerpc, powerpc64, i686 and x86_64 on Darwin versions from 9 through 12 (MacOSX10.5 to 10.8).
+
+The package requires libuuid and MD5 crypto support, which will be built from source if not available on the system.  Otherwise, the comments below for Darwin apply equally here.
+
+----
 
 This is a project that collects together several Open Source sub-projects from the Darwin (OS X) opensource repository (http://www.opensource.apple.com/darwinsource/)
 
@@ -18,7 +24,7 @@ The sub-projects are
  * dyld ; actually only used for headers
  * several stub libraries used when support is needed on older systems.
 
-## Support for 'legacy' MacOSX versions - 0.7.0-pre-release-0
+## Support for 'legacy' MacOSX versions - 0.7.0r0
 
 This is a special release specifically supporting MacOSX 10.5 through 10.8 where the system C++ runtime is C++98.
 
@@ -117,7 +123,11 @@ You can also run the same tests using the Apple tools on the system:
 
 ## Changes
 
-0.7.0 p0
+0.7.0r0
 
-Initial release of this legacy support.
+Initial release, this has one additional bug-fix to ld64 in addition to the prelease fixes (a fix to a memory management issue that caused install-name-overrides to fail).
+
+0.7.0p0
+
+Initial pre-release of this legacy support.
 
