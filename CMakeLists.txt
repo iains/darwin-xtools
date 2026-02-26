@@ -64,7 +64,10 @@ else()
   message(STATUS "*Top Level* NO LTO")
 endif()
 
-if(XTOOLS_TAPI_PATH AND
+if(XTOOLS_USE_TAPILITE)
+  option(XTOOLS_TAPI_SUPPORT "Support TAPI in ld64." ON)
+  message(STATUS "*Top Level* WITH TAPIlite")
+elseif(XTOOLS_TAPI_PATH AND
    EXISTS ${XTOOLS_TAPI_PATH}/include/tapi AND
    EXISTS ${XTOOLS_TAPI_PATH}/lib/libtapi.dylib)
   configure_file(
@@ -128,8 +131,13 @@ include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/macho-target-includes")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/include")
 include_directories(BEFORE SYSTEM "${CMAKE_BINARY_DIR}/host-includes")
 if(XTOOLS_TAPI_SUPPORT)
-  include_directories(BEFORE SYSTEM "${XTOOLS_TAPI_PATH}/include")
-  message(STATUS "*Top Level* including ${XTOOLS_TAPI_PATH}/include")
+  if(XTOOLS_USE_TAPILITE)
+    include_directories(BEFORE SYSTEM "${CMAKE_SOURCE_DIR}/tapilite/include")
+    message(STATUS "*Top Level* including ${CMAKE_SOURCE_DIR}/tapilite/include")
+  else()
+    include_directories(BEFORE SYSTEM "${XTOOLS_TAPI_PATH}/include")
+    message(STATUS "*Top Level* including ${XTOOLS_TAPI_PATH}/include")
+  endif()
 endif()
 
 if (EXISTS ${CMAKE_BINARY_DIR}/lib)
@@ -158,6 +166,15 @@ if (NOT XTOOLS_HAS_MODERNXAR)
                 ${CMAKE_SOURCE_DIR}/xar-additions/xar.h
                 ${CMAKE_BINARY_DIR}/host-includes/xar/xar.h
                 COPYONLY)
+endif()
+
+# build tapilite first, so ld64 can link against it
+if(XTOOLS_USE_TAPILITE)
+  if(EXISTS ${XTOOLS_LIBYAML_PATH}/CMakeLists.txt)
+    add_subdirectory(${XTOOLS_LIBYAML_PATH})
+    include_directories("${CMAKE_SOURCE_DIR}/libyaml/include")
+  endif ()
+  add_subdirectory(tapilite)
 endif()
 
 # Evaluate first so that we find out about libprunetrie.

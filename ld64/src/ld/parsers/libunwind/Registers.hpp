@@ -43,6 +43,55 @@
 namespace libunwind {
 
 
+#ifndef i386_thread_state_t
+struct _i386_thread_state_t
+{
+    unsigned int	__eax;
+    unsigned int	__ebx;
+    unsigned int	__ecx;
+    unsigned int	__edx;
+    unsigned int	__edi;
+    unsigned int	__esi;
+    unsigned int	__ebp;
+    unsigned int	__esp;
+    unsigned int	__ss;
+    unsigned int	__eflags;
+    unsigned int	__eip;
+    unsigned int	__cs;
+    unsigned int	__ds;
+    unsigned int	__es;
+    unsigned int	__fs;
+    unsigned int	__gs;
+};
+#define i386_thread_state_t _i386_thread_state_t
+#endif
+#ifndef x86_thread_state64_t
+struct _x86_thread_state64_t
+{
+	__uint64_t	__rax;
+	__uint64_t	__rbx;
+	__uint64_t	__rcx;
+	__uint64_t	__rdx;
+	__uint64_t	__rdi;
+	__uint64_t	__rsi;
+	__uint64_t	__rbp;
+	__uint64_t	__rsp;
+	__uint64_t	__r8;
+	__uint64_t	__r9;
+	__uint64_t	__r10;
+	__uint64_t	__r11;
+	__uint64_t	__r12;
+	__uint64_t	__r13;
+	__uint64_t	__r14;
+	__uint64_t	__r15;
+	__uint64_t	__rip;
+	__uint64_t	__rflags;
+	__uint64_t	__cs;
+	__uint64_t	__fs;
+	__uint64_t	__gs;
+};
+#define x86_thread_state64_t _x86_thread_state64_t
+#endif
 ///
 /// Registers_x86 holds the register state of a thread in a 32-bit intel process.  
 ///

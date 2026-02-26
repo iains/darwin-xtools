@@ -76,4 +76,4 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/abstraction")
 add_subdirectory(ld)
 add_subdirectory(other)
 
-add_library(prunetrie other/PruneTrie.cpp)
+add_library(prunetrie STATIC other/PruneTrie.cpp)
