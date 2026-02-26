@@ -3,3 +3,4 @@ ld64-*
 zPATCHES
 cctools-*
 libtapi*
+build/*
