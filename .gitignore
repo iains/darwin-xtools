@@ -4,3 +4,6 @@ zPATCHES
 cctools-*
 libtapi*
 build/*
+*.xcuserstate
+*.xcuserdatad
+*/xcuserdata/*
