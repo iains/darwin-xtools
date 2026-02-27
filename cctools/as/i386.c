@@ -574,9 +574,7 @@ void md_number_to_chars (char *buf, signed_expr_t val, int n) {
 #endif
 
 void
-i386_align_code (fragP, count)
-     fragS *fragP;
-     int count;
+i386_align_code (fragS *fragP, int count)
 {
   /* Various efficient no-op patterns for aligning code labels.
      Note: Don't try to assemble the instructions in the comments.
@@ -688,35 +686,30 @@ mode_from_disp_size (unsigned int t)
 }
 
 static INLINE int
-fits_in_signed_byte (num)
-     offsetT num;
+fits_in_signed_byte(offsetT num)
 {
   return (num >= -128) && (num <= 127);
 }
 
 static INLINE int
-fits_in_unsigned_byte (num)
-     offsetT num;
+fits_in_unsigned_byte(offsetT num)
 {
   return (num & 0xff) == num;
 }
 
 static INLINE int
-fits_in_unsigned_word (num)
-     offsetT num;
+fits_in_unsigned_word(offsetT num)
 {
   return (num & 0xffff) == num;
 }
 
 static INLINE int
-fits_in_signed_word (num)
-     offsetT num;
+fits_in_signed_word(offsetT num)
 {
   return (-32768 <= num) && (num <= 32767);
 }
 static INLINE int
-fits_in_signed_long (num)
-     offsetT num ATTRIBUTE_UNUSED;
+fits_in_signed_long(offsetT num ATTRIBUTE_UNUSED)
 {
 #if !defined(BFD64)
   return 1;
@@ -732,8 +725,7 @@ fits_in_signed_long (num)
 #endif
 }				/* fits_in_signed_long() */
 static INLINE int
-fits_in_unsigned_long (num)
-     offsetT num ATTRIBUTE_UNUSED;
+fits_in_unsigned_long(offsetT num ATTRIBUTE_UNUSED)
 {
 #if !defined(BFD64)
   return 1;
@@ -743,8 +735,7 @@ fits_in_unsigned_long (num)
 }				/* fits_in_unsigned_long() */
 
 static int
-smallest_imm_type (num)
-     offsetT num;
+smallest_imm_type(offsetT num)
 {
   if (cpu_arch_flags != (Cpu086 | Cpu186 | Cpu286 | Cpu386 | Cpu486 | CpuNo64))
     {
@@ -770,9 +761,7 @@ smallest_imm_type (num)
 }
 
 static offsetT
-offset_in_range (val, size)
-     offsetT val;
-     int size;
+offset_in_range(offsetT val, int size)
 {
   addressT mask;
 
@@ -1244,8 +1233,7 @@ pi (char *line, i386_insn *x)
 }
 
 static void
-pte (t)
-     template *t;
+pte(template *t)
 {
   unsigned int i;
   fprintf (stdout, " %d operands ", t->operands);
@@ -1266,8 +1254,7 @@ pte (t)
 }
 
 static void
-pe (e)
-     expressionS *e;
+pe(expressionS *e)
 {
   fprintf (stdout, "    operation     %d\n", e->X_op);
   fprintf (stdout, "    add_number    %ld (%lx)\n",
@@ -1287,8 +1274,7 @@ pe (e)
 }
 
 static void
-ps (s)
-     symbolS *s;
+ps(symbolS *s)
 {
   fprintf (stdout, "%s type %s%s",
 	   S_GET_NAME (s),
@@ -1425,8 +1411,7 @@ reloc (int size, int pcrel, int sign, bfd_reloc_code_real_type other)
    some cases we force the original symbol to be used.  */
 
 int
-tc_i386_fix_adjustable (fixP)
-     fixS *fixP ATTRIBUTE_UNUSED;
+tc_i386_fix_adjustable(fixS *fixP ATTRIBUTE_UNUSED)
 {
 #if defined (OBJ_ELF) || defined (OBJ_MAYBE_ELF)
   if (OUTPUT_FLAVOR != bfd_target_elf_flavour)
@@ -3109,7 +3094,7 @@ process_operands (void)
 }
 
 static const seg_entry *
-build_modrm_byte ()
+build_modrm_byte(void)
 {
   const seg_entry *default_seg = 0;
 
@@ -3796,9 +3781,7 @@ output_insn (void)
 }
 
 static void
-output_disp (insn_start_frag, insn_start_off)
-    fragS *insn_start_frag;
-    offsetT insn_start_off;
+output_disp(fragS *insn_start_frag, offsetT insn_start_off)
 {
   char *p;
   unsigned int n;
@@ -3968,9 +3951,7 @@ output_disp (insn_start_frag, insn_start_off)
 }
 
 static void
-output_imm (insn_start_frag, insn_start_off)
-    fragS *insn_start_frag;
-    offsetT insn_start_off;
+output_imm(fragS *insn_start_frag, offsetT insn_start_off)
 {
   char *p;
   unsigned int n;
@@ -4280,11 +4261,8 @@ static enum bfd_reloc_code_real got_reloc = NO_RELOC;
 
 #if !NeXT_MOD || ARCH64
 void
-x86_cons_fix_new (frag, off, len, exp)
-     fragS *frag;
-     unsigned int off;
-     unsigned int len;
-     expressionS *exp;
+x86_cons_fix_new(fragS *frag, unsigned int off, unsigned int len,
+expressionS *exp)
 {
 #ifdef NeXT_MOD
   bfd_reloc_code_real_type r = reloc (len, 0, 0, got_reloc);
@@ -4306,9 +4284,7 @@ segT
 #else
 void
 #endif
-x86_cons (exp, size)
-     expressionS *exp;
-     int size;
+x86_cons(expressionS *exp, int size)
 {
 #ifdef NeXT_MOD
   segT segment;
@@ -5389,11 +5365,8 @@ int md_long_jump_size = 5;
 const int md_reloc_size = 8;
 
 void
-md_create_short_jump (ptr, from_addr, to_addr, frag, to_symbol)
-     char *ptr;
-     addressT from_addr, to_addr;
-     fragS *frag ATTRIBUTE_UNUSED;
-     symbolS *to_symbol ATTRIBUTE_UNUSED;
+md_create_short_jump(char *ptr, addressT from_addr, addressT to_addr,
+fragS *frag ATTRIBUTE_UNUSED, symbolS *to_symbol ATTRIBUTE_UNUSED)
 {
   offsetT offset;
 
@@ -5404,11 +5377,8 @@ md_create_short_jump (ptr, from_addr, to_addr, frag, to_symbol)
 }
 
 void
-md_create_long_jump (ptr, from_addr, to_addr, frag, to_symbol)
-     char *ptr;
-     addressT from_addr, to_addr;
-     fragS *frag ATTRIBUTE_UNUSED;
-     symbolS *to_symbol ATTRIBUTE_UNUSED;
+md_create_long_jump(char *ptr, addressT from_addr, addressT to_addr,
+fragS *frag ATTRIBUTE_UNUSED, symbolS *to_symbol ATTRIBUTE_UNUSED)
 {
   offsetT offset;
 
@@ -5679,9 +5649,7 @@ output_invalid (int c)
 /* REG_STRING starts *before* REGISTER_PREFIX.  */
 
 static const reg_entry *
-parse_register (reg_string, end_op)
-     char *reg_string;
-     char **end_op;
+parse_register(char *reg_string, char **end_op)
 {
   char *s = reg_string;
   char *p;
@@ -5840,8 +5808,7 @@ md_parse_option (c, arg)
 }
 
 void
-md_show_usage (stream)
-     FILE *stream;
+md_show_usage(FILE *stream)
 {
 #if defined (OBJ_ELF) || defined (OBJ_MAYBE_ELF)
   fprintf (stream, _("\
@@ -5966,9 +5933,7 @@ md_undefined_symbol (name)
 /* Round up a section size to the appropriate boundary.  */
 
 valueT
-md_section_align (segment, size)
-     segT segment ATTRIBUTE_UNUSED;
-     valueT size;
+md_section_align(segT segment ATTRIBUTE_UNUSED, valueT size)
 {
 #if (defined (OBJ_AOUT) || defined (OBJ_MAYBE_AOUT))
   if (OUTPUT_FLAVOR == bfd_target_aout_flavour)
@@ -6018,8 +5983,7 @@ s_bss (ignore)
 #endif
 
 void
-i386_validate_fix (fixp)
-     fixS *fixp;
+i386_validate_fix(fixS *fixp)
 {
   if (fixp->fx_subsy && fixp->fx_subsy == GOT_symbol)
     {
@@ -6534,9 +6498,7 @@ static int intel_e10_1		PARAMS ((void));
 static int intel_e11		PARAMS ((void));
 
 static int
-i386_intel_operand (operand_string, got_a_float)
-     char *operand_string;
-     int got_a_float;
+i386_intel_operand(char *operand_string, int got_a_float)
 {
   int ret;
   char *p;
@@ -7296,8 +7258,7 @@ intel_e11 ()
 /* Match the given token against cur_token. If they match, read the next
    token from the operand string.  */
 static int
-intel_match_token (code)
-     int code;
+intel_match_token(int code)
 {
   if (cur_token.code == code)
     {

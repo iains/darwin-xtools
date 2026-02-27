@@ -292,9 +292,7 @@ static int already_written;
  *	Write an archive member to a file.
  */
 void
-put_arobj(cfp, sb)
-	CF *cfp;
-	struct stat *sb;
+put_arobj(CF *cfp, struct stat *sb)
 {
 	unsigned int lname;
 	char *name;
@@ -398,9 +396,7 @@ put_arobj(cfp, sb)
  *	have been ripped out long ago.
  */
 void
-copy_ar(cfp, size)
-	CF *cfp;
-	off_t size;
+copy_ar(CF *cfp, off_t size)
 {
 	static char pad = '\n';
 	off_t sz;
