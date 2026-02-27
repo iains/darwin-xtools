@@ -1,6 +1,7 @@
 #include <string.h>
 
-void bar()
+void 
+bar (void)
 {
 	strcpy(NULL, NULL);
 }

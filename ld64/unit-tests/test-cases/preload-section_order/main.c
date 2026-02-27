@@ -1,5 +1,6 @@
 
 
-void entry() { 
+void 
+entry (void) { 
 }
 

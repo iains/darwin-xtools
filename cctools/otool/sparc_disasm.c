@@ -153,14 +153,12 @@ union sparc_insn
 				      strings_size, verbose)
 
 static int opcodes_sorted = 0;
-extern void qsort();
-static int compare_opcodes ();
+static int compare_opcodes(char *, char *);
 
 #ifdef NOT_USED
 /* Nonzero if INSN is the opcode for a delayed branch.  */
-static int
-is_delayed_branch (insn)
-	union sparc_insn insn;
+static int 
+is_delayed_branch (union sparc_insn insn)
 {
 	unsigned int i;
 
@@ -808,8 +806,7 @@ enum bool verbose)
 /* Compare opcodes A and B.  */
 
 static int
-compare_opcodes (a, b)
-     char *a, *b;
+compare_opcodes (char *a, char *b)
 {
   struct sparc_opcode *op0 = (struct sparc_opcode *) a;
   struct sparc_opcode *op1 = (struct sparc_opcode *) b;

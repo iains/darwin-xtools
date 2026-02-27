@@ -25,27 +25,32 @@
 
 const char kMyStr[] = "hello";
 
-int test1()
+int 
+test1 (void)
 {
 	return 10;
 }
 
-int test2()
+int 
+test2 (void)
 {
 	return 10;
 }
 
-int test3()
+int 
+test3 (void)
 {
 	return 10;
 }
 
-int test4()
+int 
+test4 (void)
 {
 	return 10;
 }
 
-const char* getstr()
+const char *
+getstr (void)
 {
 	test1();
 	test2();

@@ -26,12 +26,14 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
 
-int foo()
+int 
+foo (void)
 {
 	return 2;
 }
 
-void test()
+void 
+test (void)
 {
 #ifdef RTLD_SELF
 	if ( dlsym(RTLD_SELF, "foo") != &foo )

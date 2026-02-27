@@ -5,7 +5,8 @@ int bb = 20;
 int cc = 30;
 
 
-int main()
+int 
+main (void)
 {
   printf("%p %p\n", &aa, &cc);
 	return 0;

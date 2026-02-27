@@ -907,6 +907,8 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 	opts.setArchitecture(CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_ALL, Options::kPlatformOSX);
 #elif __arm__
 	opts.setArchitecture(CPU_TYPE_ARM, CPU_SUBTYPE_ARM_V6, Options::kPlatformOSX);
+#elif __arm64__
+	opts.setArchitecture(CPU_TYPE_ARM64, CPU_SUBTYPE_ARM64_ALL, Options::kPlatformOSX);
 #else
 	#error unknown default architecture
 #endif

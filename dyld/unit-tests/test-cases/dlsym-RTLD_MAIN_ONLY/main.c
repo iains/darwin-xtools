@@ -27,13 +27,15 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
 
-int foo()
+int 
+foo (void)
 {
 	return 0;
 }
 
 
-int main()
+int 
+main (void)
 {
 	// make sure we get the foo() in main and not the one in libfoo.dylib
  	if ( dlsym(RTLD_MAIN_ONLY, "foo") != &foo ) {

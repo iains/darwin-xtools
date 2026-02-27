@@ -1,1 +1,2 @@
-void none() {}
+void 
+none (void) {}

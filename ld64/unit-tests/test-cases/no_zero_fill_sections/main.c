@@ -26,7 +26,8 @@
 static int a[2000];
 int b[2000];
 
-int main()
+int 
+main (void)
 {
 	a[0] = 0;
 	b[0] = 0;

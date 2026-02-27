@@ -1,1 +1,2 @@
-void base() { }
+void 
+base (void) { }

@@ -65,7 +65,8 @@ static pthread_key_t				sCxaKey = 0;
 static char							sPreMainCxaGlobals[2*sizeof(long)];
 
 // called by libstdc++.a 
-char* __cxa_get_globals() 
+char *
+__cxa_get_globals (void) 
 {	
 	// if libSystem.dylib not yet initialized, or is old libSystem, use shared global
 	if ( (_ZN4dyld17gLibSystemHelpersE == NULL) || (_ZN4dyld17gLibSystemHelpersE->version < 7) )
@@ -85,7 +86,8 @@ char* __cxa_get_globals()
 }
 
 // called by libstdc++.a 
-char* __cxa_get_globals_fast() 
+char *
+__cxa_get_globals_fast (void) 
 { 
 	// if libSystem.dylib not yet initialized, or is old libSystem, use shared global
 	if ( (_ZN4dyld17gLibSystemHelpersE == NULL) || (_ZN4dyld17gLibSystemHelpersE->version < 7) )
@@ -175,7 +177,8 @@ void __Unwind_SjLj_SetThreadKey(pthread_key_t key)
 //}
 
 
-struct _Unwind_FunctionContext* __Unwind_SjLj_GetTopOfFunctionStack()
+struct _Unwind_FunctionContext *
+__Unwind_SjLj_GetTopOfFunctionStack (void)
 {
 	//_ZN4dyld3logEPKcz("__Unwind_SjLj_GetTopOfFunctionStack(),           key=%d, ", sThreadChainKey);
 	//printChain();

@@ -181,7 +181,15 @@ public:
 	}
 	
 	BlobType *clone() const
-	{ assert(validateBlob()); return specific(this->BlobCore::clone());	}
+	{
+		assert(validateBlob());
+		/* TODO: come up with a better preprocessor conditional: */
+#ifdef HAVE_Security_BlobCore_clone
+		return specific(this->BlobCore::clone());
+#else
+		return NULL;
+#endif
+	}
 
 	static BlobType *readBlob(int fd)
 	{ return specific(BlobCore::readBlob(fd, _magic, sizeof(BlobType), 0), true); }

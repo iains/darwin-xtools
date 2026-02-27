@@ -31,7 +31,8 @@
 #endif
 
 
-int main()
+int 
+main (void)
 {
 #if USE_FOO_WRONG
 	foo = 1;

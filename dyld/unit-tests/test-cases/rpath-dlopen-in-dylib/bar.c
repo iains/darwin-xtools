@@ -27,7 +27,8 @@
 
 #include "test.h"
 
-void bar()
+void 
+bar (void)
 {
 	void* handle = dlopen("libfoo.dylib", RTLD_LAZY);
 	if ( handle == NULL ) {

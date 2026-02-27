@@ -2,5 +2,6 @@
 
 int x;
 
-int foo() { return x; }
+int 
+foo (void) { return x; }
 

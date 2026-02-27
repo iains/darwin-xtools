@@ -83,9 +83,8 @@ static char rcsid[] = "$OpenBSD: delete.c,v 1.2 1996/06/26 05:31:19 deraadt Exp 
  * delete --
  *	Deletes named members from the archive.
  */
-int
-delete(argv)
-	char **argv;
+int 
+delete (char **argv)
 {
 	CF cf;
 	off_t size;

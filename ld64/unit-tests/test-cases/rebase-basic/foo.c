@@ -1,5 +1,6 @@
 
-int foo() { return 10; }
+int 
+foo (void) { return 10; }
 
 void* foop = &foo;
 

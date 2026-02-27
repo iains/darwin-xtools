@@ -48,7 +48,8 @@ void* calldlopen(const char* path, int mode, void* (*dlopen_proc)(const char* pa
 //
 // try calling dlopen() from code not owned by dyld
 //
-int main()
+int 
+main (void)
 {
 	// now try to create a page where foo() was
 	vm_address_t addr = 0;

@@ -24,13 +24,15 @@
 
 
 
-int foo_real()
+int 
+foo_real (void)
 {
 	return 10;
 }
 
 // This foo is a "resolver" function that return the actual address of "foo"
-void* foo()
+void *
+foo (void)
 {
 	__asm__(".desc _foo, 0x100");
 	return &foo_real;

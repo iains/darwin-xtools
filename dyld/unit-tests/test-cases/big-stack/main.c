@@ -49,8 +49,8 @@ void foo(unsigned long long stackSize, char* stackStart)
 }
 
 
-int
-main()
+int 
+main (void)
 {
 	char start;
   foo(STACK_SIZE, &start);	

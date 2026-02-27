@@ -29,10 +29,14 @@ const char charArray1[] = "charArray1";
 static const char charArray2[] = "charArray2";
 
 
-const char* getString() { return "string"; }
-const char* getString2() { return charArray2; }
-const char* getString3() { return charArray1; }
-const char* getString4() { return foo; }
+const char *
+getString (void) { return "string"; }
+const char *
+getString2 (void) { return charArray2; }
+const char *
+getString3 (void) { return charArray1; }
+const char *
+getString4 (void) { return foo; }
 
 
 float		f1 = 3.0;
@@ -41,9 +45,12 @@ long double ld1 = 3.0;
 
 
 
-float getSingle() { return 1.0; }
-double getDouble() { return 2.0; }
-long double getLongDouble() { return 3.0; }
+float 
+getSingle (void) { return 1.0; }
+double 
+getDouble (void) { return 2.0; }
+long double 
+getLongDouble (void) { return 3.0; }
 
 
 // rdar://problem/4732996

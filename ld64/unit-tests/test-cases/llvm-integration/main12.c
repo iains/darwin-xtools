@@ -1,5 +1,6 @@
 #include "a12.h"
-int main()
+int 
+main (void)
 {
   e[0] = ZERO;
   foo();

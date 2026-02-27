@@ -51,8 +51,13 @@ configure_file (
   )
 
 if(XTOOLS_TAPI_SUPPORT)
-  include_directories("${XTOOLS_TAPI_PATH}/include")
-  message(STATUS "*LD64* including ${XTOOLS_TAPI_PATH}/include")
+  if(XTOOLS_USE_TAPILITE)
+    include_directories("${CMAKE_SOURCE_DIR}/tapilite/include")
+    message(STATUS "*LD64* including ${CMAKE_SOURCE_DIR}/tapilite/include")
+  else()
+    include_directories("${XTOOLS_TAPI_PATH}/include")
+    message(STATUS "*LD64* including ${XTOOLS_TAPI_PATH}/include")
+  endif()
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
@@ -62,15 +67,19 @@ if(XTOOLS_LTO_SUPPORT)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lLTO")
 endif()
 
-if(XTOOLS_TAPI_SUPPORT)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltapi")
-endif()
-
 add_definitions(-DLD_VERS="xtools-ld64-${LD64_VERSION_NUM}")
 
 add_executable(ld ${LD64_SOURCES})
 if(NOT XTOOLS_HAS_MODERNXAR)
   target_link_libraries(ld xarextralib)
+endif()
+
+if(XTOOLS_TAPI_SUPPORT)
+  if(XTOOLS_USE_TAPILITE)
+    target_link_libraries(ld tapilite yaml)
+  else()
+    target_link_libraries(ld tapi)
+  endif()
 endif()
 
 install(TARGETS ld DESTINATION bin)

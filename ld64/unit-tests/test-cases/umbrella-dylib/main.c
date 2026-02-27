@@ -1,6 +1,7 @@
 extern void c1();
 extern void a1();
-int main()
+int 
+main (void)
 {
   a1();
   c1();

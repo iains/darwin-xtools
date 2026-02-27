@@ -5,12 +5,15 @@ a separate compilation unit that also has a() and b().
 
 extern void c();
 
-void a() {
+void 
+a (void) {
 }
 
-void b() {
+void 
+b (void) {
 }
 
-int main() {
+int 
+main (void) {
 c();
 }

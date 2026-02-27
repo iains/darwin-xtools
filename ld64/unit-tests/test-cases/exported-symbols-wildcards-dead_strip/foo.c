@@ -23,12 +23,18 @@
  */
 #include <stddef.h>
 
-void good() {}
-void bad() {} 
+void 
+good (void) {}
+void 
+bad (void) {} 
 
 
-void ABC() {}
-void ABD() { good(); }
-void DEF() {}
-void DEG() { bad(); }
+void 
+ABC (void) {}
+void 
+ABD (void) { good(); }
+void 
+DEF (void) {}
+void 
+DEG (void) { bad(); }
 

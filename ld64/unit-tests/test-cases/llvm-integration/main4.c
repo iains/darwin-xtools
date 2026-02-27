@@ -1,6 +1,7 @@
 extern int foo2();
 extern int foo3();
-int main(){
+int 
+main (void){
 	int i = foo3() + foo2();
 	if (i == 42)
 	  return 0;

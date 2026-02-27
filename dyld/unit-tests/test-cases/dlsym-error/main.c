@@ -28,13 +28,15 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
 
-int foo()
+int 
+foo (void)
 {
 	return 42;
 }
 
 
-int main()
+int 
+main (void)
 {
 	void* handle = (void*)0x12345;	// bogus value
 	

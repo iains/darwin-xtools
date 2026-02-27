@@ -1,1 +1,2 @@
-void junk() {}
+void 
+junk (void) {}

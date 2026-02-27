@@ -1,12 +1,14 @@
 
 extern void good();
 
-void foo() 
+void 
+foo (void) 
 {
 	good();
 }
 
-void loadme()
+void 
+loadme (void)
 {
 //	foo();
 }

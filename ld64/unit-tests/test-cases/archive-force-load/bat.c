@@ -1,1 +1,2 @@
-void bat() {}
+void 
+bat (void) {}

@@ -3,7 +3,8 @@ extern void foo();
 extern void bar();
 extern void bar_extra();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	bar();

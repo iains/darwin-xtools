@@ -73,7 +73,8 @@ static void dlsym_should_succeed(info hp, const char* symbol)
 }
 
 
-int main()
+int 
+main (void)
 {
 	int result;
 	info mainFirst		= dlopen_or_fail(NULL, RTLD_FIRST);
@@ -101,6 +102,7 @@ int main()
 }
 
 
-void main_foo() {}
+void 
+main_foo (void) {}
 
 

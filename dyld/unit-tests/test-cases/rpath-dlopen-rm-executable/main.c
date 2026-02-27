@@ -29,7 +29,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 	char buf[2048];
 	uint32_t bufSize = sizeof(buf);

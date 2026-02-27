@@ -22,12 +22,14 @@
  */
 
 
-int foo()
+int 
+foo (void)
 {
 	return 10;
 }
 
-int bar()
+int 
+bar (void)
 {
 	return 10;
 }

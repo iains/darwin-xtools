@@ -6,7 +6,8 @@
 
 #include "common.h"
 
-int main()
+int 
+main (void)
 {
 	if ( ok() )
 		PASS("upward-dylib-init-order");

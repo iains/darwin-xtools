@@ -22,7 +22,8 @@
  */
 extern int foo();
 
-void bun()
+void 
+bun (void)
 {
 	foo();
 

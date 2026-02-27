@@ -1,6 +1,7 @@
 static int my;
 
-int getmy() 
+int 
+getmy (void) 
 { 
 #if __x86_64__
 	__asm(" .quad _my");

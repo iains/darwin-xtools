@@ -18,7 +18,8 @@ int (*pbaz)() = &baz;
 int (*pfrob)() = &frob;
 
 
-int main()
+int 
+main (void)
 {
 	if ( foo() != 1 )
 		FAIL("re-export-symbol-dylib: foo() returned wrong value");

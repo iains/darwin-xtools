@@ -47,7 +47,8 @@ __thread int b = 5;     // statically, initially 5
 
 extern void _tlv_atexit(void (*termfunc)(void* objAddr), void* objAddr);
 
-void myinit()
+void 
+myinit (void)
 {
 	a = 11;      // dynamically initialized to 11
 	b = 42;      // dynamically initialized to 42
@@ -95,7 +96,8 @@ static void* work(void* arg)
 	return NULL;
 }
 
-int main()
+int 
+main (void)
 {
 	pthread_t worker1;
 	if ( pthread_create(&worker1, NULL, work, &thread1) != 0 ) {

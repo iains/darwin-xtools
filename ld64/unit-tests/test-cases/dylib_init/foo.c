@@ -1,2 +1,3 @@
-void _init() {
+void 
+_init (void) {
 }

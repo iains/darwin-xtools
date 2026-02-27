@@ -51,7 +51,8 @@ static void trySO(const char* path)
 
 
 
-int main()
+int 
+main (void)
 {
 	trySO("libfoo.dylib");
   

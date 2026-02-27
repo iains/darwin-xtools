@@ -31,7 +31,8 @@
 //  <rdar://problem/6563887> app crashes when libSystem cannot be found
 //
 
-int main() 
+int 
+main (void) 
 {
 	// see if libSystem is in list of images
 	uint32_t count = _dyld_image_count();

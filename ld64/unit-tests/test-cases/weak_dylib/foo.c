@@ -2,8 +2,12 @@
 
 #include "foo.h"
 
-void foo1() {}
-void foo2() {}
-void foo3() {}
-void foo4() {}
+void 
+foo1 (void) {}
+void 
+foo2 (void) {}
+void 
+foo3 (void) {}
+void 
+foo4 (void) {}
 

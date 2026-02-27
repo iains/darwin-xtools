@@ -8,7 +8,8 @@
 
 const char kTest[] = "test";
 
-void bar()
+void 
+bar (void)
 {
 	CFStringGetLength(CFSTR("test"));
 }

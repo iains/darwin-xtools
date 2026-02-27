@@ -25,7 +25,8 @@
 
 extern void foo();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	return 0;

@@ -2,7 +2,8 @@
 
 CFStringRef OtherCFString = CFSTR("other");
 
-void bar()
+void 
+bar (void)
 {
 	CFStringGetLength(CFSTR("live"));
 }

@@ -31,7 +31,8 @@ int xyz_mi4 = 4;
 int main_common;
 
 
-int main()
+int 
+main (void)
 {
 	fprintf(stdout, "hello %p\n", &xyz_ms1);
 	return 0;

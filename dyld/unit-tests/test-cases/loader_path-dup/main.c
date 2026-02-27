@@ -30,7 +30,8 @@
 extern bool foo();
 extern bool bar();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() && bar() )
 		PASS("loader_path");

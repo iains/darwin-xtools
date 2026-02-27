@@ -7,7 +7,8 @@
 #include "up.h"
 #include "down.h"
 
-int main()
+int 
+main (void)
 {
 	if ( whatsup() )
 		PASS("upward-dylib");

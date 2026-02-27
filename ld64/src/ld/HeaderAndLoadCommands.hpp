@@ -1236,6 +1236,9 @@ uint8_t* HeaderAndLoadCommandsAtom<A>::copyVersionLoadCommand(uint8_t* p) const
 		case Options::kPlatform_bridgeOS:
 			assert(0 && "bridgeOS uses LC_BUILD_VERSION");
 			break;
+		default:
+			assert(0 && "unknown platform");
+			break;
 	}
 	return p + sizeof(macho_version_min_command<P>);
 }

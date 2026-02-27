@@ -30,7 +30,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 	for (int i=0; i < 100; ++i) {
 		void* handle = dlopen("libfoo.dylib", RTLD_LAZY);

@@ -27,7 +27,8 @@ int x = 3;
 int* xp = &x;
 
 
-int bar() 
+int 
+bar (void) 
 {
 	return *xp;
 }

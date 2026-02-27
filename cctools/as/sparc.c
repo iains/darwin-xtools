@@ -206,8 +206,8 @@ uintptr_t ignore)
 
 /* This function is called once, at assembler startup time.  It should
    set up all the tables, etc. that the MD part of the assembler will need. */
-void
-md_begin ()
+void 
+md_begin (void)
 {
   register const char *retval = NULL;
   int lose = 0;
@@ -257,9 +257,8 @@ void)
 	return;
 }
 
-void
-md_assemble (str)
-     char *str;
+void 
+md_assemble (char *str)
 {
   char *toP;
   int rsd;
@@ -338,9 +337,8 @@ md_assemble (str)
   }
 }
 
-static void
-sparc_ip (str)
-     char *str;
+static void 
+sparc_ip (char *str)
 {
   char *error_message = "";
   char *s;
@@ -1016,9 +1014,8 @@ sparc_ip (str)
   the_insn.opcode = opcode;
 }
 
-static int
-getExpression (str)
-     char *str;
+static int 
+getExpression (char *str)
 {
   char *save_in;
   segT seg;
@@ -1057,10 +1054,7 @@ getExpression (str)
 #define MAX_LITTLENUMS 6
 
 char *
-md_atof (type, litP, sizeP)
-     char type;
-     char *litP;
-     int *sizeP;
+md_atof (int type, char *litP, int *sizeP)
 {
   int prec;
   LITTLENUM_TYPE words[MAX_LITTLENUMS];
@@ -1249,10 +1243,7 @@ md_number_to_imm(unsigned char *buf, signed_expr_t val, int size, fixS *fixP, in
  */
 
 int 
-md_parse_option (argP, cntP, vecP)
-     char **argP;
-     int *cntP;
-     char ***vecP;
+md_parse_option (char **argP, int *cntP, char ***vecP)
 {
   char *p;
   const char **arch;
@@ -1342,9 +1333,8 @@ S_GET_NAME(sym)
 }
 
 /* for debugging only */
-static void
-print_insn (insn)
-     struct sparc_it *insn;
+static void 
+print_insn (struct sparc_it *insn)
 {
   const char *const Reloc[] = {
     "VANILLA",

@@ -26,17 +26,20 @@ extern int bar1;
 extern int bar2; // just under 2GB array
 extern int bar3;
 
-int getbar1()
+int 
+getbar1 (void)
 {
 	return bar1;
 }
 
-int getbar2()
+int 
+getbar2 (void)
 {
 	return bar2;
 }
 
-int getbar3()
+int 
+getbar3 (void)
 {
 	return bar3;
 }

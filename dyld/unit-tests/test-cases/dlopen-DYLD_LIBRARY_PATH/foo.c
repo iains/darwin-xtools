@@ -22,7 +22,8 @@
  */
 
 
-int foo()
+int 
+foo (void)
 {
 #ifdef ALT
 	return 1;

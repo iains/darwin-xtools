@@ -1,19 +1,22 @@
 
 
-void foo()
+void 
+foo (void)
 {
 
 }
 
 
-void bar()
+void 
+bar (void)
 {
 	foo();
 }
 
 
 
-int main()
+int 
+main (void)
 {
 	bar();
 	return 0;

@@ -34,7 +34,8 @@
 /// main executable (and not _mh_execute_header+nnn).
 ///
 
-int main()
+int 
+main (void)
 {
 	Dl_info info;
 	if ( dladdr(&main, &info) == 0 ) {

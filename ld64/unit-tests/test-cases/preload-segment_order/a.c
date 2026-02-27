@@ -5,7 +5,8 @@ const char** myp = &mystring;
 
 int com;
 
-const char* inc() {
+const char *
+inc (void) {
   ++com;
   return "";
 }

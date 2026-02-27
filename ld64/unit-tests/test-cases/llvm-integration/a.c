@@ -1,4 +1,5 @@
-int foo3()
+int 
+foo3 (void)
 {
 	return 21;
 }

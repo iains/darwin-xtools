@@ -31,7 +31,8 @@
 /// verify each time it is linked is a new instantiations (new globals, etc)
 ///
 
-int main()
+int 
+main (void)
 {
 // NSCreateObjectFileImageFromMemory is only available on Mac OS X - not iPhone OS
 #if __MAC_OS_X_VERSION_MIN_REQUIRED

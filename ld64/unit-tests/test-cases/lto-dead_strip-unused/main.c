@@ -1,6 +1,7 @@
 extern void bar();
 
-int main()
+int 
+main (void)
 {
 	bar();
 	return 0;

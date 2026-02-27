@@ -26,7 +26,8 @@ __thread int a = 0;
 __thread static int b = 0;
 extern __thread int c;
 
-int foo() {
+int 
+foo (void) {
   return a+b+c;
 }
 

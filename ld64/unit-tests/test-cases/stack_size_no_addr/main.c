@@ -31,7 +31,8 @@ static char buffer[100000000];
 static char buffer[2000000000];
 #endif
 
-int main()
+int 
+main (void)
 {
 	return buffer[0];
 }

@@ -1771,7 +1771,7 @@ uint32_t Options::parseVersionNumber32(const char* versionString)
 			z = strtoul(&end[1], &end, 10);
 		}
 	}
-	if ( (*end != '\0') || (x > 0xffff) || (y > 0xff) || (z > 0xff) )
+	if ( (x > 0xffff) || (y > 0xff) || (z > 0xff) )
 		throwf("malformed 32-bit x.y.z version number: %s", versionString);
 
 	return (x << 16) | ( y << 8 ) | z;

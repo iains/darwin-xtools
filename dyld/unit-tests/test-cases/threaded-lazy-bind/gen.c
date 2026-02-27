@@ -1,7 +1,8 @@
 
 #include <stdio.h>
 
-int main()
+int 
+main (void)
 {
 	int i;
 	for (i = 0; i < 1000; ++i) {

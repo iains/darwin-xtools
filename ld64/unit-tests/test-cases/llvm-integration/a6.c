@@ -1,10 +1,12 @@
 
-int foo1()
+int 
+foo1 (void)
 {
   return 42;
 }
 
-int foo2()
+int 
+foo2 (void)
 {
   return 21;
 }

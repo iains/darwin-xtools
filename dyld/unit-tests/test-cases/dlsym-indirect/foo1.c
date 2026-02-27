@@ -22,7 +22,8 @@
  */
 
 
-int foo1()
+int 
+foo1 (void)
 {
 	return 10;
 }

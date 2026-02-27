@@ -20,6 +20,7 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-void foo()
+void 
+foo (void)
 {
 }

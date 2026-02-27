@@ -9,7 +9,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 	void* handle = dlopen("libfoo.dylib", RTLD_LAZY);
 	if ( handle != NULL ) {

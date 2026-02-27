@@ -1,5 +1,6 @@
 
-int bar()
+int 
+bar (void)
 {
 	return 1;
 }

@@ -55,7 +55,8 @@ static void* work(void* arg)
 	return NULL;
 }
 
-int main()
+int 
+main (void)
 {
 	pthread_t worker1;
 	if ( pthread_create(&worker1, NULL, work, NULL) != 0 ) {

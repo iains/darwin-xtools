@@ -80,7 +80,8 @@ static bool vectortest()
 }
 #endif
 
-int main()
+int 
+main (void)
 {
 	if ( ! inttest() ) {
 		FAIL("lazy-binding-reg-params int parameters");

@@ -30,13 +30,15 @@ int realTestCallCount = 0;
 
 
 void test$FOO();
-void test$FOO() {
+void 
+test$FOO (void) {
     //printf("test\n");
 	++realTestCallCount;
 }
 
 void* test_chooser() __asm__("_test");
-void* test_chooser() {
+void *
+test_chooser (void) {
     __asm__(".symbol_resolver _test");
     //printf("resolver\n");
 	++resolverCallCount;
@@ -46,7 +48,8 @@ void* test_chooser() {
 void test();
 static void (*t)(void) = test;
 
-void check() {
+void 
+check (void) {
     t();        // call through initialized pointer
     t = test;	// re-assign pointer via non-lazy-poitner
     t();        // call agin through pointer

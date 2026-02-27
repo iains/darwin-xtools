@@ -24,7 +24,8 @@
 extern char b;
 int my = 2;
 
-char foo()
+char 
+foo (void)
 {
 	return my+b;
 }

@@ -5,7 +5,8 @@ extern void bar();
 extern void foo();
 
 
-int main()
+int 
+main (void)
 {
 	baz();
 	bar();

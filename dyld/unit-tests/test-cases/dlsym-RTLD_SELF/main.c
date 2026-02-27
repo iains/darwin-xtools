@@ -38,7 +38,8 @@
 ///
 
 
-int foo()
+int 
+foo (void)
 {
 	return 0;
 }
@@ -64,7 +65,8 @@ static void trySO(const char* pathToLoad)
 
 
 
-int main()
+int 
+main (void)
 {
 	trySO("test.bundle");
 	trySO("test.dylib");

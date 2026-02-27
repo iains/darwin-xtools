@@ -32,7 +32,8 @@ extern void* zerofill__end   __asm("section$end$__DATA$__zerofill");
 void* start = &zerofill_start;
 void* end = &zerofill__end;
 
-int main()
+int 
+main (void)
 {
 	a[0] = 0;
 	b[0] = 0;

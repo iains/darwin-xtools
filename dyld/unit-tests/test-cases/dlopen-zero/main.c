@@ -27,13 +27,15 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
 
-int foo()
+int 
+foo (void)
 {
 	return 42;
 }
 
 
-int main()
+int 
+main (void)
 {
 	// passing NULL as path to dlopen() has the special meaning of
 	// "get handle to main executable"

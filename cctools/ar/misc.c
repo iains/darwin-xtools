@@ -83,8 +83,8 @@ static char rcsid[] = "$OpenBSD: misc.c,v 1.2 1996/06/26 05:31:21 deraadt Exp $"
 
 char *tname = "temporary file";		/* temporary file "name" */
 
-int
-tmp()
+int 
+tmp (void)
 {
 	extern char *envtmp;
 	sigset_t set, oset;
@@ -117,8 +117,7 @@ tmp()
  * 	does, remove it from the argument list.
  */
 char *
-files(argv)
-	char **argv;
+files (char **argv)
 {
 	char **list, *p;
 
@@ -132,9 +131,8 @@ files(argv)
 	return (NULL);
 }
 
-void
-orphans(argv)
-	char **argv;
+void 
+orphans (char **argv)
 {
 
 	for (; *argv; ++argv)
@@ -142,17 +140,15 @@ orphans(argv)
 }
 
 char *
-rname(path)
-	char *path;
+rname (char *path)
 {
 	char *ind;
 
 	return ((ind = strrchr(path, '/')) ? ind + 1 : path);
 }
 
-int
-compare(dest)
-	char *dest;
+int 
+compare (char *dest)
 {
 
 	if (options & AR_TR)
@@ -160,17 +156,16 @@ compare(dest)
 	return (!strcmp(chdr.name, rname(dest)));
 }
 
-void
-badfmt()
+void 
+badfmt (void)
 {
 
 	errno = EFTYPE;
 	err(1, "%s", archive);
 }
 
-void
-error(name)
-	char *name;
+void 
+error (char *name)
 {
 
 	err(1, "%s", name);

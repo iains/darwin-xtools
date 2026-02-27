@@ -1,17 +1,21 @@
 
-void mm() 
+void 
+mm (void) 
 {
 }
 
-void s1() {
+void 
+s1 (void) {
   mm();
 }
 
-void s2() {
+void 
+s2 (void) {
   mm();
 }
 
-int main()
+int 
+main (void)
 {
     s1();
     s2();

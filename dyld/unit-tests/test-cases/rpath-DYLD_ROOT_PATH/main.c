@@ -7,7 +7,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() )
 		return EXIT_SUCCESS;

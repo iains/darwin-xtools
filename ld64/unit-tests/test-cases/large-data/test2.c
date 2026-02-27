@@ -25,13 +25,15 @@
 int bigarray2[500000000]; // just under 2GB array
 int small2;
 
-int getbig2()
+int 
+getbig2 (void)
 {
 	return bigarray2[0];
 }
 
 
-int getsmall2()
+int 
+getsmall2 (void)
 {
 	return small2;
 }

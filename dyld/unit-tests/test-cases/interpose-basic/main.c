@@ -29,7 +29,8 @@
 
 extern char* wrap_strdup(const char*);
 
-int main()
+int 
+main (void)
 {
 	const char* x = strdup("123");
 	const char* y = wrap_strdup("456");

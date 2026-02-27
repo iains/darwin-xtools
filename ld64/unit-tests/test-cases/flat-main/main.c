@@ -23,10 +23,12 @@
  */
 #include <stdio.h>
 
-void foo() {}
+void 
+foo (void) {}
 
 
-int main()
+int 
+main (void)
 {
 	foo();
 	fprintf(stdout, "hello\n");

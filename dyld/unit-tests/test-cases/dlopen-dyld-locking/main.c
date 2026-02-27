@@ -46,7 +46,8 @@ static void* work(void* arg)
 }
 
 
-int main()
+int 
+main (void)
 {
 	pthread_t otherThread;
 	if ( pthread_create(&otherThread, NULL, work, NULL) != 0 ) {

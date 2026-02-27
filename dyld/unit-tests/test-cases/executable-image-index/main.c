@@ -34,7 +34,8 @@
 
 extern const struct mach_header __dso_handle;
 
-int main()
+int 
+main (void)
 {
 	if ( _dyld_get_image_header(0) == &__dso_handle )
 		PASS("executable-image-index");

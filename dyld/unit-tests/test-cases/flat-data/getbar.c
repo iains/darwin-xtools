@@ -23,7 +23,8 @@
 
 extern int bar;
 
-int* getbar()
+int *
+getbar (void)
 {
 	return &bar;
 }

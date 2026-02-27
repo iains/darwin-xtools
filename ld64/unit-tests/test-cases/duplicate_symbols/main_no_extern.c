@@ -3,11 +3,14 @@ This file contains symbols that are duplicated in another file,
 but does not reference anything that would pull in the duplicates.
 */
 
-void a() {
+void 
+a (void) {
 }
 
-void b() {
+void 
+b (void) {
 }
 
-int main() {
+int 
+main (void) {
 }

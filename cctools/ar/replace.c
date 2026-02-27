@@ -87,9 +87,8 @@ static char rcsid[] = "$OpenBSD: replace.c,v 1.2 1996/06/26 05:31:23 deraadt Exp
  *	the key entry, based on the a, b and i options.  If the u option
  *	is specified, modification dates select for replacement.
  */
-int
-replace(argv)
-	char **argv;
+int 
+replace (char **argv)
 {
 	char *file;
 	int afd, curfd, errflg, exists, mods, sfd, tfd1, tfd2;

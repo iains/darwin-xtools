@@ -5,7 +5,8 @@
 extern int foo();
 extern int bar();
 
-int main()
+int 
+main (void)
 {
 	// two regular external function calls
 	void* x = malloc(16);

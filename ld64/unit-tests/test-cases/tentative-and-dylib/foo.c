@@ -1,2 +1,3 @@
-void foo() {}
+void 
+foo (void) {}
 int var = 9;

@@ -23,11 +23,15 @@
  */
 #include <stdio.h>
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }
 
-void main2() {}
-void main3() {}
-void main4() {}
+void 
+main2 (void) {}
+void 
+main3 (void) {}
+void 
+main4 (void) {}

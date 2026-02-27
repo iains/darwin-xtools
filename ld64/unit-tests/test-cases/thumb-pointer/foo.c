@@ -4,8 +4,10 @@ extern void bar1();
 extern void bar2();
 extern char  bar_array[];
 
-void foo1() {}
-void foo2() {}
+void 
+foo1 (void) {}
+void 
+foo2 (void) {}
 char foo_array[3] = { 1,2,3 };
 
 

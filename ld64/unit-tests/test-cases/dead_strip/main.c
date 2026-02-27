@@ -22,11 +22,13 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }
 
 
 
-void dead_door_knob() {  }
+void 
+dead_door_knob (void) {  }

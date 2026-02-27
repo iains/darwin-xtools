@@ -73,7 +73,8 @@ void baseVerifyCoal2(const char* where, int* addr)
 
 
 
-void baseCheck()
+void 
+baseCheck (void)
 {
 	if ( wasProblem || (checkInCountCoal1 != 4) || (checkInCountCoal2 != 4) )
 		FAIL("weak-coal");

@@ -4997,9 +4997,8 @@ uintptr_t value)
 /* Handle the SUN sparc assembler .seg directive. .seg should only occur with
    either a ".text" or ".data" argument. Call .text or .data accordingly
 */
-void
-s_seg (ignore)
-     int ignore;
+void 
+s_seg (int ignore)
 {
   pseudo_typeS *ps_t;
   char s[32];

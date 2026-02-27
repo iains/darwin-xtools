@@ -1,4 +1,5 @@
 #include "c.h"
 
-float bb() { return bar; }
+float 
+bb (void) { return bar; }
 

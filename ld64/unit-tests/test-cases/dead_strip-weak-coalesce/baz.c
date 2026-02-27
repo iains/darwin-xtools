@@ -1,4 +1,5 @@
-void baz()
+void 
+baz (void)
 {
 }
 

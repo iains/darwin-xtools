@@ -6,7 +6,8 @@
 
 //<rdar://problem/7886402> Loading MH_DYLIB_STUB causing coalescable miscount
 
-int main()
+int 
+main (void)
 {
 	// try to load stub many times
 	for (int i=0; i < 10; ++i) {

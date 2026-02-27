@@ -34,7 +34,8 @@
 extern int* getbar();
 int bar = 1;
 
-int main()
+int 
+main (void)
 {
 	if ( getbar() != &bar )
 		FAIL("flat-data found wrong bar");

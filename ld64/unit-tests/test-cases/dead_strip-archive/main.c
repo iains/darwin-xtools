@@ -25,7 +25,8 @@
 extern void foo();
 extern int my_common;
 
-int main()
+int 
+main (void)
 {
 	// the reference to the common symbol has to be first
 	my_common += 1;

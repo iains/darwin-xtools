@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 
-void foo() {
+void 
+foo (void) {
   printf("hello\n");
 }
 

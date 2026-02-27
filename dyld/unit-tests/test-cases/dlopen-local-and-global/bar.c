@@ -23,7 +23,8 @@
 
 extern int foo;
 
-int bar()
+int 
+bar (void)
 {
 	return foo;
 }

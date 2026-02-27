@@ -26,7 +26,8 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-int main()
+int 
+main (void)
 {
 	void* handle1 = dlopen("test.bundle", RTLD_LAZY);
 	void* handle2 = dlopen("test.bundle", RTLD_LAZY);

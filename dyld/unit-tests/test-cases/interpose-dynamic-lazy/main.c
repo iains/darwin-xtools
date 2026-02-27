@@ -30,7 +30,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
   int result = foo();
   if ( result == 10 )

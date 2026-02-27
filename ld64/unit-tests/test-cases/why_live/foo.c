@@ -1,12 +1,14 @@
 
 extern void bar();
 
-void foo()
+void 
+foo (void)
 {
 	bar();
 }
 
-void frob()
+void 
+frob (void)
 {
 	bar();
 }

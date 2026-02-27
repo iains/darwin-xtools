@@ -21,7 +21,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-void bar()
+void 
+bar (void)
 {
 }
 

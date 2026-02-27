@@ -35,7 +35,8 @@
 
 
 
-int main()
+int 
+main (void)
 {	
 	dlsym(RTLD_NEXT, "bar");
   	return EXIT_SUCCESS;

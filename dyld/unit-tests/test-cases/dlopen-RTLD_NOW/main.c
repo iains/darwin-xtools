@@ -36,7 +36,8 @@
 ///
 
 
-int main()
+int 
+main (void)
 {
 	void* handle = dlopen("test.bundle", RTLD_NOW);
 	if ( handle == NULL ) {

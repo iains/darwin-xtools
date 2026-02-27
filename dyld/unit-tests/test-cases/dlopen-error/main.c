@@ -29,7 +29,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	// test error message of a dylib that does not exist
 	void* handle = dlopen("libdoesnotexist.dylib", RTLD_LAZY);

@@ -20,7 +20,8 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-int foo()
+int 
+foo (void)
 {
   return 1;
 }

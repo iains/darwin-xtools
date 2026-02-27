@@ -33,7 +33,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	// allocate two pages
 	vm_address_t addr = 0;

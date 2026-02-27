@@ -29,7 +29,8 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-struct dyld_all_image_infos* getImageInfosFromKernel()
+struct dyld_all_image_infos *
+getImageInfosFromKernel (void)
 {
 	task_dyld_info_data_t task_dyld_info;
 	mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;

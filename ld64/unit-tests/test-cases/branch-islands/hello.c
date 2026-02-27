@@ -2,13 +2,15 @@
 
 extern void foo();
 
-int main()
+int 
+main (void)
 {
 	fprintf(stdout, "hello\n");
   foo();
 	return 0;
 }
 
-void back()
+void 
+back (void)
 {
 }

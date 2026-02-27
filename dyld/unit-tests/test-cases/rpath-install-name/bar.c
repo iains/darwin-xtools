@@ -23,7 +23,8 @@
 
 extern void stuff(); 
  
-void bar()
+void 
+bar (void)
 {
 	stuff();
 }

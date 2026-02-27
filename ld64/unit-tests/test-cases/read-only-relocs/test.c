@@ -26,7 +26,8 @@ int a=0;
 extern int b;
 extern void func();
 
-int main() 
+int 
+main (void) 
 { 
 	func();
 	return a+b; 

@@ -1,7 +1,8 @@
 
 extern void realmain();
 
-int main()
+int 
+main (void)
 {
 	realmain();
 	return 0;

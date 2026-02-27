@@ -23,7 +23,8 @@
 #include <stdbool.h>
 
 
-void bar()
+void 
+bar (void)
 {
 
 }

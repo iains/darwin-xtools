@@ -1,4 +1,5 @@
-void cat()
+void 
+cat (void)
 {
 }
 

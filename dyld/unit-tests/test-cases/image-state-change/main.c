@@ -79,7 +79,8 @@ static const char* singleUnmappedHandler(enum dyld_image_states state, uint32_t 
 	return NULL;
 }
 
-static void loadAndUnLoad()
+static void 
+loadAndUnLoad (void)
 {
 	void* handle = dlopen("foo.bundle", RTLD_LAZY);
 	if ( handle == NULL ) {

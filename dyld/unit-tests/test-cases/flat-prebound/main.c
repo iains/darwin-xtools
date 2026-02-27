@@ -31,7 +31,8 @@
 // but the bar in this main executable should override the prebound bar
 extern bool foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() )
 		PASS("flat-prebound");
@@ -42,7 +43,8 @@ int main()
 }
 
 
-int bar()
+int 
+bar (void)
 {
 	return 0;
 }

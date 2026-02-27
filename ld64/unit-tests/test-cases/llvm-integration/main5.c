@@ -6,7 +6,8 @@ int foo3(void)
   return 42;
 }
 
-int main()
+int 
+main (void)
 {
   int i = foo1();
   if (i == 42)

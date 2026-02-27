@@ -441,8 +441,8 @@ char command;
 /* Number 0:TABLES-1 of current hashed symbol table.  */
 int number;
 
-int
-main ()
+int 
+main (void)
 {
   void applicatee ();
   void destroy ();
@@ -541,27 +541,22 @@ main ()
 }
 
 char *
-what (description)
-     char *description;
+what (char *description)
 {
   printf ("   %s : ", description);
   gets (answer);
   return xstrdup (answer);
 }
 
-void
-destroy (string, value)
-     char *string;
-     char *value;
+void 
+destroy (char *string, char *value)
 {
   free (string);
   free (value);
 }
 
-void
-applicatee (string, value)
-     char *string;
-     char *value;
+void 
+applicatee (char *string, char *value)
 {
   printf ("%.20s-%.20s\n", string, value);
 }
@@ -569,8 +564,8 @@ applicatee (string, value)
 /* Determine number: what hash table to use.
    Also determine h: points to hash_control.  */
 
-void
-whattable ()
+void 
+whattable (void)
 {
   for (;;)
     {

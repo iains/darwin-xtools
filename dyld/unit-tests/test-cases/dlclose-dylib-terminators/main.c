@@ -29,7 +29,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	// load foo
 	void* handleFoo = dlopen("libfoo.dylib", RTLD_LAZY);

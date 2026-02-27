@@ -75,6 +75,14 @@ struct objc_class_t {
     uint32_t protocols;   /* struct objc_protocol_list * (32-bit pointer) */
 };
 
+#ifndef CLS_GETINFO
+# define CLS_GETINFO(cls, infomask) ((cls)->info & (infomask))
+// class is not a metaclass
+#define CLS_CLASS 0x1
+// class is a metaclass
+#define CLS_META 0x2
+#endif
+
 struct objc_category_t {
     uint32_t category_name;	/* char * (32-bit pointer) */
     uint32_t class_name;	/* char * (32-bit pointer) */

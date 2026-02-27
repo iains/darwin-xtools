@@ -88,9 +88,8 @@ static char rcsid[] = "$OpenBSD: extract.c,v 1.2 1996/06/26 05:31:20 deraadt Exp
  *	members date otherwise date is time of extraction.  Does not modify
  *	archive.
  */
-int
-extract(argv)
-	char **argv;
+int 
+extract (char **argv)
 {
 	char *file;
 	int afd, all, eval, tfd;

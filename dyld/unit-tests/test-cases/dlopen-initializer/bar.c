@@ -25,12 +25,14 @@
 static int initCount = 0;
 
 
-void _init()
+void 
+_init (void)
 {
 	initCount++;
 }
 
-int getInitCount()
+int 
+getInitCount (void)
 {
 	return initCount;
 }

@@ -1,9 +1,11 @@
 
-static int mylocal()
+static int 
+mylocal (void)
 {
   return 1;
 }
 
-void* otherget() { return mylocal; }
+void *
+otherget (void) { return mylocal; }
 
 

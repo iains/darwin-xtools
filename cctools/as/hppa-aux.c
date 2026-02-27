@@ -45,8 +45,8 @@ static const int print_errors = 1;
 static int reg_name_search(
     char *name);
 
-int pa_parse_number(s)
-	char **s;
+int 
+pa_parse_number (char **s)
 {
 	int num;
 	char *name;
@@ -500,9 +500,8 @@ char *s)
     return(FALSE);	
 }
 
-int need_89_opcode(insn,result)
-     struct pa_it *insn;
-     struct pa_89_fp_reg_struct *result;
+int 
+need_89_opcode (struct pa_it *insn, struct pa_89_fp_reg_struct *result)
 {
   if ( result->L_R_select == 1 && !(insn->fpof1 == DBL && insn->fpof2 == DBL) )
     return TRUE;
@@ -510,10 +509,8 @@ int need_89_opcode(insn,result)
     return FALSE;
 }
 
-int
-pa_89_parse_number(s,result)
-     char **s;
-     struct pa_89_fp_reg_struct *result;
+int 
+pa_89_parse_number (char **s, struct pa_89_fp_reg_struct *result)
 {
   int num;
   char *name;
@@ -658,8 +655,8 @@ pa_89_parse_number(s,result)
 
 }
 
-int pa_parse_fp_cmp_cond(s)
-  char **s;
+int 
+pa_parse_fp_cmp_cond (char **s)
 {
   int cond,i;
   struct possibleS {
@@ -845,8 +842,8 @@ int field_selector)
   return value;
 }
 
-int pa_parse_nullif(s)
-     char **s;
+int 
+pa_parse_nullif (char **s)
 {
   int nullif;
 
@@ -867,8 +864,8 @@ int pa_parse_nullif(s)
   return nullif;
 }
 
-int pa_parse_nonneg_cmpsub_cmpltr(s)
-     char **s;
+int 
+pa_parse_nonneg_cmpsub_cmpltr (char **s)
 {
   int cmpltr;
   char *name;
@@ -915,8 +912,8 @@ int pa_parse_nonneg_cmpsub_cmpltr(s)
   return cmpltr;
 }
 
-int pa_parse_neg_cmpsub_cmpltr(s)
-     char **s;
+int 
+pa_parse_neg_cmpsub_cmpltr (char **s)
 {
   int cmpltr;
   char *name;
@@ -964,8 +961,8 @@ int pa_parse_neg_cmpsub_cmpltr(s)
   return cmpltr;
 }
 
-int pa_parse_nonneg_add_cmpltr(s)
-     char **s;
+int 
+pa_parse_nonneg_add_cmpltr (char **s)
 {
   int cmpltr;
   char *name;
@@ -1010,8 +1007,8 @@ int pa_parse_nonneg_add_cmpltr(s)
   return cmpltr;
 }
 
-int pa_parse_neg_add_cmpltr(s)
-     char **s;
+int 
+pa_parse_neg_add_cmpltr (char **s)
 {
   int cmpltr;
   char *name;

@@ -2,6 +2,7 @@
 
 extern int foo;
 
-int getfoo() { return foo; }
+int 
+getfoo (void) { return foo; }
 
 

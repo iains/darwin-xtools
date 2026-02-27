@@ -25,7 +25,8 @@
 // test to see if bss section is properly expanded 
 
 
-void check()
+void 
+check (void)
 {
 	
 }

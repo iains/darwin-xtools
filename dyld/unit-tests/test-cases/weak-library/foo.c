@@ -22,7 +22,8 @@
  */
 #include "foo.h"
 
-int foo()
+int 
+foo (void)
 {
   return 10;
 }

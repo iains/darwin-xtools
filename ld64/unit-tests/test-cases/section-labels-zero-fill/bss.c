@@ -29,7 +29,8 @@ extern int  bss_end    __asm("section$end$__DATA$__bss");
 
 static int mybss[2];
 
-int main()
+int 
+main (void)
 {
 	mybss[0] = 0;
 	printf("bss start = %p\n", &bss_start);

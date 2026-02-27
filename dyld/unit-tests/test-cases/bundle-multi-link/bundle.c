@@ -23,7 +23,8 @@
 
 static int value = 0;
 
-int getValue()
+int 
+getValue (void)
 {
    return value;
 }

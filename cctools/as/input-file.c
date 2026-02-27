@@ -24,7 +24,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * Note we don't need to #include the "as.h" file. No common coupling!
  */
 
-#define NDEBUG		/* JF remove asserts */
+#ifndef NDEBUG
+# define NDEBUG		/* JF remove asserts */
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -2,4 +2,5 @@
 
 extern int foo();
 
-int bar() { return foo(); }
+int 
+bar (void) { return foo(); }

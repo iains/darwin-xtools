@@ -1,5 +1,6 @@
 
-void func() {}
+void 
+func (void) {}
 
 const char kFoo[] = "foo";
 

@@ -1,12 +1,14 @@
 
 int bData = 0;
 
-void b()
+void 
+b (void)
 {
 	++bData;
 }
 
-void bb()
+void 
+bb (void)
 {
 	++bData;
 }

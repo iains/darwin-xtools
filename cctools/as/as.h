@@ -51,9 +51,13 @@ extern char version_string[];
  * asserts() from <assert.h> are DISabled when NDEBUG is defined and
  * asserts() from <assert.h> are ENabled  when NDEBUG is undefined.
  * For speed NDEBUG is defined so assert()'s are left out.
+ * NDEBUG is also defined on the command line, though, so wrap it in a
+ * preprocessor conditional, to avoid -Wmacro-redefined.
 #undef NDEBUG
  */
-#define NDEBUG
+#ifndef NDEBUG
+# define NDEBUG
+#endif
 
 /*
  * For speed SUSPECT is undefined.

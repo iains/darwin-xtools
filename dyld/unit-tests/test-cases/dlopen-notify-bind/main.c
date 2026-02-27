@@ -42,7 +42,8 @@ static void notify(const struct mach_header *mh, intptr_t vmaddr_slide)
 }
 
 
-int main()
+int 
+main (void)
 {
 	_dyld_register_func_for_add_image(&notify);
 

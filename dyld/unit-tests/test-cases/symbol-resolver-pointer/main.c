@@ -28,7 +28,8 @@
 extern void check();
 
 
-int main()
+int 
+main (void)
 {
 	check();
 	return EXIT_SUCCESS;

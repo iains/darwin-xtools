@@ -26,7 +26,8 @@
 extern int foo();
 
 // test that calls to resolver based function in same dylib work
-int fooPlusOne()
+int 
+fooPlusOne (void)
 {
 	return foo() + 1;
 }

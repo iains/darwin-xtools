@@ -2,7 +2,8 @@
 
 extern void bar();
 
-int main() 
+int 
+main (void) 
 {
 	CFStringGetLength(CFSTR("stuff"));
 	bar();

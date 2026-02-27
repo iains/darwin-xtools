@@ -84,9 +84,8 @@ static char rcsid[] = "$OpenBSD: append.c,v 1.2 1996/06/26 05:31:16 deraadt Exp 
  *	Append files to the archive - modifies original archive or creates
  *	a new archive if named archive does not exist.
  */
-int
-append(argv)
-	char **argv;
+int 
+append (char **argv)
 {
 	int afd, fd, eval;
 	char *file;

@@ -1,4 +1,5 @@
 
-void bar() {}
+void 
+bar (void) {}
 
 

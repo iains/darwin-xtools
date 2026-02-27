@@ -35,7 +35,8 @@
 typedef void (*fooProc)();
 
 // test.bundle
-void doit()
+void 
+doit (void)
 {
 // NSCreateObjectFileImageFromMemory is only available on Mac OS X - not iPhone OS
 #if __MAC_OS_X_VERSION_MIN_REQUIRED
@@ -83,7 +84,8 @@ static void myRemoveImage(const struct mach_header *mh, intptr_t vmaddr_slide)
 }
 
 
-int main()
+int 
+main (void)
 {
 	_dyld_register_func_for_remove_image(&myRemoveImage);
 

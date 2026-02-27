@@ -1,1 +1,2 @@
-void frob() {}
+void 
+frob (void) {}

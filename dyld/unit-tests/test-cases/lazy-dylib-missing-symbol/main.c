@@ -32,7 +32,8 @@
 // then when binding lazy symbols, if one 
 // cannot be bound, it is bound to this function
 // instead.
-int dyld_lazy_dylib_proxy()
+int 
+dyld_lazy_dylib_proxy (void)
 {
 	return 7;
 }
@@ -42,7 +43,8 @@ int dyld_lazy_dylib_proxy()
 extern int foo();	// should exist
 extern int bar();	// should not exist
 
-int main()
+int 
+main (void)
 {
 	// sanity check that foo was found
 	if ( foo() != 1 ) {

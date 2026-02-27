@@ -1,9 +1,11 @@
 
-void foo()
+void 
+foo (void)
 {
 }
 
-int main()
+int 
+main (void)
 {
 return 0;
 }

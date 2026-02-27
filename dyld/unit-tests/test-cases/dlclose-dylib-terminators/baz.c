@@ -1,7 +1,8 @@
 int bazData = 5;
 
 
-int baz()
+int 
+baz (void)
 {
 	return bazData;
 }

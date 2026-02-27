@@ -73,7 +73,8 @@ static void dlsym_should_succeed(info hp, const char* symbol)
 }
 
 
-int main()
+int 
+main (void)
 {
 	info libFooFirst = dlopen_or_fail("libfoo.dylib", RTLD_FIRST);
 	info libFoo      = dlopen_or_fail("libfoo.dylib", 0);

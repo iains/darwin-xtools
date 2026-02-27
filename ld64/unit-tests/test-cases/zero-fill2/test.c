@@ -48,7 +48,8 @@ static int staticbigarray5[2560000];
 #ifndef __arm__
 static int staticbigarray6[25600000*BOOST];
 #endif
-int main()
+int 
+main (void)
 {
 	staticbigarray1[10] = 4;
 	staticbigarray2[10] = 4;

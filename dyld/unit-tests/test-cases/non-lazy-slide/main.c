@@ -11,7 +11,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() == 10 )
 		PASS("non-lazy-slide");

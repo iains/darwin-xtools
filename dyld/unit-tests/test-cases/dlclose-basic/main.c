@@ -28,7 +28,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	// regular open
 	void* handle = dlopen("test.bundle", RTLD_LAZY);

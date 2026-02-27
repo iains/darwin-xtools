@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-int main()
+int 
+main (void)
 {
 	fprintf(stdout, "hello\n");
 	return 0;

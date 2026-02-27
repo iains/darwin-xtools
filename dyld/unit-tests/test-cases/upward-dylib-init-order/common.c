@@ -6,21 +6,24 @@ static bool u = false;
 static bool u2 = false;
 static bool isOk = true;
 
-void setB()
+void 
+setB (void)
 {
 	if ( u || b || u2 )
 		isOk = false;
 	b = true;
 }
 
-void setU()
+void 
+setU (void)
 {
 	if ( u  || u2 )
 		isOk = false;
 	u = true;
 }
 
-void setU2()
+void 
+setU2 (void)
 {
 	if ( u2 )
 		isOk = false;

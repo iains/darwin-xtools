@@ -22,7 +22,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }

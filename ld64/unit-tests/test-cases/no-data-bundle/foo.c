@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
-void foo()
+void 
+foo (void)
 {
 	rand();
 }

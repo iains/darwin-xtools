@@ -1,7 +1,8 @@
 
 int var;
 
-int main()
+int 
+main (void)
 {
 	var = 3;
 	return 0;

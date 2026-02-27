@@ -28,7 +28,8 @@
 
 #include "base.h"
 
-int main()
+int 
+main (void)
 {
 
 	//fprintf(stderr, "myinit() in foo1.c\n");

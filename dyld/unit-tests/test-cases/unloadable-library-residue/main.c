@@ -29,7 +29,8 @@
 #include "test.h" // PASS(), FAIL()
 
 
-int main()
+int 
+main (void)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED
 	// load libfoo which depends on libbar

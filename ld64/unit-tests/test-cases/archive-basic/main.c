@@ -25,7 +25,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	fprintf(stdout, "hello\n");
 	return foo();

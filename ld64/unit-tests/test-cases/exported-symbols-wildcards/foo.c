@@ -24,32 +24,38 @@
 #include <stddef.h>
 
 
-int foo()
+int 
+foo (void)
 {
 	return 1;
 }
 
-int foo2()
+int 
+foo2 (void)
 {
 	return 1;
 }
 
-int foobar()
+int 
+foobar (void)
 {
 	return 1;
 }
 
-int foo2bar()
+int 
+foo2bar (void)
 {
 	return 1;
 }
 
-int fao()
+int 
+fao (void)
 {
 	return 1;
 }
 
-int ffo()
+int 
+ffo (void)
 {
 	return 1;
 }

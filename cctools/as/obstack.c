@@ -215,99 +215,86 @@ POINTER obj)
 /* The function names appear in parentheses in order to prevent
    the macro-definitions of the names from being expanded there.  */
 
-POINTER (obstack_base) (obstack)
-     struct obstack *obstack;
+POINTER (
+obstack_base) (struct obstack *obstack)
 {
   return obstack_base (obstack);
 }
 
-POINTER (obstack_next_free) (obstack)
-     struct obstack *obstack;
+POINTER (
+obstack_next_free) (struct obstack *obstack)
 {
   return obstack_next_free (obstack);
 }
 
-int (obstack_object_size) (obstack)
-     struct obstack *obstack;
+int (
+obstack_object_size) (struct obstack *obstack)
 {
   return obstack_object_size (obstack);
 }
 
-int (obstack_room) (obstack)
-     struct obstack *obstack;
+int (
+obstack_room) (struct obstack *obstack)
 {
   return obstack_room (obstack);
 }
 
-void (obstack_grow) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
+void (
+obstack_grow) (struct obstack *obstack, POINTER pointer, int length)
 {
   obstack_grow (obstack, pointer, length);
 }
 
-void (obstack_grow0) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
+void (
+obstack_grow0) (struct obstack *obstack, POINTER pointer, int length)
 {
   obstack_grow0 (obstack, pointer, length);
 }
 
-void (obstack_1grow) (obstack, character)
-     struct obstack *obstack;
-     int character;
+void (
+obstack_1grow) (struct obstack *obstack, int character)
 {
   obstack_1grow (obstack, character);
 }
 
-void (obstack_blank) (obstack, length)
-     struct obstack *obstack;
-     int length;
+void (
+obstack_blank) (struct obstack *obstack, int length)
 {
   obstack_blank (obstack, length);
 }
 
-void (obstack_1grow_fast) (obstack, character)
-     struct obstack *obstack;
-     int character;
+void (
+obstack_1grow_fast) (struct obstack *obstack, int character)
 {
   obstack_1grow_fast (obstack, character);
 }
 
-void (obstack_blank_fast) (obstack, length)
-     struct obstack *obstack;
-     int length;
+void (
+obstack_blank_fast) (struct obstack *obstack, int length)
 {
   obstack_blank_fast (obstack, length);
 }
 
-POINTER (obstack_finish) (obstack)
-     struct obstack *obstack;
+POINTER (
+obstack_finish) (struct obstack *obstack)
 {
   return obstack_finish (obstack);
 }
 
-POINTER (obstack_alloc) (obstack, length)
-     struct obstack *obstack;
-     int length;
+POINTER (
+obstack_alloc) (struct obstack *obstack, int length)
 {
   return obstack_alloc (obstack, length);
 }
 
-POINTER (obstack_copy) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
+POINTER (
+obstack_copy) (struct obstack *obstack, POINTER pointer, int length)
 {
   return obstack_copy (obstack, pointer, length);
 }
 
-POINTER (obstack_copy0) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
+POINTER (
+obstack_copy0) (struct obstack *obstack, POINTER pointer, int length)
 {
   return obstack_copy0 (obstack, pointer, length);
 }

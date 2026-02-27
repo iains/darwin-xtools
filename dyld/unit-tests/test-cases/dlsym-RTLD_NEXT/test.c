@@ -25,12 +25,14 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-void* test()
+void *
+test (void)
 {
 	return dlsym(RTLD_NEXT, "foo");
 }
 
-int foo()
+int 
+foo (void)
 {
 	return 2;
 }

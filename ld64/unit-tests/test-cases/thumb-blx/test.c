@@ -24,7 +24,8 @@
 
 #include <stdlib.h>
 
-int main()
+int 
+main (void)
 {
 	malloc(1);
 	malloc(2);
