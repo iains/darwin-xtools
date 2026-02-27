@@ -1,6 +1,7 @@
 extern void baz();
 
-void bar()
+void 
+bar (void)
 {
 	baz();
 }

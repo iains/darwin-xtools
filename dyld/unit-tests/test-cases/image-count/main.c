@@ -31,7 +31,8 @@
 extern struct mach_header __dso_handle;
 
 
-struct dyld_all_image_infos* getImageInfosFromKernel()
+struct dyld_all_image_infos *
+getImageInfosFromKernel (void)
 {
 	task_dyld_info_data_t task_dyld_info;
 	mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;
@@ -44,8 +45,8 @@ struct dyld_all_image_infos* getImageInfosFromKernel()
 }
 
 
-int
-main()
+int 
+main (void)
 {
 	struct dyld_all_image_infos* info = getImageInfosFromKernel();
 	if ( info->version < 10 ) {

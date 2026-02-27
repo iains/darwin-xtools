@@ -26,7 +26,8 @@
 extern int data;
 extern void func(int);
 
-int main()
+int 
+main (void)
 {
 	func(data);
 	return 0;

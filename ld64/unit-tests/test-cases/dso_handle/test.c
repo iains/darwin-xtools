@@ -8,7 +8,8 @@
 	extern void* __dso_handle;
 #endif
 
-int main()
+int 
+main (void)
 {
 	printf("dso_handle=%p\n", __dso_handle);
 	return 0;

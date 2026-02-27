@@ -89,9 +89,8 @@ static char hb[sizeof(HDR) + 1];	/* real header */
 
 int archive_opened_for_writing = 0;
 
-int
-open_archive(mode)
-	int mode;
+int 
+open_archive (int mode)
 {
 	int created, fd, nr, r;
 	char buf[SARMAG];
@@ -207,9 +206,8 @@ skip_flock:
 	return (fd);
 }
 
-void
-close_archive(fd)
-	int fd;
+void 
+close_archive (int fd)
 {
 
 	(void)close(fd);			/* Implicit unlock. */
@@ -226,9 +224,8 @@ close_archive(fd)
  * get_arobj --
  *	read the archive header for this member
  */
-int
-get_arobj(fd)
-	int fd;
+int 
+get_arobj (int fd)
 {
 	struct ar_hdr *hdr;
 	int len, nr;
@@ -445,9 +442,8 @@ copy_ar(cfp, size)
  * skip_arobj -
  *	Skip over an object -- taking care to skip the pad bytes.
  */
-void
-skip_arobj(fd)
-	int fd;
+void 
+skip_arobj (int fd)
 {
 	off_t len;
 

@@ -21,7 +21,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #if SYMBOL_PRESENT
-int foo()
+int 
+foo (void)
 {
   return 10;
 }

@@ -20,4 +20,5 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-void zzz() {}
+void 
+zzz (void) {}

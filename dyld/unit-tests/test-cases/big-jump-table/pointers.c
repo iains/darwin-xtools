@@ -1,7 +1,8 @@
 
 #include "foo.h"
 
-long useNonLazy()
+long 
+useNonLazy (void)
 {
 	long result = 0; 
 	result += (long)&foo001;

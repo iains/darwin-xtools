@@ -2,7 +2,8 @@
 
 #include "test.h"
 
-int main()
+int 
+main (void)
 {
 	// dynamically load libz.dylib which imports _malloc from libSystem
 	dlopen("/usr/lib/libz.dylib", RTLD_LAZY);

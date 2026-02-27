@@ -26,7 +26,8 @@
 
 static bool inited = false;
 
-void setBazInitialized() { inited = true; }
+void 
+setBazInitialized (void) { inited = true; }
 
 bool bazInitialized() { return inited; }
 

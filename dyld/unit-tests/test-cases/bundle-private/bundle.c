@@ -23,6 +23,7 @@
 
 // test to see if NSLINKMODULE_OPTION_PRIVATE works 
 
-void findme()
+void 
+findme (void)
 {
 }

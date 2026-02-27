@@ -1,5 +1,6 @@
 
 extern int* myAbs;
 
-int main() { return *myAbs; }
+int 
+main (void) { return *myAbs; }
 

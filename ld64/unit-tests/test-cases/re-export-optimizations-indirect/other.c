@@ -1,1 +1,2 @@
-void other() {}
+void 
+other (void) {}

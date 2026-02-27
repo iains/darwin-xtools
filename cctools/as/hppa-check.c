@@ -117,8 +117,8 @@ char *fp_format_str[] = { "sgl", "dbl", "quad" };
 /*
  * Traverse the opcode table, dumping out sample instructions.
  */
-void
-main()
+void 
+main (void)
 {
 	int i;
 	const char *arg;

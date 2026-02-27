@@ -157,9 +157,8 @@ static int compare_opcodes(char *, char *);
 
 #ifdef NOT_USED
 /* Nonzero if INSN is the opcode for a delayed branch.  */
-static int
-is_delayed_branch (insn)
-	union sparc_insn insn;
+static int 
+is_delayed_branch (union sparc_insn insn)
 {
 	unsigned int i;
 

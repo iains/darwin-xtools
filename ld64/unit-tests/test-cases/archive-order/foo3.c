@@ -1,1 +1,2 @@
-int foo3() { return 1; }
+int 
+foo3 (void) { return 1; }

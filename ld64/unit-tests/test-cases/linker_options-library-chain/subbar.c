@@ -1,1 +1,2 @@
-void subbar() { }
+void 
+subbar (void) { }

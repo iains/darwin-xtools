@@ -26,17 +26,20 @@ int mediumarray1[1000];
 int bigarray1[500000000]; // just under 2GB array
 int small1;
 
-int getbig1()
+int 
+getbig1 (void)
 {
 	return bigarray1[0];
 }
 
-int getmedium1()
+int 
+getmedium1 (void)
 {
 	return mediumarray1[0];
 }
 
-int getsmall1()
+int 
+getsmall1 (void)
 {
 	return small1;
 }

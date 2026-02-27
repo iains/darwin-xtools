@@ -1,5 +1,6 @@
 
 int tent;
 
-int baz() { return tent; }
+int 
+baz (void) { return tent; }
 

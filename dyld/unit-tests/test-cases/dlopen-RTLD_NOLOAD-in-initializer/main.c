@@ -29,7 +29,8 @@
 
 typedef bool (*fooProc)(void);
 
-int main()
+int 
+main (void)
 {
 	void* handle = dlopen("libfoo.dylib", RTLD_LAZY);
 	if ( handle == NULL ) {

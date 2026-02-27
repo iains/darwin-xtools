@@ -1,2 +1,4 @@
-void foo() {}
-void bar() {}
+void 
+foo (void) {}
+void 
+bar (void) {}

@@ -27,7 +27,8 @@
 #include "test.h"
 
 
-void stuff()
+void 
+stuff (void)
 {
 #if BETTER
 	PASS("rpath-install-name");

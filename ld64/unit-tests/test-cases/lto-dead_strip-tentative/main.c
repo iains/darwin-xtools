@@ -3,7 +3,8 @@ extern int foo();
 extern int bar();
 extern int baz();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	bar();

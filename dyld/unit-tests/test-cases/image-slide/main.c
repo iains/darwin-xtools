@@ -41,8 +41,8 @@ intptr_t findSlide(const struct mach_header* mh)
 }
 
 
-int
-main()
+int 
+main (void)
 {
 	// find mach_header for libfoo.dylib
 	const struct mach_header* mh;

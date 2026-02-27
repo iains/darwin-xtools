@@ -28,7 +28,8 @@
 
 int barData = 1;
 
-void bar()
+void 
+bar (void)
 {
 }
 

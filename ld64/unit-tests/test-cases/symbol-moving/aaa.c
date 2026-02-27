@@ -1,3 +1,4 @@
 
-void aaa() {}
+void 
+aaa (void) {}
 

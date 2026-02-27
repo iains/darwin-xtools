@@ -39,7 +39,8 @@ void setState(int nextState)
 }
 
 
-void baseCheck()
+void 
+baseCheck (void)
 {
 	if ( badOrder ) {
 		switch ( state ) {

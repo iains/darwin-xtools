@@ -2,7 +2,8 @@
 #include <mach-o/dyld-interposing.h>
 #include "foo.h"
 
-int myfoo()
+int 
+myfoo (void)
 {
 	foo();
 	return 20;

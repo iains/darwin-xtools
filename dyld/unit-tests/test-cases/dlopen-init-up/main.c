@@ -26,7 +26,8 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-int main()
+int 
+main (void)
 {
 	PASS("dlopen-init-up");
 	return EXIT_SUCCESS;

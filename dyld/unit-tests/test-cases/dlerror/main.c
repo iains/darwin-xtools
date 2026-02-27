@@ -57,7 +57,8 @@ static void* work(void* arg)
 
 
 
-int main()
+int 
+main (void)
 {
 	dlsym(RTLD_DEFAULT, "foobar");
 	//fprintf(stderr, "%s\n", dlerror());

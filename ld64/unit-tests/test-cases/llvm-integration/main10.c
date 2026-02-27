@@ -1,6 +1,7 @@
 #include "b10.h"
 
-int main()
+int 
+main (void)
 {
   struct my_struct *mh = &my_hooks;
 

@@ -7,9 +7,11 @@ extern int def;
 extern int ghi;
 extern int com;
 
-double getpi() { return 3.1415926535; }
+double 
+getpi (void) { return 3.1415926535; }
 
-void bar() 
+void 
+bar (void) 
 {  
 }
 
@@ -31,7 +33,8 @@ void* all[] = { &main, &version, &mainget, &getpi, &otherget,
                 &bar, &foo, &x, &abc, &def, &ghi, &com, &com3, &com4, &com5 };
                 
                 
-void* foo() 
+void *
+foo (void) 
 {
   return all;
 }

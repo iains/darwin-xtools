@@ -1,7 +1,8 @@
 
 #include <dlfcn.h>
 
-int main()
+int 
+main (void)
 {
 	// dynamically load libfoo.dylib which depends on libstdc++.dylib 
 	// being re-bound to libfoo's operator new.

@@ -1,2 +1,3 @@
-int wrap() { return 0; }
+int 
+wrap (void) { return 0; }
 

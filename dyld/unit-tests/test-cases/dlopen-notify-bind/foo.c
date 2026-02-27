@@ -26,7 +26,8 @@
 
 void* externalRlocToMalloc = &malloc;
 
-void* foo()
+void *
+foo (void)
 {
 	return externalRlocToMalloc;
 }

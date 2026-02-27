@@ -1,7 +1,8 @@
 extern  int foo1(void);
 extern  void foo2(void);
 
-int main()
+int 
+main (void)
 {
   int i = foo1();
   if (i == 42)

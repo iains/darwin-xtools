@@ -4,7 +4,8 @@ extern  void foo2(void);
 void foo4(void)
 {
 }
-int main()
+int 
+main (void)
 {
   int i = foo1();
   if (i == 42)

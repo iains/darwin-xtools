@@ -30,7 +30,8 @@ extern int* get_b();
 extern int* get_c();	
 extern int* get_d();	
 
-int main()
+int 
+main (void)
 {
 	int* p;
   p = get_a();

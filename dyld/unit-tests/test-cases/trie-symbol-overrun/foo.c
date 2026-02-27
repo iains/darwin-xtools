@@ -1,12 +1,15 @@
 
-void abc()
+void 
+abc (void)
 {
 }
 
-void abcdefghi()
+void 
+abcdefghi (void)
 {
 }
 
-void abcdee()
+void 
+abcdee (void)
 {
 }

@@ -30,7 +30,8 @@
 extern int foo();
 extern int bar();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	bar();

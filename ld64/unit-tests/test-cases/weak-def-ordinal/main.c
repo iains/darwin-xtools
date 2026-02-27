@@ -26,7 +26,8 @@
 extern void aaa();
 extern void bbb();
 
-int main()
+int 
+main (void)
 {
 	aaa();
 	bbb();

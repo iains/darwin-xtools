@@ -38,7 +38,8 @@ static int staticbigarray4[256];
 static int staticbigarray5[256];
 static int staticbigarray6[256];
 
-int main()
+int 
+main (void)
 {
 	staticbigarray1[10] = 4;
 	staticbigarray2[10] = 4;

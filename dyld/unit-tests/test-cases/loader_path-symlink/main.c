@@ -6,7 +6,8 @@
 
 extern void foo();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	PASS("loader_path-symlink");

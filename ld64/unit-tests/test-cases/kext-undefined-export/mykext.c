@@ -22,6 +22,7 @@ kern_return_t mykext_stop (kmod_info_t * ki, void * d) {
     return KERN_SUCCESS;
 }
 
-void my_dead_code() {
+void 
+my_dead_code (void) {
 	++extern_unused_global;
 }

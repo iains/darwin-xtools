@@ -2,13 +2,15 @@
 int a;
 int b = 5;
 
-int foo()
+int 
+foo (void)
 {
 	return a+b;
 }
 
 
-int entry()
+int 
+entry (void)
 {
 	return foo();
 }

@@ -33,7 +33,8 @@
 ///
 
 
-int main()
+int 
+main (void)
 {
 	// main links against libfoo.dylib so it should already be loaded
 	void* handle = dlopen("libfoo.dylib", RTLD_NOLOAD);

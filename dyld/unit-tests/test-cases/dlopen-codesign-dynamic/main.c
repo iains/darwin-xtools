@@ -11,7 +11,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 #if ENFORCE
 	uint32_t flags = CS_ENFORCEMENT | CS_KILL;

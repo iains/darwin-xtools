@@ -9,7 +9,8 @@ extern int foo[];
 
 int* pfoo3 = &foo[3];
 
-int main()
+int 
+main (void)
 {
 	if ( *pfoo3 != 4 )
 		FAIL("weak-in-dylib, pfoo3=%d", *pfoo3);

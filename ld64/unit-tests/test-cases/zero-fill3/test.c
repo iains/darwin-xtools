@@ -44,7 +44,8 @@ static int staticbigarray5[2560000];
 static int staticbigarray6[25600000];
 //static int staticbigarray99[2147483647U/SHRINK];
 
-int main()
+int 
+main (void)
 {
 	bigarray5[10] = 4;
 	bigarray7[10] = 4;

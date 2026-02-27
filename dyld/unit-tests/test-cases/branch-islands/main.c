@@ -11,7 +11,8 @@ extern bool test1();
 const char* str = "hello";
 
 
-int main()
+int 
+main (void)
 {
 	if ( test1() )
 		FAIL("branch-islands: test1");

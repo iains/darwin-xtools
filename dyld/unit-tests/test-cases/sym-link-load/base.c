@@ -34,7 +34,8 @@ void setState(int x)
 }
 
 
-void baseCheck()
+void 
+baseCheck (void)
 {
 	switch ( initCount ) {
 		case 0:

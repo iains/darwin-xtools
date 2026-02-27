@@ -29,7 +29,8 @@ extern int bar();
 extern int bar2();
 extern int bar3();
 
-int main()
+int 
+main (void)
 {
     foo();
     bar();

@@ -34,7 +34,8 @@
 // we want to verify that dlopening the symlink name will use the one in the shared cache
 
 
-int main()
+int 
+main (void)
 {
 	void* libzHandle = dlopen("/usr/lib/libz.dylib", RTLD_LAZY);
 	if ( libzHandle == NULL ) {

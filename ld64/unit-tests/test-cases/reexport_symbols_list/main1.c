@@ -1,7 +1,8 @@
 extern int foo();
 extern int bart();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	bart();

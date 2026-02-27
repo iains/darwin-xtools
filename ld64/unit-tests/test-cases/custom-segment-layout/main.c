@@ -1,7 +1,8 @@
 
 int x = 5;
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }

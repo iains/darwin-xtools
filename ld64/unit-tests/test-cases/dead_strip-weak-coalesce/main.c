@@ -2,7 +2,8 @@
 // baz is in a lazily loaded archive
 extern void baz();
 
-int main()
+int 
+main (void)
 {
 	baz();
 	return 0;

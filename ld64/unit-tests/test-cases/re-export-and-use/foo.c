@@ -7,7 +7,8 @@ void* pbar = &bar;
 void* pbaz = &baz;
 #endif
 
-int foo()
+int 
+foo (void)
 {
 #if USE_BAZ
 	baz();

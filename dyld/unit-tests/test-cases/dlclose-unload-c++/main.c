@@ -41,7 +41,8 @@ bool inImage(void* x)
 }
 
 
-int main()
+int 
+main (void)
 {
 	void* handle1 = dlopen("libfoo.dylib", RTLD_LAZY);
 	if ( handle1 == NULL ) {

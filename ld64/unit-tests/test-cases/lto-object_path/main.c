@@ -7,7 +7,8 @@ void foo(int x)
 	printf("hello, world %d\n", x);
 }
 
-int main()
+int 
+main (void)
 {
 	foo(10);
 	return 0;

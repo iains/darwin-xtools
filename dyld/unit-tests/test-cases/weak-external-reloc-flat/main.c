@@ -24,7 +24,8 @@ int* pbar = &bar[1];
 // the function should use libfoo's frob[] even if libfoo is flat
 extern int getfrob();
 
-int main()
+int 
+main (void)
 {
 	if ( *pfoo != 7 )
 		FAIL("weak-external-reloc-flat, pfoo=%d", *pfoo);

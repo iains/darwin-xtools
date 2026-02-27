@@ -28,7 +28,8 @@
 
 typedef int (*Func_t)(void);
 
-int main()
+int 
+main (void)
 {
 	// RTLD_NOW force lazy pointers to be bound early 
 	void* handle = dlopen("libfoo.dylib", RTLD_NOW);

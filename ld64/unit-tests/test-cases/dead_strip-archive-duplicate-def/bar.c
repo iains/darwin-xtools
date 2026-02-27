@@ -1,7 +1,9 @@
 
-void bar() { }
+void 
+bar (void) { }
 
-int baz()
+int 
+baz (void)
 {
 	return -1;
 }

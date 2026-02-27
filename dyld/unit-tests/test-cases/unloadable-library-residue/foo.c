@@ -27,7 +27,8 @@ extern int bar3;
 
 
 
-int foo()
+int 
+foo (void)
 {
 	return bar1 + bar2 + bar3;
 }

@@ -24,7 +24,8 @@
 
 
 // funcation called by a loaded bundle
-int bar() 
+int 
+bar (void) 
 {
 	return 1;
 }

@@ -29,7 +29,8 @@
 
 extern bool foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() ) 
 		PASS("rpath-loader_path-dlopen");

@@ -180,10 +180,8 @@ operandname( mode )
     /* NOTREACHED */
 }
 
-static
-uint32_t
-operandlength( modep )
-    struct modebyte	*modep;
+static uint32_t 
+operandlength (struct modebyte *modep)
 {
     
     switch ( operandmode( modep ) ) {
@@ -217,10 +215,8 @@ operandlength( modep )
     /* NOTREACHED */
 }
 
-static
-uint32_t
-reladdr( modep )
-    struct modebyte	*modep;
+static uint32_t 
+reladdr (struct modebyte *modep)
 {
     operandenum	mode = operandmode( modep );
     char	*cp;

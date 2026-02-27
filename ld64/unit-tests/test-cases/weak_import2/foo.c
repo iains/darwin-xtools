@@ -2,10 +2,14 @@
 
 #include "foo.h"
 
-void func1() {}
-void func2() {}
-void func3() {}
-void func4() {}
+void 
+func1 (void) {}
+void 
+func2 (void) {}
+void 
+func3 (void) {}
+void 
+func4 (void) {}
 
 
 int data1 = 0;

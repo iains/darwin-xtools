@@ -22,7 +22,8 @@
  */
 #include <stdio.h>
 
-void foo()
+void 
+foo (void)
 {
 	printf("foo");
 }

@@ -87,7 +87,8 @@ void loadAsDylib(const char* path)
 
 #endif
 
-int main()
+int 
+main (void)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED
 	int dummy; 

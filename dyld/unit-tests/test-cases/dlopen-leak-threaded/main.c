@@ -44,7 +44,8 @@ static void* work(void* arg)
 }
 
 
-int main()
+int 
+main (void)
 {
 	pthread_t worker1;
 	if ( pthread_create(&worker1, NULL, work, "/frazzle/bar") != 0 ) {

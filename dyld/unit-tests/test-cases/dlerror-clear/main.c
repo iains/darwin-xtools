@@ -33,7 +33,8 @@
 /// This tests that the dlerror message is cleared when dlerror is called
 ///
 
-int main()
+int 
+main (void)
 {
 	// try to non-existent library
 	void* handle1 = dlopen("frobulite", RTLD_LAZY);

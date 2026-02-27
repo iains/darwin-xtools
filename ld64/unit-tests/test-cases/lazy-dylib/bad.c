@@ -6,7 +6,8 @@ extern int data;
 
 static int* pd = &data;
 
-int main()
+int 
+main (void)
 {
 	return *pd;
 }

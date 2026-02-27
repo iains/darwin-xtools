@@ -2040,7 +2040,8 @@ static void* work(void* ignore)
 }
 
 
-int main()
+int 
+main (void)
 {
 	pthread_t worker[10];
 	for (int i=0; i < 10; ++i) {

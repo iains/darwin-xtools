@@ -30,7 +30,8 @@ extern int foo();
 extern int fooPlusOne();
 
 
-int main()
+int 
+main (void)
 {
 	if ( getenv("TEN") != NULL ) {
 		if ( foo() != 10 )

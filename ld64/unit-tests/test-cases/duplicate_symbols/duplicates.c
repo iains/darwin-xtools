@@ -1,10 +1,13 @@
 #include <stdio.h>
 
-void a() {
+void 
+a (void) {
 }
 
-void b() {
+void 
+b (void) {
 }
 
-void c() {
+void 
+c (void) {
 }

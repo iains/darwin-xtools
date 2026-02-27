@@ -29,7 +29,8 @@
 
 typedef bool (*CheckFunc)();
 
-int main()
+int 
+main (void)
 {
 	void* handle = dlopen("test.bundle", RTLD_LAZY);
 	if ( handle == NULL ) {

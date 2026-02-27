@@ -46,7 +46,8 @@ static void tryPath(const char* path)
 //  <rdar://problem/7017050> dlopen() not opening frameworks with non-canonical paths
 //
 
-int main()
+int 
+main (void)
 {
 	tryPath("//usr/lib/libSystem.B.dylib");
 	tryPath("/usr/bin/../lib/libSystem.B.dylib");

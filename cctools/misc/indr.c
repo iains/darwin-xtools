@@ -384,9 +384,8 @@ char *envp[])
 /*
  * Print the current usage message and exit non-zero.
  */
-static
-void
-usage()
+static void 
+usage (void)
 {
 	fprintf(stderr, "Usage: %s [-n] [[-arch arch_flag] ...] "
 		"<symbol list file> <input file> <output file>\n", progname);
@@ -1794,9 +1793,8 @@ struct list *list)
  * first 4 bytes are not stuffed with the size because on a little endian
  * machine that first byte is likely to be non-zero.
  */
-static
-void
-start_string_table()
+static void 
+start_string_table (void)
 {
 	if(string_table.size == 0){
 	    string_table.size = INITIAL_STRING_TABLE_SIZE;
@@ -1833,9 +1831,8 @@ char *p)
  * This routine is called after all calls to add_to_string_table() are made
  * to round off the size of the string table.  It zeros the rounded bytes.
  */
-static
-void
-end_string_table()
+static void 
+end_string_table (void)
 {
     uint32_t length;
 

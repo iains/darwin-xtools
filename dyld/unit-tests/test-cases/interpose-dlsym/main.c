@@ -29,7 +29,8 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
 
-int main()
+int 
+main (void)
 {
 	void* handle = dlopen("/usr/lib/libSystem.B.dylib", RTLD_LAZY);
 	if ( handle == NULL ) {

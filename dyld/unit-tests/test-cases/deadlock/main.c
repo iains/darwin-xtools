@@ -94,7 +94,8 @@ static void myImageHandler(const struct mach_header *mh, intptr_t vmaddr_slide)
 }
 #endif
 
-int main()
+int 
+main (void)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED
 	pthread_mutex_init(&sBarrierMutex, NULL);

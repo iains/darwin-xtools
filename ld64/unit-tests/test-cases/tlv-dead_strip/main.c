@@ -24,7 +24,8 @@
 
 __thread int gTLSThreadID = 0;
 
-int foobar() {
+int 
+foobar (void) {
   return gTLSThreadID;
 }
 

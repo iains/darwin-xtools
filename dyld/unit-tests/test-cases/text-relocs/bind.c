@@ -1,7 +1,8 @@
 
 extern int y;
 
-int test()
+int 
+test (void)
 {
 	return y;
 }

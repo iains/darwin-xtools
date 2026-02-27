@@ -31,14 +31,16 @@
 	              :										\
 	);
 
-int deadwood()
+int 
+deadwood (void)
 {
 	DTRACE_CALL0ARGS(__foo__, test2)
 	return 0;
 }
 
 
-int main() {
+int 
+main (void) {
 	int a = 1;
 
 	while(a) {

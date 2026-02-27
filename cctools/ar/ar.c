@@ -107,10 +107,8 @@ extern char support_url[];
  *	functions.  Some hacks that let us be backward compatible with 4.3 ar
  *	option parsing and sanity checking.
  */
-int
-main(argc, argv)
-	int argc;
-	char **argv;
+int 
+main (int argc, char **argv)
 {
 	int c, retval, verbose, run_ranlib, toc64;
 	char *p;
@@ -317,9 +315,8 @@ main(argc, argv)
 	exit(EXIT_SUCCESS);
 }
 
-static void
-badoptions(arg)
-	char *arg;
+static void 
+badoptions (char *arg)
 {
 
 	warnx("illegal option combination for %s", arg);

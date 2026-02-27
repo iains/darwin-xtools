@@ -28,10 +28,12 @@ int y = 0;
 
 static int x = 0;
 
-int getx() { return x; }
+int 
+getx (void) { return x; }
 void setx(int a) { x = a; }
 
-void bar()
+void 
+bar (void)
 {
 	printf("hello\n");
 }

@@ -1,6 +1,7 @@
 
 
-void foo() 
+void 
+foo (void) 
 {
    // do nothing
 }

@@ -29,7 +29,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	Dl_info info;
 

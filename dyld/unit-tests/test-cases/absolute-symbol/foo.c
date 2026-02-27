@@ -1,5 +1,6 @@
 
 
 int var = 5;
-void func() { }
+void 
+func (void) { }
 

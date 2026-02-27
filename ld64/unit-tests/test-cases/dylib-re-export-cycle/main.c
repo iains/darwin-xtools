@@ -1,6 +1,7 @@
 extern void unfindable();
 
-int main() {
+int 
+main (void) {
    unfindable();
    return 0;
 }

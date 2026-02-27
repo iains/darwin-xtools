@@ -21,5 +21,6 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-void compress() {}
+void 
+compress (void) {}
 

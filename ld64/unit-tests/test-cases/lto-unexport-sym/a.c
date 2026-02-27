@@ -1,7 +1,9 @@
 void foo();
-void bar() {
+void 
+bar (void) {
 	foo();
 }
 
-int main() {
+int 
+main (void) {
 }

@@ -22,7 +22,8 @@
  */
 
 
-int base()
+int 
+base (void)
 {
 	return 10;
 }

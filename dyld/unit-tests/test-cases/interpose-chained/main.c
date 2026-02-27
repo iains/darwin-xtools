@@ -27,7 +27,8 @@
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 #include "foo.h"
 
-int main()
+int 
+main (void)
 {
 	const char* x = foo("seed");
   

@@ -27,7 +27,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 	void* h1 = dlopen("./libstuff_better.dylib", RTLD_LAZY);
 	if ( h1 == NULL ) {

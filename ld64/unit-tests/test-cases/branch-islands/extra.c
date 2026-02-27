@@ -2,7 +2,8 @@
 
 extern void back();
 
-void foo()
+void 
+foo (void)
 {
 	fprintf(stdout, "foo\n");
   back();

@@ -81,9 +81,8 @@ static char rcsid[] = "$OpenBSD: print.c,v 1.2 1996/06/26 05:31:22 deraadt Exp $
  *	Prints archive members on stdout - if member names given only
  *	print those members, otherwise print all members.
  */
-int
-print(argv)
-	char **argv;
+int 
+print (char **argv)
 {
 	CF cf;
 	int afd, all;

@@ -757,9 +757,8 @@ symbolP = symbol_find_or_make(isymbolP->isy_name);
  * Some stabs (e.g. SLINE) when found within a BINCL/EINCL disqualify the EXCL
  * optimization and therefore disable this checksumming.
  */
-static
-void
-set_BINCL_checksums()
+static void 
+set_BINCL_checksums (void)
 {
     struct HeaderRange { 
 	symbolS*		bincl; 

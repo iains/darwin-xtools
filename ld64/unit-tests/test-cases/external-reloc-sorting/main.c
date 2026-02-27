@@ -33,7 +33,8 @@ extern int baz;
 int* array[] = { &foo, &bar, &baz, &foo, &bar, &baz, &foo, &bar, &baz };
 
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }

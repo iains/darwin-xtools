@@ -46,7 +46,8 @@ const char* pd_12345678901234 = &d - 12345678901234;
 const char* pd12345678901234  = &d + 12345678901234;
 #endif
 
-int main()
+int 
+main (void)
 {
 	if (*pc != 12 ) {
 		FAIL("addend: *pc != 12");

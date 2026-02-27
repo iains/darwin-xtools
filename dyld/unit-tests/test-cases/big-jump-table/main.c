@@ -27,7 +27,8 @@
 
 
 
-int main()
+int 
+main (void)
 {
 	PASS("big-jump-table");
 	return EXIT_SUCCESS;

@@ -33,7 +33,8 @@
 
 extern int foo2;
 
-int main()
+int 
+main (void)
 {
 	return foo2;
 }

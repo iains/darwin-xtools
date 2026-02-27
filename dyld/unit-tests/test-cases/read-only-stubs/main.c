@@ -58,7 +58,8 @@ static vm_prot_t getPermission(void* addr)
 }
 
 
-static void* getStubAddr()
+static void *
+getStubAddr (void)
 {
 	unsigned long size;
 #if __i386__
@@ -93,7 +94,8 @@ static void checkStubs(void* addr)
 }
 
 
-int main()
+int 
+main (void)
 {
 	void* stubAddr = getStubAddr();	
 #if __i386__
@@ -111,7 +113,8 @@ int main()
 
 #else
 
-int main()
+int 
+main (void)
 {
 	// iOS does not have modifiable stubs
 	PASS("read-only-stubs");

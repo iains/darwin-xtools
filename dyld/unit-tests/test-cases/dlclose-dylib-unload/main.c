@@ -30,7 +30,8 @@
 
 
 
-void verifyfoo()
+void 
+verifyfoo (void)
 {
 	// open same dylib three times
 	void* handle1 = dlopen("libfoo.dylib", RTLD_LAZY);
@@ -91,7 +92,8 @@ void verifyfoo()
 
 
 
-void verifybar()
+void 
+verifybar (void)
 {
 	// open same dylib three times
 	void* handle1 = dlopen("libbar.dylib", RTLD_LAZY);
@@ -152,7 +154,8 @@ void verifybar()
 
 // verify libbar.dylib can be loaded and unloaded
 // verify libbar.dylib can be loaded, but cannot be unloaded (because main executable links against it)
-int main()
+int 
+main (void)
 {
 	verifyfoo();
 	verifybar();

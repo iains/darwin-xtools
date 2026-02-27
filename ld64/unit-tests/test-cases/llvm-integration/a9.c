@@ -10,7 +10,8 @@ void foo2(void) {
 
 }
 
-static int foo3() {
+static int 
+foo3 (void) {
   foo4();
   return 10;
 }

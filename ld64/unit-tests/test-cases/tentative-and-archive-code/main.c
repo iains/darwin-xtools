@@ -1,7 +1,8 @@
 
 int foo;
 
-int main()
+int 
+main (void)
 {
 	foo = 3;
 	return 0;

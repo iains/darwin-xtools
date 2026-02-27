@@ -31,7 +31,8 @@
 extern bool allocationSeen(void* p);
 typedef bool (*seenProc)(void*);
 
-int main()
+int 
+main (void)
 {
 	void* x = strdup("123");
 	

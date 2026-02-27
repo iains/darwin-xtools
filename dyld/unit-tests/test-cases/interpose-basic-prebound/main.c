@@ -30,7 +30,8 @@
 
 extern bool check_dylib_interposing();
 
-int main()
+int 
+main (void)
 {  
 	if ( check_dylib_interposing() )
 		PASS("interpose-basic");

@@ -681,9 +681,8 @@ i386_align_code (fragP, count)
   fragP->fr_var = count;
 }
 
-static INLINE unsigned int
-mode_from_disp_size (t)
-     unsigned int t;
+static INLINE unsigned int 
+mode_from_disp_size (unsigned int t)
 {
   return (t & Disp8) ? 1 : (t & (Disp16 | Disp32 | Disp32S)) ? 2 : 0;
 }
@@ -1030,8 +1029,8 @@ uintptr_t dummy)
 }
 
 #ifndef NeXT_MOD
-uint32_t
-i386_mach ()
+uint32_t 
+i386_mach (void)
 {
   if (!strcmp (default_arch, "x86_64"))
     return bfd_mach_x86_64;
@@ -1042,8 +1041,8 @@ i386_mach ()
 }
 #endif
 
-void
-md_begin ()
+void 
+md_begin (void)
 {
   const char *hash_err;
 
@@ -1209,10 +1208,8 @@ static void pt PARAMS ((unsigned int));
 static void pe PARAMS ((expressionS *));
 static void ps PARAMS ((symbolS *));
 
-static void
-pi (line, x)
-     char *line;
-     i386_insn *x;
+static void 
+pi (char *line, i386_insn *x)
 {
   unsigned int i;
 
@@ -1341,9 +1338,8 @@ static const type_names[] =
   { 0, "" }
 };
 
-static void
-pt (t)
-     unsigned int t;
+static void 
+pt (unsigned int t)
 {
   const struct type_name *ty;
 
@@ -1359,12 +1355,8 @@ pt (t)
 static bfd_reloc_code_real_type reloc
   PARAMS ((int, int, int, bfd_reloc_code_real_type));
 
-static bfd_reloc_code_real_type
-reloc (size, pcrel, sign, other)
-     int size;
-     int pcrel;
-     int sign;
-     bfd_reloc_code_real_type other;
+static bfd_reloc_code_real_type 
+reloc (int size, int pcrel, int sign, bfd_reloc_code_real_type other)
 {
   if (other != NO_RELOC)
     return other;
@@ -1482,9 +1474,8 @@ tc_i386_fix_adjustable (fixP)
 
 static int intel_float_operand PARAMS ((const char *mnemonic));
 
-static int
-intel_float_operand (mnemonic)
-     const char *mnemonic;
+static int 
+intel_float_operand (const char *mnemonic)
 {
   /* Note that the value returned is meaningful only for opcodes with (memory)
      operands, hence the code here is free to improperly handle opcodes that
@@ -1540,9 +1531,8 @@ intel_float_operand (mnemonic)
    machine dependent instruction.  This function is supposed to emit
    the frags/bytes it assembles to.  */
 
-void
-md_assemble (line)
-     char *line;
+void 
+md_assemble (char *line)
 {
   int j;
   char mnemonic[MAX_MNEM_SIZE];
@@ -1809,9 +1799,7 @@ md_assemble (line)
 }
 
 static char *
-parse_insn (line, mnemonic)
-     char *line;
-     char *mnemonic;
+parse_insn (char *line, char *mnemonic)
 {
   char *l = line;
   char *token_start = l;
@@ -2008,9 +1996,7 @@ parse_insn (line, mnemonic)
 }
 
 static char *
-parse_operands (l, mnemonic)
-     char *l;
-     const char *mnemonic;
+parse_operands (char *l, const char *mnemonic)
 {
   char *token_start;
 
@@ -2138,8 +2124,8 @@ parse_operands (l, mnemonic)
   return l;
 }
 
-static void
-swap_operands ()
+static void 
+swap_operands (void)
 {
   union i386_op temp_op;
   unsigned int temp_type;
@@ -2182,8 +2168,8 @@ swap_operands ()
 
 /* Try to ensure constant immediates are represented in the smallest
    opcode possible.  */
-static void
-optimize_imm ()
+static void 
+optimize_imm (void)
 {
   char guess_suffix = 0;
   int op;
@@ -2290,8 +2276,8 @@ optimize_imm ()
 }
 
 /* Try to use the smallest displacement type too.  */
-static void
-optimize_disp ()
+static void 
+optimize_disp (void)
 {
   int op;
 
@@ -2344,8 +2330,8 @@ optimize_disp ()
       }
 }
 
-static int
-match_template ()
+static int 
+match_template (void)
 {
   /* Points to template once we've found it.  */
   const template *t;
@@ -2525,8 +2511,8 @@ match_template ()
   return 1;
 }
 
-static int
-check_string ()
+static int 
+check_string (void)
 {
   int mem_op = (i.types[0] & AnyMem) ? 0 : 1;
   if ((i.tm.operand_types[mem_op] & EsSeg) != 0)
@@ -2792,8 +2778,8 @@ check_byte_reg (void)
   return 1;
 }
 
-static int
-check_long_reg ()
+static int 
+check_long_reg (void)
 {
   int op;
 
@@ -2843,8 +2829,8 @@ check_long_reg ()
   return 1;
 }
 
-static int
-check_qword_reg ()
+static int 
+check_qword_reg (void)
 {
   int op;
 
@@ -2875,8 +2861,8 @@ check_qword_reg ()
   return 1;
 }
 
-static int
-check_word_reg ()
+static int 
+check_word_reg (void)
 {
   int op;
   for (op = i.operands; --op >= 0;)
@@ -2916,8 +2902,8 @@ check_word_reg ()
   return 1;
 }
 
-static int
-finalize_imm ()
+static int 
+finalize_imm (void)
 {
   unsigned int overlap0, overlap1, overlap2;
 
@@ -2994,8 +2980,8 @@ finalize_imm ()
   return 1;
 }
 
-static int
-process_operands ()
+static int 
+process_operands (void)
 {
   /* Default segment register this instruction will use for memory
      accesses.  0 means unknown.  This is only for optimizing out
@@ -3381,8 +3367,8 @@ build_modrm_byte ()
   return default_seg;
 }
 
-static void
-output_branch ()
+static void 
+output_branch (void)
 {
   char *p;
   int code16;
@@ -3497,8 +3483,8 @@ output_branch ()
 	}
 }
 
-static void
-output_jump ()
+static void 
+output_jump (void)
 {
   char *p;
   int size;
@@ -3589,8 +3575,8 @@ output_jump ()
 #endif
 }
 
-static void
-output_interseg_jump ()
+static void 
+output_interseg_jump (void)
 {
   char *p;
   int size;
@@ -3668,8 +3654,8 @@ output_interseg_jump ()
   md_number_to_chars (p + size, (valueT) i.op[0].imms->X_add_number, 2);
 }
 
-static void
-output_insn ()
+static void 
+output_insn (void)
 {
   fragS *insn_start_frag;
   offsetT insn_start_off;
@@ -4410,9 +4396,8 @@ pe_directive_secrel (dummy)
 
 static int i386_immediate PARAMS ((char *));
 
-static int
-i386_immediate (imm_start)
-     char *imm_start;
+static int 
+i386_immediate (char *imm_start)
 {
   char *save_input_line_pointer;
 #ifndef LEX_AT
@@ -4500,8 +4485,7 @@ i386_immediate (imm_start)
 static char *i386_scale PARAMS ((char *));
 
 static char *
-i386_scale (scale)
-     char *scale;
+i386_scale (char *scale)
 {
   offsetT val;
   char *save = input_line_pointer;
@@ -4544,10 +4528,8 @@ i386_scale (scale)
 
 static int i386_displacement PARAMS ((char *, char *));
 
-static int
-i386_displacement (disp_start, disp_end)
-     char *disp_start;
-     char *disp_end;
+static int 
+i386_displacement (char *disp_start, char *disp_end)
 {
   expressionS *exp;
   segT exp_seg = 0;
@@ -4715,9 +4697,8 @@ static int i386_index_check PARAMS ((const char *));
 /* Make sure the memory operand we've been dealt is valid.
    Return 1 on success, 0 on a failure.  */
 
-static int
-i386_index_check (operand_string)
-     const char *operand_string;
+static int 
+i386_index_check (const char *operand_string)
 {
   int ok;
 #if INFER_ADDR_PREFIX
@@ -4799,9 +4780,8 @@ i386_index_check (operand_string)
 /* Parse OPERAND_STRING into the i386_insn structure I.  Returns non-zero
    on error.  */
 
-static int
-i386_operand (operand_string)
-     char *operand_string;
+static int 
+i386_operand (char *operand_string)
 {
   const reg_entry *r;
   char *end_op;
@@ -5641,10 +5621,7 @@ int nsect)
    returned, or NULL on OK.  */
 
 char *
-md_atof (type, litP, sizeP)
-     int type;
-     char *litP;
-     int *sizeP;
+md_atof (int type, char *litP, int *sizeP)
 {
   int prec;
   LITTLENUM_TYPE words[MAX_LITTLENUMS];
@@ -5690,8 +5667,7 @@ md_atof (type, litP, sizeP)
 char output_invalid_buf[8];
 
 static char *
-output_invalid (c)
-     int c;
+output_invalid (int c)
 {
   if (ISPRINT (c))
     sprintf (output_invalid_buf, "'%c'", c);

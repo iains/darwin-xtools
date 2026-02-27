@@ -31,7 +31,8 @@
 /// The key index for main executables starts at 4
 ///
 
-int main()
+int 
+main (void)
 {
 	pthread_key_t key;
 	

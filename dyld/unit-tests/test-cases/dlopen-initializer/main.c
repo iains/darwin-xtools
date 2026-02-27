@@ -53,7 +53,8 @@ static void trySO(const char* path)
 
 
 
-int main()
+int 
+main (void)
 {
 	trySO("test1.dylib");
 	trySO("test2.dylib");

@@ -1,8 +1,10 @@
 
 
 
-void foo1() {}
-void foo2() {}
+void 
+foo1 (void) {}
+void 
+foo2 (void) {}
 
 
 int foo_data1 = 0;

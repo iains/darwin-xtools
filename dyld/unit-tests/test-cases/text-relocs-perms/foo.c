@@ -56,7 +56,8 @@ static vm_prot_t getPermission(void* addr)
 }
 
 
-static void* getStubAddr()
+static void *
+getStubAddr (void)
 {
 #if __LP64__
 	uint64_t size;
@@ -94,7 +95,8 @@ static void checkStubs(void* addr)
 }
 
 
-void foo()
+void 
+foo (void)
 {
 	void* stubAddr = getStubAddr();	
 	checkStubs(stubAddr);
@@ -102,7 +104,8 @@ void foo()
 
 #else
 
-void foo() 
+void 
+foo (void) 
 {
 	// iOS does not have text relocs
 }

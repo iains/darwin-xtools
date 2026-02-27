@@ -1,12 +1,14 @@
 
 extern void foo();
 
-int baz()
+int 
+baz (void)
 {
 	return 0;
 }
 
-int main()
+int 
+main (void)
 {
 	foo();
 	return 0;

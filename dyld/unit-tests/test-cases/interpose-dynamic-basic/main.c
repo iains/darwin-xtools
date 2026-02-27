@@ -40,7 +40,8 @@ char* mystrdup(const char* in)
 
 static const struct dyld_interpose_tuple sTable[] = { {&mystrdup, &strdup} };
 
-int main()
+int 
+main (void)
 {
 	const char* preCall = strdup("123");
   DupProc preProc = &strdup;

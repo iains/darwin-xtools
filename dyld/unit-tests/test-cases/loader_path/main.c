@@ -29,7 +29,8 @@
 #include "test.h"
 
 
-int main()
+int 
+main (void)
 {
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && (__MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_5)
 	NSAddImage("@loader_path/hide/libfoo3.dylib", 0);

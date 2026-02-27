@@ -32,7 +32,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() == 0 )
 		FAIL("flat-private-extern found wrong bar");
@@ -42,7 +43,8 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-int bar()
+int 
+bar (void)
 {
 	return 0;
 }

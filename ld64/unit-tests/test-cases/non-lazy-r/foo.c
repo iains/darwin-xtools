@@ -3,18 +3,22 @@
 
 extern int foo;
 
-int getfoo() { return foo; }
+int 
+getfoo (void) { return foo; }
 
 
 extern int other;
 
-int getother() { return other; }
+int 
+getother (void) { return other; }
 
 
 extern int tent;
 
-int gettent() { return tent; }
+int 
+gettent (void) { return tent; }
 
 
 extern void* func;
-void* getfunc() { return func; }
+void *
+getfunc (void) { return func; }

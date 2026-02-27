@@ -31,7 +31,8 @@ asm(".desc _magicSymbol, 0x10");
 int  hiddenSymbol = 1;
 asm(".desc _hiddenSymbol, 0x10");
 
-int main()
+int 
+main (void)
 {
 	return 0;
 }

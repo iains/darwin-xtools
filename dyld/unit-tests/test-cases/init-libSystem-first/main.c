@@ -28,7 +28,8 @@
 
 extern bool foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() )
 		PASS("init-libSystem-first");

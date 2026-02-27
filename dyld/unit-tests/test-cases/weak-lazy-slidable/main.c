@@ -11,7 +11,8 @@ extern bool foo1();
 extern bool foo2();
 
 
-int main()
+int 
+main (void)
 {
 	if ( foo1() && foo2() ) 
 		PASS("weak-lazy-slidable");

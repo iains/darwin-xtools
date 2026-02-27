@@ -32,7 +32,8 @@ extern int  common_end    __asm("section$end$__DATA$__common");
 int mycommon[2];
 static int mybss[2];
 
-int main()
+int 
+main (void)
 {
 	mybss[0] = 0;
 	printf("bss start = %p\n", &bss_start);

@@ -22,13 +22,15 @@
  */
 
 
-int foo()
+int 
+foo (void)
 {
 	return 10;
 }
 
 #if FOO2
-int foo2()
+int 
+foo2 (void)
 {
 	return 10;
 }

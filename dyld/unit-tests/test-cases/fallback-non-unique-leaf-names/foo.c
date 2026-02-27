@@ -22,7 +22,8 @@
  */
 #include <stdio.h>
 
-int foo()
+int 
+foo (void)
 {
 	return FOO;
 }

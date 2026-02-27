@@ -1,7 +1,8 @@
 
 extern int bar;
 
-int foo()
+int 
+foo (void)
 {
 	return bar;
 }

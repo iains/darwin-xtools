@@ -1,6 +1,7 @@
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	return 0;

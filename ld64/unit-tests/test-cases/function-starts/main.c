@@ -1,14 +1,19 @@
 
-void foo() {}
+void 
+foo (void) {}
 
-void mid() {}
+void 
+mid (void) {}
 
-static void bar() { foo(); }
+static void 
+bar (void) { foo(); }
 
-int main() { bar(); return 0; }
+int 
+main (void) { bar(); return 0; }
 
 
 #if __STATIC__
-void myexit() {}
+void 
+myexit (void) {}
 #endif
 

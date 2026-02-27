@@ -1,2 +1,3 @@
 
-int bar() { return 0; }
+int 
+bar (void) { return 0; }

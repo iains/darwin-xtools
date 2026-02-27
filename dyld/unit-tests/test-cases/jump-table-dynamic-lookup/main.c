@@ -65,7 +65,8 @@ static void* callAll(void* p)
 	return NULL;
 }
 
-int main()
+int 
+main (void)
 {
 	// load libfoo so that functions can be found dynamically
 	dlopen("libfoo.dylib", RTLD_LAZY);

@@ -30,7 +30,8 @@ extern int foo();
 // bar is defined in libfoo.dylib it calls myfunc() 
 extern int bar();
 
-int main()
+int 
+main (void)
 {
 	if ( (foo() == 10) && (bar() == 10) )
 		PASS("weak-override");
@@ -41,7 +42,8 @@ int main()
 
 
 // myfunc() also defined in libfoo.dylib but weak there, so this should override
-int myfunc()
+int 
+myfunc (void)
 {
 	return 10;
 }

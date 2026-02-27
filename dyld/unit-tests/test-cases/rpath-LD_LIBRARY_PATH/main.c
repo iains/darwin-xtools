@@ -28,7 +28,8 @@
 
 extern void foo();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	PASS("rpath-LD_LIBRARY_PATH");

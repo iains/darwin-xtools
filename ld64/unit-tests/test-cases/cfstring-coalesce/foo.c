@@ -4,7 +4,8 @@ extern void bar();
 
 extern CFStringRef OtherCFString;
 
-void foo()
+void 
+foo (void)
 {
 	CFStringGetLength(CFSTR("hello"));
 	CFStringGetLength(CFSTR("world"));
@@ -12,7 +13,8 @@ void foo()
 }
 
 
-int main() 
+int 
+main (void) 
 {
 	CFStringGetLength(CFSTR("live"));
 	bar();

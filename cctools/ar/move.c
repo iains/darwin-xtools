@@ -87,9 +87,8 @@ static char rcsid[] = "$OpenBSD: move.c,v 1.2 1996/06/26 05:31:21 deraadt Exp $"
  *	option selected members go after 'posname'.  If no options, members
  *	are moved to end of archive.
  */
-int
-move(argv)
-	char **argv;
+int 
+move (char **argv)
 {
 	CF cf;
 	off_t size, tsize;

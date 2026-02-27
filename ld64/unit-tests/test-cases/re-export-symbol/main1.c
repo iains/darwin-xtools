@@ -2,7 +2,8 @@ extern int foo();
 extern int bar();
 extern int bar_weak();
 
-int main()
+int 
+main (void)
 {
 	foo();
 	bar();

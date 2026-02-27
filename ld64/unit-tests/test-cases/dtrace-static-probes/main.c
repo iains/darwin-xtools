@@ -8,7 +8,8 @@ typedef int weirdType2;
 #include "bar.h"
 
 
-int deadwood()
+int 
+deadwood (void)
 {
 	if ( BAR_COUNT1_ENABLED() )
 		BAR_COUNT1(2);
@@ -16,7 +17,8 @@ int deadwood()
 }
 
 
-int main() {
+int 
+main (void) {
 	int a = 1;
 
 	while(a) {

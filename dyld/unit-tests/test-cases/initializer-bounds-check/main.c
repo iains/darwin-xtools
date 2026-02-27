@@ -27,8 +27,8 @@
 
 extern int bar;
 
-int
-main()
+int 
+main (void)
 {
 	if ( bar == 1 )
 		FAIL("initializer-bounds-check, out of bounds initializer called");

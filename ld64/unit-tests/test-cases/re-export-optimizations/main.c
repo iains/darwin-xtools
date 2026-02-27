@@ -1,7 +1,8 @@
 
 extern void bar();
 
-int main()
+int 
+main (void)
 {
 #if	CALL_BAR
 	bar();

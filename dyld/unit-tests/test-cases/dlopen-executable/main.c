@@ -28,7 +28,8 @@
 
 typedef int (*fooproc)(void);
 
-int main()
+int 
+main (void)
 {
 	// dlopen of regular executable should fail
 	void* handle = dlopen("./foo.exe", RTLD_LAZY);

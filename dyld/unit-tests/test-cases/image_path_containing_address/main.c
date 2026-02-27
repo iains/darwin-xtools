@@ -49,7 +49,8 @@ static void verify(void* addr)
 }
 
 
-int main()
+int 
+main (void)
 {
 	verify(&main);
 	verify(&foo);

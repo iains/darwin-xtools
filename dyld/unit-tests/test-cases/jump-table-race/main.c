@@ -849,7 +849,8 @@ static void* callAll(void* p)
 	return NULL;
 }
 
-int main()
+int 
+main (void)
 {
 	// call all foo's on another thread
 	pthread_t otherThread;

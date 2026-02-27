@@ -54,7 +54,8 @@ static void* work(void* ignore)
 }
 
 
-int main()
+int 
+main (void)
 {
 	h2 = dlopen("libfoo2.dylib", 0);
 	if ( h2 == NULL ) {

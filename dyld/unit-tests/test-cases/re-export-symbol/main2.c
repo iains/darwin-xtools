@@ -12,7 +12,8 @@ extern int mybar();
 
 int (*pmybar)() = &mybar;
 
-int main()
+int 
+main (void)
 {
 	if ( foo() != 10 )
 		FAIL("re-export-symbol: foo() returned wrong value");

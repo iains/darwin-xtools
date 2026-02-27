@@ -29,7 +29,8 @@ extern int  common_end    __asm("section$end$__DATA$__common");
 
 int mycommon[2];
 
-int main()
+int 
+main (void)
 {
 	printf("common start = %p\n", &common_start);
 	printf("common end = %p\n", &common_end);

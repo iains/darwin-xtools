@@ -29,7 +29,8 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-static uintptr_t libSystemSlide()
+static uintptr_t 
+libSystemSlide (void)
 {
 	Dl_info info;
 	if ( dladdr(&malloc, &info) == 0 ) {

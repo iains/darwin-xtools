@@ -60,7 +60,8 @@ static void trySO(const char* path)
 #endif
 
 
-int main()
+int 
+main (void)
 {
 // _dyld_func_lookup is only available in 10.5 and earlier
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && (__MAC_OS_X_VERSION_MIN_REQUIRED <= __MAC_10_5)

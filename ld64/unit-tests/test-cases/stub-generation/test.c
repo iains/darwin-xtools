@@ -25,13 +25,15 @@
 
 const char kMyStr[] = "hello";
 
-int test()
+int 
+test (void)
 {
 	return 10;
 }
 
 
-const char* getstr()
+const char *
+getstr (void)
 {
 	test();
 	return kMyStr;

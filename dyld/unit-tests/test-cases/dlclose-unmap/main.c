@@ -64,7 +64,8 @@ static void trySO(const char* path)
 }
 
 
-int main()
+int 
+main (void)
 {
 	trySO("test.bundle");
 	trySO("test.dylib");

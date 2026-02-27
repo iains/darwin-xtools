@@ -25,7 +25,8 @@
 extern int foo();
 extern int foo2();
 
-void doit()
+void 
+doit (void)
 {
 	foo();
 	foo2();

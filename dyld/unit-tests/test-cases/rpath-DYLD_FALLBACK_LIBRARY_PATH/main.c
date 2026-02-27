@@ -28,7 +28,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	if ( foo() )
 		PASS("rpath-DYLD_FALLBACK_LIBRARY_PATH");

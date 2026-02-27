@@ -53,7 +53,8 @@ static const char* batchMappedHandler(enum dyld_image_states state, uint32_t inf
 }
 
 
-int main()
+int 
+main (void)
 {
 	// tell dyld we want to know when images are mapped
 	dyld_register_image_state_change_handler(dyld_image_state_initialized, false, batchMappedHandler);

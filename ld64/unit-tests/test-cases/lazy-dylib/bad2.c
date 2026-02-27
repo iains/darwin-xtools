@@ -4,7 +4,8 @@
 
 extern int foo();
 
-int main()
+int 
+main (void)
 {
 	int (*func)() = foo;
 	if ( func != NULL )

@@ -26,7 +26,8 @@
 
 static int data=0;
 
-int main()
+int 
+main (void)
 {
 	printf("&data=%p\n", &data);
 	return 0;

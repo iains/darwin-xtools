@@ -34,7 +34,8 @@ char bigarray[0x10000000];	// 0.25GB
 	#endif
 #endif
 
-int main()
+int 
+main (void)
 {
 	//int local;
 	

@@ -1,3 +1,4 @@
 
-void middle() {}
+void 
+middle (void) {}
 

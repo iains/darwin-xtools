@@ -1,2 +1,3 @@
 
-void bar2() {}
+void 
+bar2 (void) {}

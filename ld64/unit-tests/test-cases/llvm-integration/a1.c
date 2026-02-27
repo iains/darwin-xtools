@@ -2,7 +2,8 @@
 #include <string.h>
 #include <errno.h>
 extern int foo4();
-int foo3()
+int 
+foo3 (void)
 {
 /*       printf ("%s\n",strerror(errno)); */
 	return foo4();

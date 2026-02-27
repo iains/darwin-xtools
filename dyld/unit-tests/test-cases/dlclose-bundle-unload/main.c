@@ -26,7 +26,8 @@
 
 #include "test.h" // PASS(), FAIL(), XPASS(), XFAIL()
 
-int main()
+int 
+main (void)
 {
 	// open same bundle three times
 	void* handle1 = dlopen("test.bundle", RTLD_LAZY);
