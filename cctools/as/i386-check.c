@@ -83,6 +83,17 @@ static char *Disp32_table[] = { "0xbabecafe", NULL };
 static char *Disp32S_table[] = { "0x12345678", NULL };
 static char *Disp64_table[] = { "0xfeedfacebabecafe", NULL };
 /*
+ * PC-relative branch/call targets are generated as a reference to an
+ * (undefined) external symbol rather than an absolute number.  An absolute
+ * number does not survive the assemble -> disassemble -> reassemble round trip
+ * used by check-as: otool renders a relative branch's target as an absolute
+ * address, which re-encodes to a different displacement on reassembly.  A
+ * symbol reference is emitted as a branch relocation and rendered symbolically
+ * by otool, so it round-trips exactly.  (This mirrors the PCREL "_relitive"
+ * handling in ppc-check.c.)
+ */
+static char *Branch_target_table[] = { "_branch_target", NULL };
+/*
 static char *Mem8_table[] = { "0x88888888", NULL };
 static char *Mem16_table[] = { "0x1616", NULL };
 static char *Mem32_table[] = { "0x32323232", NULL };
@@ -378,7 +389,17 @@ if(type0 >= EsSeg)
 		     */
 		    if(t->opcode_modifier & JumpByte)
 			continue;
-			
+
+		    /*
+		     * Use a symbol reference for PC-relative branch/call
+		     * targets so the operand survives the disassemble/reassemble
+		     * round trip (see Branch_target_table above).
+		     */
+		    if((t->opcode_modifier & (Jump | JumpDword)) &&
+		       (type0 == Disp8 || type0 == Disp16 || type0 == Disp32 ||
+			type0 == Disp32S || type0 == Disp64))
+			op0 = Branch_target_table;
+
 		    for( ; *op0; op0++){
 			if(((strcmp(t->name, "call") == 0 ||
 			     strcmp(t->name, "jmp") == 0) &&
