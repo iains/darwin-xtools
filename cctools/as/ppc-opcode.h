@@ -693,7 +693,9 @@ static const struct ppc_opcode ppc_opcodes[] = {
  { 0x7c00042c, "lwbrx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}} },
  { 0x7c00042a, "lswx",    {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}} },
  { 0x7c000028, "lwarx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}} },
+ { 0x7c000028, "lwarx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}, {0,1,NUM}} },
  { 0x7c0000a8, "ldarx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}}, IMPL64 },
+ { 0x7c0000a8, "ldarx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}, {0,1,NUM}}, IMPL64 },
 
  { 0x7c00022a, "lscbx",   {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}}, CPU601 },
  { 0x7c00022b, "lscbx.",  {{21,5,GREG}, {16,5,G0REG}, {11,5,GREG}}, CPU601 },
