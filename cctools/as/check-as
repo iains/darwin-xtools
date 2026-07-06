@@ -4,13 +4,18 @@
 # $1 = generator
 # $2 = arch
 # $3 = assembler driver to test.
+# $4 = otool to use (optional; defaults to otool from PATH).
+#      The host toolchain's otool has dropped support for some legacy
+#      architectures (e.g. ppc, cputype 18), so the build's own otool is
+#      passed in here to disassemble the objects being round-tripped.
 # return success/fail of the final comparison on objects.
 
 #set -x
+OTOOL=${4:-otool}
 $1 > check-$2.s
 $3 -arch $2 -W -force_cpusubtype_ALL -o check-$2.o check-$2.s
-otool -arch $2 -Q -X -tV check-$2.o >  check-$2-1.s
+$OTOOL -arch $2 -Q -X -tV check-$2.o >  check-$2-1.s
 $3 -arch $2 -W -force_cpusubtype_ALL -o check-$2-1.o check-$2-1.s
-otool -arch $2 -Q -X -tV check-$2-1.o >  check-$2-2.s
+$OTOOL -arch $2 -Q -X -tV check-$2-1.o >  check-$2-2.s
 diff -W200 -y --suppress-common-lines check-$2-1.s check-$2-2.s >errors-$2-diff.txt
 exec cmp check-$2.o check-$2-1.o
