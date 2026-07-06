@@ -18,7 +18,7 @@ The sub-projects are
  * dyld ; actually only used for headers
  * several stub libraries used when support is needed on older systems.
 
-## Support for 'legacy' MacOSX versions - 0.7.0r0
+## Support for 'legacy' MacOSX versions - 0.7.0r1
 
 This is a special release specifically supporting MacOSX 10.5 through 10.8 where the system C++ runtime is C++98.
 
@@ -116,6 +116,12 @@ You can also run the same tests using the Apple tools on the system:
 `TEST_SYSTEM_TOOLS=1 ctest`
 
 ## Changes
+
+0.7.0r1 July 2026
+
+Fixes a build error for modern compilers caused by a reference to a missing base class method.
+
+Adds support for 4 parameter versions of `lwarx` and `ldarx` needed to build GCC-17.
 
 0.7.0r0 April 2025
 
