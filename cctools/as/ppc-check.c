@@ -6,6 +6,9 @@
 static int bits(
     uint32_t width);
 
+static int is_update_form(
+    const char *name);
+
 static char *cond[] = { "lt", "gt", "eq", "un"};
 static char *pred[] = { "+", "-" };
 
@@ -63,6 +66,15 @@ char *envp[])
 		    if((strcmp("lmw", ppc_opcodes[i].name) == 0 && j == 0) ||
 		       (strcmp("lswi", ppc_opcodes[i].name) == 0 && j == 0))
 			printf("r31");
+		    else if(is_update_form(ppc_opcodes[i].name) &&
+			    j == ((ppc_opcodes[i].ops[1].type == D ||
+				   ppc_opcodes[i].ops[1].type == DS) ? 2 : 1))
+			/*
+			 * The RA (base) register of an update-form load/store
+			 * must not be r0; force it non-zero the same way a
+			 * G0REG operand is generated.
+			 */
+			printf("r%d", bits(5) | 0x1 );
 		    else
 			printf("r%d", bits(5) );
 		    break;
@@ -180,6 +192,31 @@ char *envp[])
 		}
 	    }
 	}
+	return(0);
+}
+
+/*
+ * is_update_form() returns non-zero if the named instruction is an update-form
+ * load/store, i.e. one for which the assembler requires RA != 0 (see the
+ * "RA must not be 0" checks in ppc.c).
+ */
+static
+int
+is_update_form(
+const char *name)
+{
+    static const char * const updates[] = {
+	"lbzu",  "lbzux",  "lhzu",  "lhzux",  "lhau",  "lhaux",
+	"lwzu",  "lwzux",  "lwaux", "ldu",    "ldux",
+	"stbu",  "stbux",  "sthu",  "sthux",  "stwu",  "stwux",
+	"stdu",  "stdux",  "lfsu",  "lfsux",  "lfdu",  "lfdux",
+	"stfsu", "stfsux", "stfdu", "stfdux", NULL
+    };
+    int k;
+
+	for(k = 0; updates[k] != NULL; k++)
+	    if(strcmp(name, updates[k]) == 0)
+		return(1);
 	return(0);
 }
 
