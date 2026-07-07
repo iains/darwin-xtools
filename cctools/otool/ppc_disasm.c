@@ -939,11 +939,22 @@ enum bool verbose)
 			   RB(opcode));
 		break;
 	    case 0x00000028:
-		if(RA(opcode) == 0)
-		    printf("lwarx\tr%u,0,r%u\n", RT(opcode), RB(opcode));
-		else
-		    printf("lwarx\tr%u,r%u,r%u\n", RT(opcode), RA(opcode),
-			   RB(opcode));
+                if ((opcode & 1))
+                  {
+ 		    if(RA(opcode) == 0)
+		        printf("lwarx\tr%u,0,r%u,1\n", RT(opcode), RB(opcode));
+		    else
+		        printf("lwarx\tr%u,r%u,r%u,1\n", RT(opcode), RA(opcode),
+			       RB(opcode));
+                 }
+                else
+                  {
+		    if(RA(opcode) == 0)
+		        printf("lwarx\tr%u,0,r%u\n", RT(opcode), RB(opcode));
+		    else
+		        printf("lwarx\tr%u,r%u,r%u\n", RT(opcode), RA(opcode),
+			       RB(opcode));
+		  }
 		break;
 	    case 0x000000a8:
 		if(RA(opcode) == 0)
