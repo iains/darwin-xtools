@@ -331,7 +331,7 @@ enum bool verbose)
 		    relocs, nrelocs, symbols, symbols64, nsymbols,
 		    sorted_symbols, nsorted_symbols, strings, strings_size,
 		    verbose);
-		printf(",0x%x\n", (unsigned int)(base + disp));
+		printf(",.+%d\n", disp);
 	    }
 	    else{
 		print_immediate(base + disp, sect_offset,
