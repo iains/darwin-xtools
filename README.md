@@ -1,4 +1,4 @@
-# Darwin Xtools 0.7.0r0
+# Darwin Xtools 0.7.0 to target MacOSX 10.5 to 10.8
 
 ## Overview
 
@@ -122,6 +122,10 @@ You can also run the same tests using the Apple tools on the system:
 Fixes a build error for modern compilers caused by a reference to a missing base class method.
 
 Adds support for 4 parameter versions of `lwarx` and `ldarx` needed to build GCC-17.
+
+Fixes otool disassembler output for hints on `lwarx` and `ldarx`.
+
+Fixes otool disassembler output for `jbsr/jmp` instructions so that it is possible to round-trip the generated assembler.
 
 0.7.0r0 April 2025
 
