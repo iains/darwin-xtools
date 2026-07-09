@@ -1,6 +1,7 @@
 # Top Level CMake file for XTOOLS.
 
-cmake_minimum_required(VERSION 3.9.6)
+cmake_minimum_required(VERSION 3.9.6...4.99)
+
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to MinSizeRel")
@@ -41,8 +42,53 @@ set(UNIX_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name 
 if(CMAKE_CROSSCOMPILING)
   message(STATUS "*Top Level* Cross compiling for ${CMAKE_SYSTEM_VERSION}")
 else()
-  message(STATUS "*Top Level* native build version ${CMAKE_SYSTEM_VERSION}")
+  message(STATUS "*Top Level* native build version ${CMAKE_HOST_SYSTEM_VERSION}")
 endif()
+
+# Include the mandatory compiler flag check module
+include(CheckCXXCompilerFlag)
+
+# Define the Darwin/macOS architectures you want to test
+# Common 64-bit: x86_64, arm64
+# Common 32-bit: i386, ppc
+set(TARGET_ARCHS "x86_64" "i386" "arm64" "arm64e" "arm64_32" "ppc64" "ppc")
+
+foreach(ARCH ${TARGET_ARCHS})
+    # Create a unique variable name for each architecture check result
+    set(FLAG_VAR "COMPILER_SUPPORTS_${ARCH}")
+    
+    # Temporarily force the compiler to try building with this specific architecture flag
+    # CMake 3.9 requires the flags to be passed exactly as the compiler expects them
+    set(CMAKE_REQUIRED_FLAGS "-arch ${ARCH}")
+    
+    # Run a test compilation using an empty check flag (we are testing CMAKE_REQUIRED_FLAGS)
+    # The third argument stores the result (TRUE/FALSE) in our dynamic variable name
+    check_cxx_compiler_flag("" ${FLAG_VAR})
+    
+    # Evaluate the result
+    if(${FLAG_VAR})
+        message(STATUS "Compiler supports architecture: ${ARCH}")
+    else()
+        message(STATUS "Compiler DOES NOT support architecture: ${ARCH}")
+    endif()
+    
+    # Clean up the required flags variable for the next loop iteration
+    unset(CMAKE_REQUIRED_FLAGS)
+endforeach()
+
+
+# A pointer size of 8 bytes means 64-bit architecture
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(STATUS "Default compiler output is 64-bit")
+    set(XTOOLS_HOST_IS_64B YES CACHE BOOL "host native bitwidth")
+# A pointer size of 4 bytes means 32-bit architecture
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message(STATUS "Default compiler output is 32-bit")
+    set(XTOOLS_HOST_IS_64B NO CACHE BOOL "host native bitwidth")
+else()
+    message(STATUS "Unknown bitness (Size of pointer: ${CMAKE_SIZEOF_VOID_P} bytes)")
+endif()
+
 
 if(FALSE AND XTOOLS_LTO_PATH AND
    EXISTS ${XTOOLS_LTO_PATH}/include/llvm-c/lto.h AND
